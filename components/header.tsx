@@ -58,7 +58,16 @@ export default function Header() {
                     size="sm"
                     className={isActive("/") ? "" : "text-muted-foreground"}
                   >
-                    Home
+                    Start
+                  </Button>
+                </Link>
+                <Link href="/coin">
+                  <Button
+                    variant={isActive("/coin") ? "default" : "ghost"}
+                    size="sm"
+                    className={isActive("/coin") ? "" : "text-muted-foreground"}
+                  >
+                    Coin
                   </Button>
                 </Link>
                 <Link href="/explore">
