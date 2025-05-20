@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "mip-dapp",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -62,8 +62,8 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/node": "^22",
-    "@types/react": "^19",
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
     "@types/react-dom": "^19",
     "postcss": "^8",
     "tailwindcss": "^3.4.17",
