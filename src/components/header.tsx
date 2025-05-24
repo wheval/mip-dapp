@@ -12,6 +12,14 @@ import { cn } from "@/src/lib/utils"
 import WalletConnectButton from "@/src/components/wallet-connect-button"
 import MobileMenu from "@/src/components/mobile-menu"
 import { usePathname } from "next/navigation"
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -48,7 +56,7 @@ export default function Header() {
                 <div className="relative h-8 w-8 mr-2 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold">
                   MIP
                 </div>
-                <span className="font-bold text-xl hidden sm:inline-block">MIP</span>
+                
               </Link>
 
               <nav className="hidden md:flex items-center space-x-1">
@@ -123,7 +131,15 @@ export default function Header() {
               </div>
 
               <div className="hidden md:block">
-                <WalletConnectButton />
+            
+            <SignedOut>
+              <SignInButton />
+              <SignUpButton />
+            </SignedOut>
+           
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
               </div>
 
               <Sheet>

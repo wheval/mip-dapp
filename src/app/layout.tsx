@@ -7,6 +7,14 @@ import { Toaster } from "@/src/components/ui/toaster"
 import { WalletProvider } from "@/src/components/wallet-provider"
 import { LiveActivityProvider } from "@/src/components/live-activity-provider"
 import Header from "@/src/components/header"
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,6 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
@@ -35,5 +44,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   )
 }
