@@ -74,7 +74,7 @@ export function FloatingNavigation() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-foreground">Navigation</h3>
-                  <p className="text-xs text-muted-foreground">Quick access to all features</p>
+                  <p className="text-xs text-muted-foreground">Quick access MIP</p>
                 </div>
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                   <Sparkles className="w-3 h-3 mr-1" />
@@ -123,17 +123,17 @@ export function FloatingNavigation() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
-                      <TrendingUp className="w-3 h-3 text-primary" />
-                      <span className="text-sm font-bold text-foreground">2.4K</span>
+                      
+                      <span className="text-sm font-bold text-foreground">Mediolano</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Assets</span>
+                    <span className="text-xs text-muted-foreground">Protocol</span>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
-                      <Zap className="w-3 h-3 text-orange-500" />
-                      <span className="text-sm font-bold text-foreground">$0.01</span>
+                      
+                      <span className="text-sm font-bold text-foreground">Starknet</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Avg Fee</span>
+                    <span className="text-xs text-muted-foreground">Blockchain</span>
                   </div>
                 </div>
               </div>

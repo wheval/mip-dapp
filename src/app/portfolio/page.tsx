@@ -222,7 +222,6 @@ export default function PortfolioPage() {
           </div>
         </div>
       </main>
-      <FloatingNavigation />
     </div>
   )
 }

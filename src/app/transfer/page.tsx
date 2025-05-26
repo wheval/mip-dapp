@@ -377,7 +377,6 @@ export default function TransferPage() {
           </div>
         </div>
       </main>
-      <FloatingNavigation />
     </div>
   )
 }

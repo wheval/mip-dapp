@@ -233,7 +233,7 @@ export default function ActivitiesPage() {
           </div>
         </div>
       </main>
-      <FloatingNavigation />
+
     </div>
   )
 }
