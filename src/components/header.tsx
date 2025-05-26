@@ -1,158 +1,71 @@
 "use client"
 
-import Link from "next/link"
 import { Button } from "@/src/components/ui/button"
+import { Badge } from "@/src/components/ui/badge"
+import { Wallet, UserCheck, UserX, Sparkles } from "lucide-react"
 import { ThemeToggle } from "@/src/components/theme-toggle"
-import { Search, Menu } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet"
-import { Input } from "@/src/components/ui/input"
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { cn } from "@/src/lib/utils"
-import WalletConnectButton from "@/src/components/wallet-connect-button"
-import MobileMenu from "@/src/components/mobile-menu"
-import { usePathname } from "next/navigation"
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
+import { NotificationsDropdown } from "@/src/components/notifications-dropdown"
+import Link from "next/link"
+import { useState } from "react"
 
-export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const pathname = usePathname()
+export function Header() {
+  const [isConnected, setIsConnected] = useState(true)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const isActive = (path: string) => {
-    if (path === "/" && pathname === "/") return true
-    if (path !== "/" && pathname.startsWith(path)) return true
-    return false
+  const toggleConnection = () => {
+    setIsConnected(!isConnected)
   }
 
   return (
-    <header
-      className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 transition-all duration-200",
-        isScrolled ? "bg-background/95 backdrop-blur-sm border-t" : "bg-background border-t",
-      )}
-    >
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center mr-6">
-                <div className="relative h-8 w-8 mr-2 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold">
-                  MIP
-                </div>
-                
-              </Link>
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 supports-[backdrop-filter]:bg-background/60">
+      <div className="px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="group">
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
+            </div>
+          </Link>
 
-              <nav className="hidden md:flex items-center space-x-1">
-                <Link href="/">
-                  <Button
-                    variant={isActive("/") ? "default" : "ghost"}
-                    size="sm"
-                    className={isActive("/") ? "" : "text-muted-foreground"}
-                  >
-                    Start
-                  </Button>
-                </Link>
-                <Link href="/coin">
-                  <Button
-                    variant={isActive("/coin") ? "default" : "ghost"}
-                    size="sm"
-                    className={isActive("/coin") ? "" : "text-muted-foreground"}
-                  >
-                    Coin
-                  </Button>
-                </Link>
-                <Link href="/explore">
-                  <Button
-                    variant={isActive("/explore") ? "default" : "ghost"}
-                    size="sm"
-                    className={isActive("/explore") ? "" : "text-muted-foreground"}
-                  >
-                    Explore
-                  </Button>
-                </Link>
-                <Link href="/collections">
-                  <Button
-                    variant={isActive("/collections") ? "default" : "ghost"}
-                    size="sm"
-                    className={isActive("/collections") ? "" : "text-muted-foreground"}
-                  >
-                    Collections
-                  </Button>
-                </Link>
-                <Link href="/activity">
-                  <Button
-                    variant={isActive("/activity") ? "default" : "ghost"}
-                    size="sm"
-                    className={isActive("/activity") ? "" : "text-muted-foreground"}
-                  >
-                    Activity
-                  </Button>
-                </Link>
-              </nav>
+          {/* Right Side Controls */}
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
+
+            {/* Notifications */}
+            <NotificationsDropdown />
+
+            {/* Connection Status - Desktop */}
+            <div className="hidden sm:flex items-center space-x-2 bg-muted/50 rounded-full px-3 py-1.5 border border-border/50">
+              <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                <Wallet className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-sm font-medium text-foreground">0x1234...5678</span>
+              <Badge
+                variant="secondary"
+                className="text-xs bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+              >
+                Connected
+              </Badge>
             </div>
 
-            <div className="flex items-center space-x-2">
-              {isSearchOpen ? (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: "200px", opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative"
-                >
-                  <Input placeholder="Search..." className="pr-8" autoFocus onBlur={() => setIsSearchOpen(false)} />
-                  <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                </motion.div>
+            {/* Connection Status - Mobile */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleConnection}
+              className="sm:hidden w-10 h-10 p-0 relative transition-all duration-200"
+            >
+              {isConnected ? (
+                <>
+                  <UserCheck className="w-5 h-5 text-green-600" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-background"></div>
+                </>
               ) : (
-                <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)} className="hidden md:flex">
-                  <Search className="h-5 w-5" />
-                </Button>
+                <UserX className="w-5 h-5 text-orange-500" />
               )}
-
-              <div className="hidden md:block">
-                <ThemeToggle />
-              </div>
-
-              <div className="hidden md:block">
-            
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-           
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-              </div>
-
-              <Sheet>
-                <SheetTrigger asChild className="md:hidden">
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="p-0">
-                  <MobileMenu />
-                </SheetContent>
-              </Sheet>
-            </div>
+            </Button>
           </div>
         </div>
       </div>

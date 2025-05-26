@@ -2,48 +2,39 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/src/components/theme-provider"
 import { Toaster } from "@/src/components/ui/toaster"
-import { WalletProvider } from "@/src/components/wallet-provider"
-import { LiveActivityProvider } from "@/src/components/live-activity-provider"
-import Header from "@/src/components/header"
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
+import { ThemeProvider } from "@/src/components/theme-provider"
+import { Header } from "@/src/components/header"
+import { Footer } from "@/src/components/footer"
+import { FloatingNavigation } from "@/src/components/floating-navigation"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "MIP - Onchain Social DApp",
-  description: "Create, connect, and earn from your digital fingerprint",
-    generator: 'v0.dev'
+  title: "MIP - My Intellectual Property",
+  description: "Coin your content into programmable intellectual property with frictionless tokenization. Powered on Starknet",
+  keywords: ["NFT", "IP", "Intellectual Property", "Starknet", "Web3", "Tokenization"],
+  authors: [{ name: "Mediolano" }],
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <ClerkProvider>
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <WalletProvider>
-            <LiveActivityProvider>
-              <main className="min-h-screen pb-20 bg-background">{children}</main>
-              <Header />
-              <Toaster />
-            </LiveActivityProvider>
-          </WalletProvider>
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <FloatingNavigation />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
-    </ClerkProvider>
   )
 }

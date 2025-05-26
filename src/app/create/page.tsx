@@ -1,336 +1,231 @@
 "use client"
 
+import { Header } from "@/src/components/header"
 import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Textarea } from "@/src/components/ui/textarea"
-import { Switch } from "@/src/components/ui/switch"
-import { Upload, ImageIcon, FileVideo, FileText, Info, Loader2, Plus, X } from "lucide-react"
-import { Slider } from "@/src/components/ui/slider"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/components/ui/tooltip"
-import { useSearchParams } from "next/navigation"
+import { Badge } from "@/src/components/ui/badge"
+import { Progress } from "@/src/components/ui/progress"
+import { Upload, ImageIcon, Music, Video, FileText, Palette, Shield, Zap, Clock, DollarSign, Info } from "lucide-react"
 import { useState } from "react"
-import { motion } from "framer-motion"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { getCollections } from "@/src/lib/mock-data"
+
+const assetTypes = [
+  { id: "image", icon: ImageIcon, label: "Image", description: "Photos, artwork, designs" },
+  { id: "music", icon: Music, label: "Music", description: "Audio tracks, compositions" },
+  { id: "video", icon: Video, label: "Video", description: "Films, animations, clips" },
+  { id: "document", icon: FileText, label: "Document", description: "Text, research, articles" },
+  { id: "design", icon: Palette, label: "Design", description: "UI/UX, graphics, logos" },
+]
 
 export default function CreatePage() {
-  const searchParams = useSearchParams()
-  const initialTab = searchParams.get("type") || "image"
-  const [activeTab, setActiveTab] = useState(initialTab)
-  const [isUploading, setIsUploading] = useState(false)
+  const [selectedType, setSelectedType] = useState("")
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [properties, setProperties] = useState<Array<{ trait: string; value: string }>>([])
-  const collections = getCollections()
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFileSelect = () => {
+  const handleUpload = () => {
     setIsUploading(true)
+    setUploadProgress(0)
 
-    // Simulate file upload progress
-    let progress = 0
     const interval = setInterval(() => {
-      progress += 5
-      setUploadProgress(progress)
-
-      if (progress >= 100) {
-        clearInterval(interval)
-        setIsUploading(false)
-        setPreviewUrl("/placeholder.svg?height=400&width=400")
-      }
-    }, 100)
-  }
-
-  const addProperty = () => {
-    setProperties([...properties, { trait: "", value: "" }])
-  }
-
-  const removeProperty = (index: number) => {
-    const newProperties = [...properties]
-    newProperties.splice(index, 1)
-    setProperties(newProperties)
-  }
-
-  const updateProperty = (index: number, field: "trait" | "value", value: string) => {
-    const newProperties = [...properties]
-    newProperties[index][field] = value
-    setProperties(newProperties)
+      setUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setIsUploading(false)
+          return 100
+        }
+        return prev + 10
+      })
+    }, 200)
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-3xl font-bold mb-6">Create New Asset</h1>
+    <div className="min-h-screen bg-background">
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Asset Details</CardTitle>
-                  <CardDescription>Create your digital asset on Starknet</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
-                    <Button
-                      variant={activeTab === "image" ? "default" : "outline"}
-                      size="sm"
-                      className="flex items-center whitespace-nowrap"
-                      onClick={() => setActiveTab("image")}
-                    >
-                      <ImageIcon className="h-4 w-4 mr-2" />
-                      Image
-                    </Button>
-                    <Button
-                      variant={activeTab === "video" ? "default" : "outline"}
-                      size="sm"
-                      className="flex items-center whitespace-nowrap"
-                      onClick={() => setActiveTab("video")}
-                    >
-                      <FileVideo className="h-4 w-4 mr-2" />
-                      Video
-                    </Button>
-                    <Button
-                      variant={activeTab === "post" ? "default" : "outline"}
-                      size="sm"
-                      className="flex items-center whitespace-nowrap"
-                      onClick={() => setActiveTab("post")}
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      Post
-                    </Button>
-                  </div>
-
-                  <div className="pt-4">
-                    {activeTab === "image" && (
-                      <div>
-                        {previewUrl ? (
-                          <div className="relative aspect-square max-w-md mx-auto">
-                            <img
-                              src={previewUrl || "/placeholder.svg"}
-                              alt="Preview"
-                              className="w-full h-full object-cover rounded-lg"
-                            />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="absolute bottom-2 right-2"
-                              onClick={() => setPreviewUrl(null)}
-                            >
-                              Change
-                            </Button>
-                          </div>
-                        ) : (
-                          <div
-                            className="border-2 border-dashed rounded-lg p-12 text-center cursor-pointer hover:bg-muted/50 transition-colors"
-                            onClick={handleFileSelect}
-                          >
-                            <div className="flex flex-col items-center">
-                              {isUploading ? (
-                                <>
-                                  <Loader2 className="h-12 w-12 text-primary mb-4 animate-spin" />
-                                  <h3 className="font-medium text-lg mb-2">Uploading...</h3>
-                                  <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary" style={{ width: `${uploadProgress}%` }}></div>
-                                  </div>
-                                  <p className="text-muted-foreground mt-2">{uploadProgress}%</p>
-                                </>
-                              ) : (
-                                <>
-                                  <Upload className="h-12 w-12 text-muted-foreground mb-4" />
-                                  <h3 className="font-medium text-lg mb-2">Upload Image</h3>
-                                  <p className="text-muted-foreground mb-4">PNG, JPG or GIF up to 10MB</p>
-                                  <Button>Select File</Button>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {activeTab === "video" && (
-                      <div className="border-2 border-dashed rounded-lg p-12 text-center">
-                        <div className="flex flex-col items-center">
-                          <Upload className="h-12 w-12 text-muted-foreground mb-4" />
-                          <h3 className="font-medium text-lg mb-2">Upload Video</h3>
-                          <p className="text-muted-foreground mb-4">MP4 or WebM up to 50MB</p>
-                          <Button>Select File</Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeTab === "post" && (
-                      <Textarea placeholder="Write your post content here..." className="min-h-[200px]" />
-                    )}
-                  </div>
-
-                  <div className="grid w-full gap-1.5">
-                    <Label htmlFor="title">Name</Label>
-                    <Input id="title" placeholder="Give your asset a name" />
-                  </div>
-
-                  <div className="grid w-full gap-1.5">
-                    <Label htmlFor="collection">Collection</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a collection" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="new">Create new collection</SelectItem>
-                        {collections.map((collection) => (
-                          <SelectItem key={collection.id} value={collection.id}>
-                            {collection.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="grid w-full gap-1.5">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" placeholder="Tell the story behind your creation" />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label>Properties</Label>
-                      <Button variant="outline" size="sm" onClick={addProperty}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Property
-                      </Button>
-                    </div>
-
-                    <div className="space-y-3">
-                      {properties.map((property, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="flex gap-2 items-center"
-                        >
-                          <Input
-                            placeholder="Trait name"
-                            value={property.trait}
-                            onChange={(e) => updateProperty(index, "trait", e.target.value)}
-                            className="flex-1"
-                          />
-                          <Input
-                            placeholder="Value"
-                            value={property.value}
-                            onChange={(e) => updateProperty(index, "value", e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button variant="ghost" size="icon" onClick={() => removeProperty(index)}>
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </motion.div>
-                      ))}
-
-                      {properties.length === 0 && (
-                        <div className="border rounded-md p-4 text-center text-muted-foreground">
-                          <p>Add properties to your asset (e.g. Color: Blue, Size: Large)</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline">Save Draft</Button>
-                  <Button>Create Asset</Button>
-                </CardFooter>
-              </Card>
-            </div>
-
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Asset Settings</CardTitle>
-                  <CardDescription>Configure how your asset will be tokenized</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid w-full gap-1.5">
-                    <Label htmlFor="price">Initial Price (ETH)</Label>
-                    <Input id="price" type="number" placeholder="0.00" min="0" step="0.01" />
-                  </div>
-
-                  <div className="grid w-full gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="royalty">Royalty Percentage</Label>
-                      <span className="text-sm text-muted-foreground">10%</span>
-                    </div>
-                    <Slider defaultValue={[10]} max={25} step={1} />
-                    <p className="text-sm text-muted-foreground">You'll receive this percentage of all future sales</p>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Unlockable Content</Label>
-                      <p className="text-sm text-muted-foreground">Include content only revealed to the owner</p>
-                    </div>
-                    <Switch />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center">
-                        <Label className="mr-1">Content Coin</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="h-4 w-4 text-muted-foreground" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="max-w-xs">
-                                Create a token for your content that can be traded on exchanges
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <p className="text-sm text-muted-foreground">Create a tradeable token for this content</p>
-                    </div>
-                    <Switch />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Limited Edition</Label>
-                      <p className="text-sm text-muted-foreground">Set a maximum supply for this token</p>
-                    </div>
-                    <Switch />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="mt-4">
-                <CardHeader>
-                  <CardTitle>Network Info</CardTitle>
-                  <CardDescription>Minting on Starknet blockchain</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Network</span>
-                      <span className="font-medium">Starknet</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Gas Fee (est.)</span>
-                      <span className="font-medium">0.0001 ETH</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Protocol</span>
-                      <span className="font-medium">Ekubo</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+      <main className="max-w-4xl mx-auto px-4 py-8 pb-24">
+        <div className="space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+              <Zap className="w-3 h-3 mr-1" />
+              Create IP Asset
+            </Badge>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">Transform Your Work Into Protected IP</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Upload your creative work and tokenize it as intellectual property on Starknet. Secure, fast, and designed
+              for creators.
+            </p>
           </div>
-        </motion.div>
-      </div>
+
+          {/* Asset Type Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Select Asset Type
+              </CardTitle>
+              <CardDescription>Choose the type of intellectual property you want to tokenize</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {assetTypes.map((type) => {
+                  const Icon = type.icon
+                  return (
+                    <button
+                      key={type.id}
+                      onClick={() => setSelectedType(type.id)}
+                      className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                        selectedType === type.id
+                          ? "border-primary bg-primary/5 shadow-lg"
+                          : "border-border hover:border-primary/50 hover:bg-muted/50"
+                      }`}
+                    >
+                      <div className="text-center space-y-2">
+                        <Icon
+                          className={`w-8 h-8 mx-auto ${
+                            selectedType === type.id ? "text-primary" : "text-muted-foreground"
+                          }`}
+                        />
+                        <div>
+                          <p className="font-medium">{type.label}</p>
+                          <p className="text-xs text-muted-foreground">{type.description}</p>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Upload Section */}
+          {selectedType && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="w-5 h-5" />
+                  Upload Your Asset
+                </CardTitle>
+                <CardDescription>Upload your file and provide details for tokenization</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* File Upload */}
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
+                  <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-lg font-medium mb-2">Drop your file here or click to browse</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Supports JPG, PNG, GIF, MP4, MP3, PDF up to 100MB
+                  </p>
+                  <Button onClick={handleUpload} disabled={isUploading}>
+                    {isUploading ? "Uploading..." : "Choose File"}
+                  </Button>
+                </div>
+
+                {/* Upload Progress */}
+                {isUploading && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <Progress value={uploadProgress} className="h-2" />
+                  </div>
+                )}
+
+                {/* Asset Details Form */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Asset Title</Label>
+                      <Input id="title" placeholder="Enter a descriptive title" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea id="description" placeholder="Describe your intellectual property..." rows={4} />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="tags">Tags</Label>
+                      <Input id="tags" placeholder="art, design, music (comma separated)" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="royalty">Royalty Percentage</Label>
+                      <Input id="royalty" type="number" placeholder="10" min="0" max="50" />
+                      <p className="text-xs text-muted-foreground mt-1">Percentage you'll receive from future sales</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="price">Initial Price (ETH)</Label>
+                      <Input id="price" type="number" placeholder="0.1" step="0.001" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="license">License Type</Label>
+                      <select className="w-full px-3 py-2 border border-border rounded-md bg-background">
+                        <option>Standard License</option>
+                        <option>Extended License</option>
+                        <option>Exclusive License</option>
+                        <option>Custom License</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Tokenization Info */}
+          {selectedType && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Info className="w-5 h-5" />
+                  Tokenization Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center space-y-2">
+                    <Clock className="w-8 h-8 mx-auto text-primary" />
+                    <h3 className="font-semibold">Processing Time</h3>
+                    <p className="text-sm text-muted-foreground">~2-5 minutes</p>
+                  </div>
+
+                  <div className="text-center space-y-2">
+                    <DollarSign className="w-8 h-8 mx-auto text-green-500" />
+                    <h3 className="font-semibold">Network Fee</h3>
+                    <p className="text-sm text-muted-foreground">~$0.50 USD</p>
+                  </div>
+
+                  <div className="text-center space-y-2">
+                    <Shield className="w-8 h-8 mx-auto text-blue-500" />
+                    <h3 className="font-semibold">Blockchain</h3>
+                    <p className="text-sm text-muted-foreground">Starknet</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Create Button */}
+          {selectedType && (
+            <div className="text-center">
+              <Button size="lg" className="px-8">
+                Create IP Asset
+                <Zap className="w-4 h-4 ml-2" />
+              </Button>
+              <p className="text-sm text-muted-foreground mt-2">
+                By creating this asset, you agree to our Terms of Service
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   )
 }
