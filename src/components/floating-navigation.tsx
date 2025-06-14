@@ -74,7 +74,7 @@ export function FloatingNavigation() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-foreground">Navigation</h3>
-                  <p className="text-xs text-muted-foreground">Quick access MIP</p>
+                  <p className="text-xs text-muted-foreground">Quick access</p>
                 </div>
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                   <Sparkles className="w-3 h-3 mr-1" />
