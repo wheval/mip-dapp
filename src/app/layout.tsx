@@ -7,22 +7,16 @@ import { ThemeProvider } from "@/src/components/theme-provider"
 import { Header } from "@/src/components/header"
 import { Footer } from "@/src/components/footer"
 import { FloatingNavigation } from "@/src/components/floating-navigation"
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "MIP - My Intellectual Property",
-  description: "Coin your content into programmable intellectual property with frictionless tokenization. Powered on Starknet",
+  title: "MIP - Mediolano Intellectual Property",
+  description: "Transform your content into protected intellectual property with frictionless tokenization on Starknet",
   keywords: ["NFT", "IP", "Intellectual Property", "Starknet", "Web3", "Tokenization"],
-  authors: [{ name: "Mediolano" }],
+  authors: [{ name: "MIP Team" }],
+  viewport: "width=device-width, initial-scale=1",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -31,7 +25,6 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
@@ -45,6 +38,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-    </ClerkProvider>
   )
 }

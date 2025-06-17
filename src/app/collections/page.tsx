@@ -3,72 +3,75 @@
 import { useState } from "react"
 import { Header } from "@/src/components/header"
 import { FloatingNavigation } from "@/src/components/floating-navigation"
+import { CollectionCard } from "@/src/components/collection-card"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { TrendingUp, Search, Grid3X3, List, Download, Star, Users, Shield, Plus } from "lucide-react"
-import { portfolioAssets } from "@/src/lib/mock-data"
-import type { AssetIP } from "@/src/types/asset"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Search, Grid3X3, List, TrendingUp, FolderOpen, Eye, Heart, Plus } from "lucide-react"
+import { collections } from "@/src/lib/mock-data"
 import Link from "next/link"
-import { ExpandableAssetCard } from "@/src/components/expandable-asset-card"
 
-export default function PortfolioPage() {
-  const [selectedTab, setSelectedTab] = useState("owned")
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+export default function CollectionsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("recent")
   const [filterBy, setFilterBy] = useState("all")
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [selectedTab, setSelectedTab] = useState("all")
 
-  const ownedAssets = portfolioAssets.filter((asset) => asset.creator?.username !== "you")
-  const createdAssets = portfolioAssets.filter(
-    (asset) => asset.creator?.username === "you" || asset.creator?.name === "You",
-  )
+  const featuredCollections = collections.filter((collection) => collection.isFeatured)
+  const allCollections = collections
 
-  const currentAssets = selectedTab === "owned" ? ownedAssets : createdAssets
+  const currentCollections = selectedTab === "featured" ? featuredCollections : allCollections
 
-  const filteredAssets = currentAssets.filter((asset) => {
-    const matchesSearch = asset.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesFilter = filterBy === "all" || asset.type.toLowerCase() === filterBy.toLowerCase()
+  const filteredCollections = currentCollections.filter((collection) => {
+    const matchesSearch =
+      collection.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      collection.description.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesFilter = filterBy === "all" || collection.category.toLowerCase() === filterBy.toLowerCase()
     return matchesSearch && matchesFilter
   })
 
-  const sortedAssets = [...filteredAssets].sort((a, b) => {
+  const sortedCollections = [...filteredCollections].sort((a, b) => {
     switch (sortBy) {
       case "name":
-        return a.title.localeCompare(b.title)
-      case "type":
-        return a.type.localeCompare(b.type)
-      case "author":
-        return a.author.localeCompare(b.author)
+        return a.name.localeCompare(b.name)
+      case "assets":
+        return b.assets - a.assets
       default:
-        return 0
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     }
   })
 
+  const totalAssets = collections.reduce((sum, collection) => sum + collection.assets, 0)
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
-
       <main className="pb-6">
         <div className="px-4 py-8">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             {/* Header Section */}
             <div className="mb-8 animate-fade-in-up">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-2">My IP Portfolio</h1>
-                  <p className="text-muted-foreground">Manage your tokenized intellectual property</p>
+                  <h1 className="text-3xl font-bold text-foreground mb-2">IP Collections</h1>
+                  <p className="text-muted-foreground">
+                    Discover curated collections of programmable intellectual property
+                  </p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                    {currentAssets.length} Assets
+                    {collections.length} Collections
                   </Badge>
-                  <Button variant="outline" size="sm" className="hover:scale-105 transition-transform">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
-                  </Button>
+                  <Link href="/create-collection">
+                    <Button className="hover:scale-105 transition-transform">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Collection
+                    </Button>
+                  </Link>
                 </div>
               </div>
 
@@ -79,11 +82,9 @@ export default function PortfolioPage() {
                   style={{ animationDelay: "100ms" }}
                 >
                   <CardContent className="p-4 text-center">
-                    <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-blue-900 dark:text-blue-100">
-                      {ownedAssets.length + createdAssets.length}
-                    </div>
-                    <div className="text-xs text-blue-700 dark:text-blue-300">Total Assets</div>
+                    <FolderOpen className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2 animate-pulse" />
+                    <div className="text-lg font-bold text-blue-900 dark:text-blue-100">{collections.length}</div>
+                    <div className="text-xs text-blue-700 dark:text-blue-300">Collections</div>
                   </CardContent>
                 </Card>
 
@@ -92,9 +93,9 @@ export default function PortfolioPage() {
                   style={{ animationDelay: "200ms" }}
                 >
                   <CardContent className="p-4 text-center">
-                    <Star className="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-green-900 dark:text-green-100">{createdAssets.length}</div>
-                    <div className="text-xs text-green-700 dark:text-green-300">Created</div>
+                    <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2 animate-pulse" />
+                    <div className="text-lg font-bold text-green-900 dark:text-green-100">{totalAssets}</div>
+                    <div className="text-xs text-green-700 dark:text-green-300">Total Assets</div>
                   </CardContent>
                 </Card>
 
@@ -103,9 +104,11 @@ export default function PortfolioPage() {
                   style={{ animationDelay: "300ms" }}
                 >
                   <CardContent className="p-4 text-center">
-                    <Users className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-purple-900 dark:text-purple-100">{ownedAssets.length}</div>
-                    <div className="text-xs text-purple-700 dark:text-purple-300">Collected</div>
+                    <Eye className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2 animate-pulse" />
+                    <div className="text-lg font-bold text-purple-900 dark:text-purple-100">
+                      X
+                    </div>
+                    <div className="text-xs text-purple-700 dark:text-purple-300">Total Views</div>
                   </CardContent>
                 </Card>
 
@@ -114,9 +117,11 @@ export default function PortfolioPage() {
                   style={{ animationDelay: "400ms" }}
                 >
                   <CardContent className="p-4 text-center">
-                    <Shield className="w-6 h-6 text-orange-600 dark:text-orange-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-orange-900 dark:text-orange-100">100%</div>
-                    <div className="text-xs text-orange-700 dark:text-orange-300">Protected</div>
+                    <Heart className="w-6 h-6 text-orange-600 dark:text-orange-400 mx-auto mb-2 animate-pulse" />
+                    <div className="text-lg font-bold text-orange-900 dark:text-orange-100">
+                      X
+                    </div>
+                    <div className="text-xs text-orange-700 dark:text-orange-300">Total Likes</div>
                   </CardContent>
                 </Card>
               </div>
@@ -127,11 +132,11 @@ export default function PortfolioPage() {
               <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <TabsList className="grid w-full sm:w-auto grid-cols-2 bg-muted/50">
-                    <TabsTrigger value="owned" className="data-[state=active]:bg-background">
-                      Owned ({ownedAssets.length})
+                    <TabsTrigger value="all" className="data-[state=active]:bg-background">
+                      All Collections ({collections.length})
                     </TabsTrigger>
-                    <TabsTrigger value="created" className="data-[state=active]:bg-background">
-                      Created ({createdAssets.length})
+                    <TabsTrigger value="featured" className="data-[state=active]:bg-background">
+                      Featured ({featuredCollections.length})
                     </TabsTrigger>
                   </TabsList>
 
@@ -160,7 +165,7 @@ export default function PortfolioPage() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search your IP assets..."
+                      placeholder="Search collections..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 bg-background/50"
@@ -174,59 +179,68 @@ export default function PortfolioPage() {
                     <SelectContent>
                       <SelectItem value="recent">Recent</SelectItem>
                       <SelectItem value="name">Name</SelectItem>
-                      <SelectItem value="type">Type</SelectItem>
-                      <SelectItem value="author">Author</SelectItem>
+                      <SelectItem value="assets">Most Assets</SelectItem>
+                      <SelectItem value="views">Most Viewed</SelectItem>
+                      <SelectItem value="likes">Most Liked</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <Select value={filterBy} onValueChange={setFilterBy}>
                     <SelectTrigger className="w-full sm:w-40 bg-background/50">
-                      <SelectValue placeholder="Filter by type" />
+                      <SelectValue placeholder="Filter by category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="art">Art</SelectItem>
-                      <SelectItem value="music">Music</SelectItem>
-                      <SelectItem value="video">Video</SelectItem>
-                      <SelectItem value="document">Documents</SelectItem>
-                      <SelectItem value="image">Images</SelectItem>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="digital art">Digital Art</SelectItem>
+                      <SelectItem value="audio">Audio</SelectItem>
+                      <SelectItem value="publications">Publications</SelectItem>
+                      <SelectItem value="software">Software</SelectItem>
+                      <SelectItem value="patents">Patents</SelectItem>
+                      <SelectItem value="ai art">AI Art</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <TabsContent value="owned" className="mt-6">
-                  <AssetGrid assets={sortedAssets} viewMode={viewMode} />
+                <TabsContent value="all" className="mt-6">
+                  <CollectionGrid collections={sortedCollections} viewMode={viewMode} />
                 </TabsContent>
 
-                <TabsContent value="created" className="mt-6">
-                  <AssetGrid assets={sortedAssets} viewMode={viewMode} isOwner={true} />
+                <TabsContent value="featured" className="mt-6">
+                  <CollectionGrid collections={sortedCollections} viewMode={viewMode} featured />
                 </TabsContent>
               </Tabs>
             </div>
           </div>
         </div>
       </main>
+      
     </div>
   )
 }
 
-function AssetGrid({
-  assets,
+function CollectionGrid({
+  collections,
   viewMode,
-  isOwner = false,
-}: { assets: AssetIP[]; viewMode: "grid" | "list"; isOwner?: boolean }) {
-  if (assets.length === 0) {
+  featured = false,
+}: {
+  collections: any[]
+  viewMode: "grid" | "list"
+  featured?: boolean
+}) {
+  if (collections.length === 0) {
     return (
       <div className="text-center py-16 animate-fade-in-up">
         <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-          <TrendingUp className="w-10 h-10 text-muted-foreground" />
+          <FolderOpen className="w-10 h-10 text-muted-foreground" />
         </div>
-        <h3 className="text-xl font-semibold text-foreground mb-3">No IP assets found</h3>
-        <p className="text-muted-foreground mb-6">Start tokenizing your intellectual property or adjust your filters</p>
-        <Link href="/create">
+        <h3 className="text-xl font-semibold text-foreground mb-3">No collections found</h3>
+        <p className="text-muted-foreground mb-6">
+          {featured ? "No featured collections available" : "Start creating collections or adjust your filters"}
+        </p>
+        <Link href="/create-collection">
           <Button className="hover:scale-105 transition-transform">
             <Plus className="w-4 h-4 mr-2" />
-            Create New IP
+            Create Collection
           </Button>
         </Link>
       </div>
@@ -236,8 +250,10 @@ function AssetGrid({
   if (viewMode === "list") {
     return (
       <div className="space-y-4">
-        {assets.map((asset, index) => (
-          <ExpandableAssetCard key={asset.id} asset={asset} variant="list" isOwner={isOwner} />
+        {collections.map((collection, index) => (
+          <div key={collection.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+            <CollectionCard collection={collection} variant="compact" />
+          </div>
         ))}
       </div>
     )
@@ -245,8 +261,10 @@ function AssetGrid({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {assets.map((asset, index) => (
-        <ExpandableAssetCard key={asset.id} asset={asset} variant="grid" isOwner={isOwner} />
+      {collections.map((collection, index) => (
+        <div key={collection.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+          <CollectionCard collection={collection} variant={featured ? "featured" : "default"} />
+        </div>
       ))}
     </div>
   )

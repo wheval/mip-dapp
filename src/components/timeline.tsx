@@ -1,27 +1,55 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Card, CardContent } from "@/src/components/ui/card"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Badge } from "@/src/components/ui/badge"
+import { Card, CardContent } from "@/src/components/ui/card"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible"
 import { AssetFilterDrawer, type FilterState } from "@/src/components/asset-filter-drawer"
-import { Share, MoreHorizontal, ExternalLink, Shield, Play, FileText, Music, X, Sparkles } from "lucide-react"
+import {
+  Share,
+  MoreHorizontal,
+  Shield,
+  ExternalLink,
+  Sparkles,
+  X,
+  ChevronDown,
+  CheckCircle,
+  XCircle,
+  Globe,
+  Eye,
+  Copy,
+  Send,
+  Loader2,
+  UserPlus,
+  Calendar,
+  Hash,
+  Network,
+  Award,
+} from "lucide-react"
 import { timelineAssets } from "@/src/lib/mock-data"
 import Image from "next/image"
 import Link from "next/link"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu"
 
-const getMediaIcon = (iptype: string) => {
-  switch (iptype.toLowerCase()) {
-    case "audio":
-      return Music
-    case "video":
-      return Play
-    case "documents":
-    case "publications":
-    case "posts":
-      return FileText
+const getLicenseColor = (licenseType: string) => {
+  switch (licenseType) {
+    case "all-rights":
+      return "bg-red-500 text-white"
+    case "creative-commons":
+      return "bg-green-500 text-white"
+    case "open-source":
+      return "bg-blue-500 text-white"
+    case "custom":
+      return "bg-purple-500 text-white"
     default:
-      return ExternalLink
+      return "bg-gray-500 text-white"
   }
 }
 
@@ -36,8 +64,14 @@ const defaultFilters: FilterState = {
   priceRange: [0, 100],
 }
 
+const ASSETS_PER_PAGE = 10
+
 export function Timeline() {
   const [filters, setFilters] = useState<FilterState>(defaultFilters)
+  const [expandedAssets, setExpandedAssets] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
 
   const filteredAssets = useMemo(() => {
     let filtered = [...timelineAssets]
@@ -46,21 +80,22 @@ export function Timeline() {
     if (filters.search) {
       filtered = filtered.filter(
         (asset) =>
-          asset.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+          asset.title.toLowerCase().includes(filters.search.toLowerCase()) ||
           asset.description.toLowerCase().includes(filters.search.toLowerCase()) ||
-          asset.creator.name.toLowerCase().includes(filters.search.toLowerCase()),
+          asset.creator.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+          asset.tags.toLowerCase().includes(filters.search.toLowerCase()),
       )
     }
 
     // Asset type filter
     if (filters.assetTypes.length > 0) {
-      filtered = filtered.filter((asset) => filters.assetTypes.includes(asset.iptype.toLowerCase()))
+      filtered = filtered.filter((asset) => filters.assetTypes.includes(asset.type.toLowerCase()))
     }
 
     // License filter
     if (filters.licenses.length > 0) {
       filtered = filtered.filter((asset) => {
-        const assetLicense = asset.license.toLowerCase().replace(/\s+/g, "-")
+        const assetLicense = asset.licenseType.toLowerCase().replace(/\s+/g, "-")
         return filters.licenses.some((license) => assetLicense.includes(license) || license.includes(assetLicense))
       })
     }
@@ -72,29 +107,32 @@ export function Timeline() {
 
     // Tags filter
     if (filters.tags.length > 0) {
-      filtered = filtered.filter((asset) => filters.tags.some((tag) => asset.tags.includes(tag)))
+      filtered = filtered.filter((asset) =>
+        filters.tags.some((tag) => asset.tags.toLowerCase().includes(tag.toLowerCase())),
+      )
     }
 
     // Sort
     switch (filters.sortBy) {
       case "alphabetical":
-        filtered.sort((a, b) => a.name.localeCompare(b.name))
+        filtered.sort((a, b) => a.title.localeCompare(b.title))
         break
       case "popular":
-        // Mock popularity sort
-        filtered.sort(() => Math.random() - 0.5)
+        filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         break
       case "trending":
-        // Mock trending sort
-        filtered.sort(() => Math.random() - 0.5)
+        filtered.sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime())
         break
       default:
-        // Keep original order for "recent"
         break
     }
 
     return filtered
   }, [filters])
+
+  const paginatedAssets = useMemo(() => {
+    return filteredAssets.slice(0, currentPage * ASSETS_PER_PAGE)
+  }, [filteredAssets, currentPage])
 
   const activeFilterCount = useMemo(() => {
     return [
@@ -108,6 +146,45 @@ export function Timeline() {
     ]
       .filter(Boolean)
       .reduce((a, b) => (a as number) + (b as number), 0)
+  }, [filters])
+
+  const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore) return
+
+    setIsLoading(true)
+
+    // Simulate API call delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    const nextPage = currentPage + 1
+    const totalAvailable = filteredAssets.length
+    const nextPageAssets = totalAvailable - currentPage * ASSETS_PER_PAGE
+
+    if (nextPageAssets <= 0) {
+      setHasMore(false)
+    } else {
+      setCurrentPage(nextPage)
+    }
+
+    setIsLoading(false)
+  }, [currentPage, filteredAssets.length, isLoading, hasMore])
+
+  // Infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
+        loadMore()
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [loadMore])
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+    setHasMore(true)
   }, [filters])
 
   const clearFilters = () => {
@@ -143,300 +220,426 @@ export function Timeline() {
     }
   }
 
+  const toggleExpanded = (assetId: string) => {
+    setExpandedAssets((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(assetId)) {
+        newSet.delete(assetId)
+      } else {
+        newSet.add(assetId)
+      }
+      return newSet
+    })
+  }
+
+  const handleShare = (asset: any) => {
+    const url = `${window.location.origin}/asset/${asset.slug}`
+    navigator.clipboard.writeText(url)
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header with Filter Controls */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <h1 className="text-2xl font-bold text-foreground">IP Timeline</h1>
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-              <Sparkles className="w-3 h-3 mr-1" />
-              Live
-            </Badge>
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center space-x-3">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
-          <p className="text-muted-foreground">Latest intellectual property from creators worldwide</p>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">IP Timeline</h1>
+            <p className="text-sm text-muted-foreground">Latest intellectual property from creators worldwide</p>
+          </div>
         </div>
-      </div>
 
-      {/* Filter Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+        {/* Filter Controls */}
+        <div className="flex items-center justify-center space-x-4">
           <AssetFilterDrawer
             filters={filters}
             onFiltersChange={setFilters}
             activeFilterCount={activeFilterCount}
             onClearFilters={clearFilters}
           />
-          <span className="text-sm text-muted-foreground">
-            {filteredAssets.length} asset{filteredAssets.length !== 1 ? "s" : ""}
-          </span>
+          <Badge variant="secondary" className="bg-muted text-muted-foreground">
+            {filteredAssets.length} assets
+          </Badge>
+          {activeFilterCount > 0 && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
+              Clear
+            </Button>
+          )}
         </div>
+
+        {/* Active Filters */}
         {activeFilterCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
-            Clear all
-          </Button>
+          <div className="flex flex-wrap justify-center gap-2">
+            {filters.search && (
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                "{filters.search}"
+                <Button variant="ghost" size="sm" className="w-4 h-4 p-0 ml-1" onClick={() => removeFilter("search")}>
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            )}
+
+            {filters.assetTypes.map((type) => (
+              <Badge
+                key={type}
+                variant="secondary"
+                className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-4 h-4 p-0 ml-1"
+                  onClick={() => removeFilter("assetType", type)}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            ))}
+
+            {filters.licenses.map((license) => (
+              <Badge
+                key={license}
+                variant="secondary"
+                className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+              >
+                {license.toUpperCase()}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-4 h-4 p-0 ml-1"
+                  onClick={() => removeFilter("license", license)}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            ))}
+
+            {filters.verifiedOnly && (
+              <Badge
+                variant="secondary"
+                className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+              >
+                Verified Only
+                <Button variant="ghost" size="sm" className="w-4 h-4 p-0 ml-1" onClick={() => removeFilter("verified")}>
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            )}
+          </div>
         )}
       </div>
 
-      {/* Active Filters */}
-      {activeFilterCount > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {filters.search && (
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-              Search: "{filters.search}"
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-4 h-4 p-0 ml-1 hover:bg-primary/20"
-                onClick={() => removeFilter("search")}
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </Badge>
-          )}
-
-          {filters.assetTypes.map((type) => (
-            <Badge
-              key={type}
-              variant="secondary"
-              className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-800"
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-4 h-4 p-0 ml-1 hover:bg-blue-200 dark:hover:bg-blue-800"
-                onClick={() => removeFilter("assetType", type)}
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </Badge>
-          ))}
-
-          {filters.licenses.map((license) => (
-            <Badge
-              key={license}
-              variant="secondary"
-              className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-800"
-            >
-              {license.toUpperCase()}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-4 h-4 p-0 ml-1 hover:bg-green-200 dark:hover:bg-green-800"
-                onClick={() => removeFilter("license", license)}
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </Badge>
-          ))}
-
-          {filters.verifiedOnly && (
-            <Badge
-              variant="secondary"
-              className="bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900 dark:text-purple-300 dark:border-purple-800"
-            >
-              Verified Only
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-4 h-4 p-0 ml-1 hover:bg-purple-200 dark:hover:bg-purple-800"
-                onClick={() => removeFilter("verified")}
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </Badge>
-          )}
-
-          {filters.tags.map((tag) => (
-            <Badge
-              key={tag}
-              variant="secondary"
-              className="bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900 dark:text-orange-300 dark:border-orange-800"
-            >
-              #{tag}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-4 h-4 p-0 ml-1 hover:bg-orange-200 dark:hover:bg-orange-800"
-                onClick={() => removeFilter("tag", tag)}
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </Badge>
-          ))}
-        </div>
-      )}
-
-      {/* Assets Grid */}
+      {/* Timeline Feed */}
       {filteredAssets.length === 0 ? (
         <div className="text-center py-16">
-          <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ExternalLink className="w-10 h-10 text-muted-foreground" />
+          <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <ExternalLink className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h3 className="text-xl font-semibold text-foreground mb-3">No assets found</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No assets found</h3>
           <p className="text-muted-foreground mb-6">Try adjusting your filters to discover more IP assets</p>
           <Button onClick={clearFilters} variant="outline">
-            Clear All Filters
+            <Sparkles className="w-4 h-4 mr-2" />
+            Explore All Assets
           </Button>
         </div>
       ) : (
-        <div className="space-y-8">
-          {filteredAssets.map((asset, index) => (
+        <div className="max-w-2xl mx-auto space-y-6">
+          {paginatedAssets.map((asset, index) => (
             <Card
               key={asset.id}
-              className="overflow-hidden hover:shadow-xl transition-all duration-500 border-border/50 bg-card/50 backdrop-blur-sm group animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="overflow-hidden border-border/50 bg-card hover:shadow-lg transition-all duration-300 group"
             >
-              {/* Creator Info */}
-              <CardContent className="p-6 pb-0">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="relative">
+              <Collapsible open={expandedAssets.has(asset.id)} onOpenChange={() => toggleExpanded(asset.id)}>
+                {/* Asset Media - Top */}
+                <Link href={`/asset/${asset.slug}`}>
+                  <div className="relative">
+                    <Image
+                      src={asset.mediaUrl || "/placeholder.svg"}
+                      alt={asset.title}
+                      width={600}
+                      height={300}
+                      className="w-full h-48 object-cover cursor-pointer"
+                    />
+                    <div className="absolute top-3 right-3">
+                      <Badge className={`${getLicenseColor(asset.licenseType)} text-xs`}>
+                        {asset.licenseType.replace("-", " ").toUpperCase()}
+                      </Badge>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* Main Content */}
+                <CardContent className="p-4">
+                  {/* Title & Description */}
+                  <div className="space-y-3 mb-4">
+                    <Link href={`/asset/${asset.slug}`}>
+                      <h2 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer">
+                        {asset.title}
+                      </h2>
+                    </Link>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{asset.description}</p>
+                  </div>
+
+                  {/* Type & Author */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
                       <Link href={`/creator/${asset.creator.username}`}>
                         <Image
                           src={asset.creator.avatar || "/placeholder.svg"}
                           alt={asset.creator.name}
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 rounded-full object-cover ring-2 ring-border/50 cursor-pointer hover:scale-105 transition-transform"
+                          width={32}
+                          height={32}
+                          className="w-8 h-8 rounded-full object-cover ring-2 ring-border/50"
                         />
                       </Link>
-                      {asset.creator.verified && (
-                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                          <Shield className="w-3 h-3 text-white" />
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Link
+                            href={`/creator/${asset.creator.username}`}
+                            className="font-medium text-sm text-foreground hover:text-primary transition-colors"
+                          >
+                            {asset.creator.name}
+                          </Link>
+                          {asset.creator.verified && <Shield className="w-3 h-3 text-blue-500" />}
                         </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline" className="text-xs capitalize">
+                            {asset.type}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">{asset.timestamp}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleShare(asset)}>
+                          <Copy className="w-4 h-4 mr-2" />
+                          Copy Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Send className="w-4 h-4 mr-2" />
+                          License Asset
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          View on Explorer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleShare(asset)}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Share className="w-4 h-4 mr-1" />
+                        Share
+                      </Button>
+
+                      {asset.externalUrl && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <a href={asset.externalUrl} target="_blank" rel="noopener noreferrer">
+                            <Globe className="w-4 h-4 mr-1" />
+                            External
+                          </a>
+                        </Button>
                       )}
                     </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <Link
-                          href={`/creator/${asset.creator.username}`}
-                          className="font-semibold text-foreground hover:text-primary transition-colors"
-                        >
-                          {asset.creator.name}
-                        </Link>
+
+                    <div className="flex items-center space-x-2">
+                      <Link href={`/asset/${asset.slug}`}>
+                        <Button variant="outline" size="sm">
+                          <Eye className="w-4 h-4 mr-1" />
+                          View
+                        </Button>
+                      </Link>
+
+                      <CollapsibleTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform ${expandedAssets.has(asset.id) ? "rotate-180" : ""}`}
+                          />
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  </div>
+
+                  {/* Dashboard-Style Expandable Details */}
+                  <CollapsibleContent className="mt-4">
+                    <div className="pt-4 border-t border-border/30">
+                      {/* Dashboard Grid */}
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        {/* Creator Card */}
+                        <div className="bg-muted/30 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <UserPlus className="w-4 h-4 text-primary" />
+                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                              Creator
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Image
+                              src={asset.creator.avatar || "/placeholder.svg"}
+                              alt={asset.creator.name}
+                              width={24}
+                              height={24}
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{asset.creator.name}</p>
+                              <p className="text-xs text-muted-foreground truncate">@{asset.creator.username}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Protection Status */}
+                        <div className="bg-muted/30 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Shield className="w-4 h-4 text-green-500" />
+                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                              Protection
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{asset.protectionStatus}</p>
+                            <p className="text-xs text-muted-foreground">v{asset.ipVersion}</p>
+                          </div>
+                        </div>
+
+                        {/* Network Info */}
+                        <div className="bg-muted/30 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Network className="w-4 h-4 text-blue-500" />
+                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                              Network
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{asset.blockchain}</p>
+                            <p className="text-xs text-muted-foreground font-mono">#{asset.tokenId || asset.id}</p>
+                          </div>
+                        </div>
+
+                        {/* Registration */}
+                        <div className="bg-muted/30 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Calendar className="w-4 h-4 text-purple-500" />
+                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                              Registered
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{asset.registrationDate}</p>
+                            <p className="text-xs text-muted-foreground">{asset.protectionDuration}</p>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">{asset.timestamp}</p>
+
+                      {/* License Permissions - Compact */}
+                      <div className="bg-muted/30 rounded-lg p-3 mb-4">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <Award className="w-4 h-4 text-orange-500" />
+                          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            License Permissions
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="text-center">
+                            <div className="flex justify-center mb-1">
+                              {asset.commercialUse ? (
+                                <CheckCircle className="w-4 h-4 text-green-500" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-500" />
+                              )}
+                            </div>
+                            <p className="text-xs font-medium text-foreground">Commercial</p>
+                          </div>
+                          <div className="text-center">
+                            <div className="flex justify-center mb-1">
+                              {asset.modifications ? (
+                                <CheckCircle className="w-4 h-4 text-green-500" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-500" />
+                              )}
+                            </div>
+                            <p className="text-xs font-medium text-foreground">Modify</p>
+                          </div>
+                          <div className="text-center">
+                            <div className="flex justify-center mb-1">
+                              {asset.attribution ? (
+                                <CheckCircle className="w-4 h-4 text-green-500" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-500" />
+                              )}
+                            </div>
+                            <p className="text-xs font-medium text-foreground">Attribution</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Tags - Compact */}
+                      <div className="bg-muted/30 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Hash className="w-4 h-4 text-cyan-500" />
+                          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                            Tags
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {asset.tags.split(", ").map((tag) => (
+                            <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-9 h-9 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-
-              {/* Asset Media */}
-              <Link href={`/asset/${asset.slug}`}>
-                <div className="relative overflow-hidden cursor-pointer">
-                  <Image
-                    src={asset.image || "/placeholder.svg"}
-                    alt={asset.name}
-                    width={600}
-                    height={400}
-                    className="w-full h-72 sm:h-96 object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-background/90 text-foreground border-border/50 backdrop-blur-sm">
-                      {asset.iptype}
-                    </Badge>
-                  </div>
-
-                  <div className="absolute top-4 right-4">
-                    <Badge
-                      variant="secondary"
-                      className="bg-background/90 text-foreground border-border/50 backdrop-blur-sm"
-                    >
-                      {asset.license}
-                    </Badge>
-                  </div>
-
-                  {asset.animation_url && (
-                    <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Button variant="secondary" size="sm" className="bg-background/90 backdrop-blur-sm">
-                        {(() => {
-                          const Icon = getMediaIcon(asset.iptype)
-                          return <Icon className="w-4 h-4" />
-                        })()}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </Link>
-
-              {/* Asset Info */}
-              <CardContent className="p-6">
-                <Link href={`/asset/${asset.slug}`}>
-                  <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors cursor-pointer">
-                    {asset.name}
-                  </h2>
-                </Link>
-                <p className="text-muted-foreground mb-6 line-clamp-2 leading-relaxed">{asset.description}</p>
-
-                {/* Attributes */}
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-foreground mb-3">Attributes</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {asset.attributes.slice(0, 4).map((attr, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="text-xs bg-muted/50 hover:bg-muted transition-colors"
-                      >
-                        {attr.trait_type}: {attr.value}
-                      </Badge>
-                    ))}
-                    {asset.attributes.length > 4 && (
-                      <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
-                        +{asset.attributes.length - 4} more
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {asset.tags.slice(0, 4).map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs bg-secondary/50">
-                      #{tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                  <div className="flex items-center space-x-3">
-                    <Link href={`/asset/${asset.slug}`}>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="hover:bg-primary hover:text-primary-foreground transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View Details
-                      </Button>
-                    </Link>
-
-                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                      <Share className="w-4 h-4 mr-2" />
-                      Share
-                    </Button>
-                  </div>
-
-                  <div className="text-sm font-medium text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-                    {asset.license}
-                  </div>
-                </div>
-              </CardContent>
+                  </CollapsibleContent>
+                </CardContent>
+              </Collapsible>
             </Card>
           ))}
+
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="flex justify-center py-8">
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">Loading more assets...</span>
+              </div>
+            </div>
+          )}
+
+          {/* End of results */}
+          {!hasMore && paginatedAssets.length > 0 && (
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">You've reached the end of the timeline</p>
+            </div>
+          )}
         </div>
       )}
     </div>

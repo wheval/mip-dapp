@@ -24,92 +24,64 @@ import {
   Music,
   Palette,
   Video,
-  Lightbulb,
-  MessageSquare,
-  BookOpen,
-  Building,
-  Code,
-  Gem,
-  Settings,
+  ImageIcon,
+  AlertCircle,
+  Calendar,
+  User,
+  Tag,
+  ExternalLink,
 } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { toast } from "@/src/hooks/use-toast"
 
 interface AssetPreviewDrawerProps {
   formData: any
-  selectedTemplate: string
   mediaPreview: string
-  attributes: Array<{ trait_type: string; value: string }>
-  onConfirm: () => void
-  isCreating: boolean
+  isFormValid: boolean
 }
 
-const templateIcons = {
-  audio: Music,
+const typeIcons = {
   art: Palette,
-  documents: FileText,
-  nft: Gem,
+  music: Music,
   video: Video,
-  patents: Lightbulb,
-  posts: MessageSquare,
-  publications: BookOpen,
-  rwa: Building,
-  software: Code,
-  custom: Settings,
+  document: FileText,
+  image: ImageIcon,
 }
 
-const templateColors = {
-  audio: "from-purple-500 to-pink-500",
-  art: "from-pink-500 to-rose-500",
-  documents: "from-blue-500 to-cyan-500",
-  nft: "from-emerald-500 to-teal-500",
-  video: "from-red-500 to-orange-500",
-  patents: "from-yellow-500 to-amber-500",
-  posts: "from-indigo-500 to-purple-500",
-  publications: "from-green-500 to-emerald-500",
-  rwa: "from-orange-500 to-red-500",
-  software: "from-cyan-500 to-blue-500",
-  custom: "from-slate-500 to-gray-500",
+const licenseLabels = {
+  "all-rights": "All Rights Reserved",
+  "creative-commons": "Creative Commons",
+  "open-source": "Open Source",
+  custom: "Custom License",
 }
 
-export function AssetPreviewDrawer({
-  formData,
-  selectedTemplate,
-  mediaPreview,
-  attributes,
-  onConfirm,
-  isCreating,
-}: AssetPreviewDrawerProps) {
+export function AssetPreviewDrawer({ formData, mediaPreview, isFormValid }: AssetPreviewDrawerProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
   const [creationComplete, setCreationComplete] = useState(false)
 
-  const templateData = {
-    audio: { label: "Audio", description: "Music, podcasts, sound effects" },
-    art: { label: "Art", description: "Digital art, illustrations, graphics" },
-    documents: { label: "Documents", description: "PDFs, presentations, reports" },
-    nft: { label: "NFT", description: "Collectibles, gaming assets" },
-    video: { label: "Video", description: "Films, animations, tutorials" },
-    patents: { label: "Patents", description: "Inventions, innovations" },
-    posts: { label: "Posts", description: "Blog posts, articles" },
-    publications: { label: "Publications", description: "Books, research papers" },
-    rwa: { label: "RWA", description: "Real world assets" },
-    software: { label: "Software", description: "Code, applications, tools" },
-    custom: { label: "Custom", description: "Other intellectual property" },
-  }
+  const TypeIcon = typeIcons[formData.type as keyof typeof typeIcons] || FileText
 
-  const selectedTemplateData = templateData[selectedTemplate as keyof typeof templateData]
-  const TemplateIcon = templateIcons[selectedTemplate as keyof typeof templateIcons] || FileText
-  const templateColor = templateColors[selectedTemplate as keyof typeof templateColors] || "from-slate-500 to-gray-500"
+  const handleCreate = async () => {
+    setIsCreating(true)
 
-  const handleConfirm = async () => {
-    await onConfirm()
+    // Simulate creation process
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    setIsCreating(false)
     setCreationComplete(true)
+
+    toast({
+      title: "IP Successfully Tokenized!",
+      description: "Your intellectual property has been protected and minted on Starknet",
+    })
   }
 
   const handleViewAsset = () => {
-    // Generate a slug from the asset name
-    const slug = formData.name
+    // Generate a slug from the asset title
+    const slug = formData.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")
@@ -122,7 +94,10 @@ export function AssetPreviewDrawer({
     setIsOpen(false)
   }
 
-  const isFormValid = selectedTemplate && formData.name && (mediaPreview || formData.external_url)
+  const resetCreation = () => {
+    setCreationComplete(false)
+    setIsOpen(false)
+  }
 
   if (creationComplete) {
     return (
@@ -137,7 +112,7 @@ export function AssetPreviewDrawer({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
+          <div className="mx-auto w-full max-w-md">
             <DrawerHeader>
               <DrawerTitle className="text-center">Asset Created Successfully!</DrawerTitle>
               <DrawerDescription className="text-center">
@@ -151,10 +126,9 @@ export function AssetPreviewDrawer({
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">{formData.name}</h3>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{formData.title}</h3>
                   <p className="text-muted-foreground text-sm">
-                    Your {selectedTemplateData?.label.toLowerCase()} asset is now protected under international
-                    copyright law
+                    Your {formData.type} asset is now protected under international copyright law
                   </p>
                 </div>
 
@@ -174,6 +148,9 @@ export function AssetPreviewDrawer({
                   <Button onClick={handleViewPortfolio} variant="outline" className="w-full">
                     <Briefcase className="w-4 h-4 mr-2" />
                     Open Portfolio
+                  </Button>
+                  <Button onClick={resetCreation} variant="ghost" className="w-full">
+                    Create Another Asset
                   </Button>
                 </div>
               </div>
@@ -196,7 +173,7 @@ export function AssetPreviewDrawer({
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-full max-w-md max-h-[90vh] overflow-y-auto">
           <DrawerHeader>
             <DrawerTitle className="text-center">Review Your IP Asset</DrawerTitle>
             <DrawerDescription className="text-center">
@@ -211,39 +188,37 @@ export function AssetPreviewDrawer({
                   <div className="relative">
                     <Image
                       src={mediaPreview || "/placeholder.svg"}
-                      alt={formData.name || "Asset preview"}
+                      alt={formData.title || "Asset preview"}
                       width={400}
                       height={200}
                       className="w-full h-40 object-cover rounded-lg"
                     />
                     <div className="absolute top-2 left-2">
                       <Badge className="bg-background/90 text-foreground border-border/50 backdrop-blur-sm">
-                        {selectedTemplateData?.label}
+                        {formData.type}
                       </Badge>
                     </div>
                   </div>
                 )}
 
                 <div>
-                  <h3 className="text-lg font-bold text-foreground mb-1">{formData.name}</h3>
+                  <h3 className="text-lg font-bold text-foreground mb-1">{formData.title}</h3>
                   {formData.description && (
                     <p className="text-sm text-muted-foreground line-clamp-2">{formData.description}</p>
                   )}
                 </div>
               </div>
 
-              {/* Template Info */}
+              {/* Asset Type Info */}
               <Card className="bg-muted/20 border-border/30">
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <div
-                      className={`w-12 h-12 bg-gradient-to-br ${templateColor} rounded-xl flex items-center justify-center`}
-                    >
-                      <TemplateIcon className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center">
+                      <TypeIcon className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground">{selectedTemplateData?.label} Asset</h4>
-                      <p className="text-xs text-muted-foreground">{selectedTemplateData?.description}</p>
+                      <h4 className="font-semibold text-foreground capitalize">{formData.type} Asset</h4>
+                      <p className="text-xs text-muted-foreground">Version {formData.ipVersion}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -253,40 +228,97 @@ export function AssetPreviewDrawer({
               <div className="space-y-3">
                 <h4 className="font-semibold text-foreground">Asset Details</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">License</span>
-                    <span className="font-medium text-foreground">{formData.license || "All Rights Reserved"}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <User className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-muted-foreground">Author</span>
+                    </div>
+                    <span className="font-medium text-foreground">{formData.author}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Network</span>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-muted-foreground">License</span>
+                    </div>
+                    <span className="font-medium text-foreground">
+                      {licenseLabels[formData.licenseType as keyof typeof licenseLabels] || formData.licenseType}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Globe className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-muted-foreground">Network</span>
+                    </div>
                     <span className="font-medium text-foreground">Starknet</span>
                   </div>
-                  {formData.external_url && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">External URL</span>
-                      <div className="flex items-center space-x-1">
-                        <Globe className="w-3 h-3 text-muted-foreground" />
-                        <span className="font-medium text-foreground text-xs">Linked</span>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-muted-foreground">Registration</span>
+                    </div>
+                    <span className="font-medium text-foreground">{formData.registrationDate}</span>
+                  </div>
+
+                  {formData.collection && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Tag className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-muted-foreground">Collection</span>
                       </div>
+                      <span className="font-medium text-foreground">{formData.collection}</span>
+                    </div>
+                  )}
+
+                  {formData.externalUrl && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-muted-foreground">External URL</span>
+                      </div>
+                      <span className="font-medium text-foreground text-xs">Linked</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Attributes */}
-              {attributes.length > 0 && (
+              {/* License Permissions */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-foreground">License Permissions</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Commercial Use</span>
+                    <Badge variant={formData.commercialUse ? "default" : "secondary"} className="text-xs">
+                      {formData.commercialUse ? "Allowed" : "Not Allowed"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Modifications</span>
+                    <Badge variant={formData.modifications ? "default" : "secondary"} className="text-xs">
+                      {formData.modifications ? "Allowed" : "Not Allowed"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Attribution Required</span>
+                    <Badge variant={formData.attribution ? "default" : "secondary"} className="text-xs">
+                      {formData.attribution ? "Yes" : "No"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {formData.tags && (
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground">Attributes</h4>
-                  <div className="space-y-2">
-                    {attributes.slice(0, 3).map((attr, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">{attr.trait_type}</span>
-                        <span className="font-medium text-foreground">{attr.value}</span>
-                      </div>
+                  <h4 className="font-semibold text-foreground">Tags</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {formData.tags.split(", ").map((tag: string, index: number) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        #{tag}
+                      </Badge>
                     ))}
-                    {attributes.length > 3 && (
-                      <div className="text-xs text-muted-foreground">+{attributes.length - 3} more attributes</div>
-                    )}
                   </div>
                 </div>
               )}
@@ -309,14 +341,30 @@ export function AssetPreviewDrawer({
                       <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
                         Instant Protection
                       </Badge>
+                      <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                        Immutable Record
+                      </Badge>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Warning */}
+              <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <div className="flex items-start space-x-3">
+                  <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-1 text-sm">Important Notice</h4>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                      Once minted, this asset cannot be modified. Please review all details carefully.
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="space-y-3">
-                <Button onClick={handleConfirm} disabled={isCreating} className="w-full">
+                <Button onClick={handleCreate} disabled={isCreating} className="w-full">
                   {isCreating ? (
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>

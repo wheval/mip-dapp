@@ -20,14 +20,14 @@ import {
 } from "lucide-react"
 
 const socialLinks = [
-  { icon: Twitter, href: "https://x.com/mediolanoapp", label: "X" },
-  { icon: Github, href: "https://github.com/mediolano-app", label: "GitHub" },
-  { icon: Linkedin, href: "https://www.linkedin.com/company/mediolano/", label: "LinkedIn" },
-  { icon: Globe, href: "https://mediolano.xyz", label: "Website" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Github, href: "#", label: "GitHub" },
+  { icon: Linkedin, href: "#", label: "LinkedIn" },
+  { icon: Globe, href: "#", label: "Website" },
 ]
 
 const mainNavLinks = [
-  { href: "/", label: "Start", icon: Home },
+  { href: "/", label: "Home", icon: Home },
   { href: "/create", label: "Create", icon: Plus },
   { href: "/portfolio", label: "Portfolio", icon: Briefcase },
   { href: "/transfer", label: "Transfer", icon: Send },
@@ -59,10 +59,11 @@ export function Footer() {
               Showcase Your IP
             </Badge>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Take the next step and add more value to your content
+              Take the next step and license and monetize your assets with Mediolano Dapp
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Mediolano empowers creators and property owners with tools to protect, manage, and monetize digital assets.
+              Transform your intellectual property into valuable digital assets. Join thousands of creators who trust
+              MIP for secure, frictionless IP tokenization.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
               <Button size="lg" className="group">
@@ -92,14 +93,9 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-muted-foreground max-w-md">
-              Fast, secure and free! Transform your content into protected intellectual property with frictionless tokenization on Starknet.
+              Transform your content into protected intellectual property with frictionless tokenization on Starknet.
+              Secure, fast, and designed for creators who value their work.
             </p>
-             <p className="text-muted-foreground max-w-md">
-              Mediolano is your gateway to protect, license, and monetizing your digital assets effortlessly. 
-            </p>
-            <p className="text-muted-foreground max-w-md">
-              Visit <Link href="https://mediolano.xyz">mediolano.xyz</Link> to learn more. 
-              </p>
             <div className="flex flex-wrap gap-2">
               {socialLinks.map((social) => {
                 const Icon = social.icon
@@ -122,7 +118,7 @@ export function Footer() {
 
           {/* Main Navigation */}
           <div className="space-y-4">
-            <h4 className="text-foreground">Navigation</h4>
+            <h4 className="font-semibold text-foreground">Navigation</h4>
             <nav className="space-y-3">
               {mainNavLinks.map((link) => {
                 const Icon = link.icon
@@ -137,15 +133,7 @@ export function Footer() {
                   </Link>
                 )
               })}
-              
-            </nav>
-          </div>
-
-
-          {/* Additional Links */}
-          <div className="space-y-4">
-
-            <div className="pt-10">
+              <div className="pt-2 border-t border-border/50">
                 {additionalLinks.map((link) => {
                   const Icon = link.icon
                   return (
@@ -160,34 +148,33 @@ export function Footer() {
                   )
                 })}
               </div>
-
+            </nav>
           </div>
 
-
-          {/* Resources 
+          {/* Resources */}
           <div className="space-y-4">
             <h4 className="font-semibold text-foreground">Resources</h4>
             <nav className="space-y-3">
-              {resourceLinks.map((link) => (
+              
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  href="/docs"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  {link.label}
+                  Documentation
                 </Link>
-              ))}
+            
             </nav>
-          </div>*/}
+          </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-muted-foreground">© 2025 Mediolano.</p>
+            <p className="text-sm text-muted-foreground">© 2024 Mediolano. All rights reserved.</p>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-              <span>❤️ Powered on Starknet</span>
-              
+              <span>Powered on Starknet</span>
+              <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
+              <span>Made with ❤️ for creators</span>
             </div>
           </div>
         </div>

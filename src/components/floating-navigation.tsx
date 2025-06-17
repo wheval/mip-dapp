@@ -8,13 +8,13 @@ import Link from "next/link"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
-import { Home, Plus, Briefcase, Send, Activity, Menu, X, Sparkles, TrendingUp, Zap } from "lucide-react"
+import { Home, Plus, Briefcase, Activity, Menu, X, Sparkles, TrendingUp, FolderOpen } from "lucide-react"
 
 const navItems = [
   { href: "/", icon: Home, label: "Home", description: "Discover IP assets" },
+  { href: "/collections", icon: FolderOpen, label: "Collections", description: "Browse collections" },
   { href: "/create", icon: Plus, label: "Create", description: "Tokenize your IP" },
   { href: "/portfolio", icon: Briefcase, label: "Portfolio", description: "Manage your assets" },
-  { href: "/transfer", icon: Send, label: "Transfer", description: "Send assets" },
   { href: "/activities", icon: Activity, label: "Activities", description: "View transactions" },
 ]
 
@@ -74,7 +74,7 @@ export function FloatingNavigation() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-foreground">Navigation</h3>
-                  <p className="text-xs text-muted-foreground">Quick access</p>
+                  <p className="text-xs text-muted-foreground">Quick access to all features</p>
                 </div>
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                   <Sparkles className="w-3 h-3 mr-1" />
@@ -123,17 +123,17 @@ export function FloatingNavigation() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
-                      
-                      <span className="text-sm font-bold text-foreground">Mediolano</span>
+                      <TrendingUp className="w-3 h-3 text-primary" />
+                      <span className="text-sm font-bold text-foreground">2.4K</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Protocol</span>
+                    <span className="text-xs text-muted-foreground">Assets</span>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
-                      
-                      <span className="text-sm font-bold text-foreground">Starknet</span>
+                      <FolderOpen className="w-3 h-3 text-orange-500" />
+                      <span className="text-sm font-bold text-foreground">156</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Blockchain</span>
+                    <span className="text-xs text-muted-foreground">Collections</span>
                   </div>
                 </div>
               </div>
