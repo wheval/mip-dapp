@@ -860,7 +860,6 @@ export default function CreatePage() {
           </div>
         </div>
       </main>
-      <Navigation />
     </div>
   )
 }

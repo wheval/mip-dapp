@@ -159,7 +159,6 @@ export default function AssetPage() {
             </div>
           </div>
         </main>
-        <Navigation />
       </div>
     )
   }
@@ -178,7 +177,6 @@ export default function AssetPage() {
             </div>
           </div>
         </main>
-        <Navigation />
       </div>
     )
   }
@@ -666,7 +664,6 @@ export default function AssetPage() {
           </div>
         </div>
       </main>
-      <Navigation />
     </div>
   )
 }

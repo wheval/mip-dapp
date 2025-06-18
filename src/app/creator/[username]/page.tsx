@@ -143,7 +143,6 @@ export default function CreatorPage() {
             </div>
           </div>
         </main>
-        <Navigation />
       </div>
     )
   }
@@ -162,7 +161,6 @@ export default function CreatorPage() {
             </div>
           </div>
         </main>
-        <Navigation />
       </div>
     )
   }
@@ -500,7 +498,6 @@ export default function CreatorPage() {
           </div>
         </div>
       </main>
-      <Navigation />
     </div>
   )
 }
