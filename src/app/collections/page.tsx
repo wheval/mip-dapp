@@ -83,7 +83,7 @@ export default function CollectionsPage() {
                 >
                   <CardContent className="p-4 text-center">
                     <FolderOpen className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-blue-900 dark:text-blue-100">{collections.length}</div>
+                    <div className="text-lg font-bold text-blue-900 dark:text-blue-100">X</div>
                     <div className="text-xs text-blue-700 dark:text-blue-300">Collections</div>
                   </CardContent>
                 </Card>
@@ -94,7 +94,7 @@ export default function CollectionsPage() {
                 >
                   <CardContent className="p-4 text-center">
                     <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-green-900 dark:text-green-100">{totalAssets}</div>
+                    <div className="text-lg font-bold text-green-900 dark:text-green-100">X</div>
                     <div className="text-xs text-green-700 dark:text-green-300">Total Assets</div>
                   </CardContent>
                 </Card>
@@ -261,11 +261,7 @@ function CollectionGrid({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {collections.map((collection, index) => (
-        <div key={collection.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
-          <CollectionCard collection={collection} variant={featured ? "featured" : "default"} />
-        </div>
-      ))}
+     
     </div>
   )
 }

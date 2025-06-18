@@ -4,7 +4,7 @@ import * as React from "react";
 import dynamic from 'next/dynamic';
 
 const MIPPortalClient = dynamic(
-  () => import('../components/MIPPortalClient'),
+  () => import('@/src/components/MIPPortalClient'),
   { ssr: false }
 );
 const OnboardingForm = dynamic(
