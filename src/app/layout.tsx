@@ -23,7 +23,6 @@ export const metadata: Metadata = {
   description: "Transform your content into protected intellectual property with frictionless tokenization on Starknet",
   keywords: ["NFT", "IP", "Intellectual Property", "Starknet", "Web3", "Tokenization"],
   authors: [{ name: "MIP Team" }],
-  viewport: "width=device-width, initial-scale=1",
     generator: 'v0.dev'
 }
 
