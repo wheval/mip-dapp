@@ -28,13 +28,12 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 supports-[backdrop-filter]:bg-background/60">
       <div className="px-4 py-3">
         <div className="flex items-center justify-between">
+
           {/* Logo */}
           <Link href="/" className="group">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
+              <h1 className="text-2xl font-bold text-foreground flex items-center space-x-2">
+                MIP </h1>
             </div>
           </Link>
 

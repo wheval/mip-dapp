@@ -239,98 +239,13 @@ export function Timeline() {
 
   return (
     <div className="space-y-6">
+     
+     
       {/* Header */}
       <div className="text-center space-y-4">
-        <div className="flex items-center justify-center space-x-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">IP Timeline</h1>
-            <p className="text-sm text-muted-foreground">Latest intellectual property from creators worldwide</p>
-          </div>
-        </div>
-
-        {/* Filter Controls */}
-        <div className="flex items-center justify-center space-x-4">
-          <AssetFilterDrawer
-            filters={filters}
-            onFiltersChange={setFilters}
-            activeFilterCount={activeFilterCount}
-            onClearFilters={clearFilters}
-          />
-          <Badge variant="secondary" className="bg-muted text-muted-foreground">
-            {filteredAssets.length} assets
-          </Badge>
-          {activeFilterCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
-              Clear
-            </Button>
-          )}
-        </div>
-
-        {/* Active Filters */}
-        {activeFilterCount > 0 && (
-          <div className="flex flex-wrap justify-center gap-2">
-            {filters.search && (
-              <Badge variant="secondary" className="bg-primary/10 text-primary">
-                "{filters.search}"
-                <Button variant="ghost" size="sm" className="w-4 h-4 p-0 ml-1" onClick={() => removeFilter("search")}>
-                  <X className="w-3 h-3" />
-                </Button>
-              </Badge>
-            )}
-
-            {filters.assetTypes.map((type) => (
-              <Badge
-                key={type}
-                variant="secondary"
-                className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-4 h-4 p-0 ml-1"
-                  onClick={() => removeFilter("assetType", type)}
-                >
-                  <X className="w-3 h-3" />
-                </Button>
-              </Badge>
-            ))}
-
-            {filters.licenses.map((license) => (
-              <Badge
-                key={license}
-                variant="secondary"
-                className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-              >
-                {license.toUpperCase()}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-4 h-4 p-0 ml-1"
-                  onClick={() => removeFilter("license", license)}
-                >
-                  <X className="w-3 h-3" />
-                </Button>
-              </Badge>
-            ))}
-
-            {filters.verifiedOnly && (
-              <Badge
-                variant="secondary"
-                className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
-              >
-                Verified Only
-                <Button variant="ghost" size="sm" className="w-4 h-4 p-0 ml-1" onClick={() => removeFilter("verified")}>
-                  <X className="w-3 h-3" />
-                </Button>
-              </Badge>
-            )}
-          </div>
-        )}
+        
       </div>
+     
 
       {/* Timeline Feed */}
       {filteredAssets.length === 0 ? (
