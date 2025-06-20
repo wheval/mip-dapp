@@ -23,8 +23,8 @@ const getNotificationIcon = (type: string) => {
 
 interface NotificationListProps {
   notifications: any[]
-  onMarkAsRead: (id: string) => void
-  onDelete: (id: string) => void
+  onMarkAsReadAction: (id: string) => void
+  onDeleteAction: (id: string) => void
   emptyStateTitle?: string
   emptyStateDescription?: string
   emptyStateAction?: React.ReactNode
@@ -34,8 +34,8 @@ interface NotificationListProps {
 
 export function NotificationList({
   notifications,
-  onMarkAsRead,
-  onDelete,
+  onMarkAsReadAction,
+  onDeleteAction,
   emptyStateTitle = "No notifications found",
   emptyStateDescription = "Try adjusting your search or filter criteria",
   emptyStateAction,
@@ -98,12 +98,12 @@ export function NotificationList({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     {!notification.read && (
-                      <DropdownMenuItem onClick={() => onMarkAsRead(notification.id)}>
+                      <DropdownMenuItem onClick={() => onMarkAsReadAction(notification.id)}>
                         <Eye className="w-4 h-4 mr-2" />
                         Mark as read
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem onClick={() => onDelete(notification.id)} className="text-destructive">
+                    <DropdownMenuItem onClick={() => onDeleteAction(notification.id)} className="text-destructive">
                       <Trash2 className="w-4 h-4 mr-2" />
                       Delete
                     </DropdownMenuItem>

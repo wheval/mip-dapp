@@ -15,40 +15,38 @@ interface Notification {
   title: string
   message: string
   time: string
+  date: string
   read: boolean
 }
 
+const today = new Date().toISOString().slice(0, 10)
+
 const mockNotifications: Notification[] = [
-  {
+   {
     id: "1",
-    type: "success",
-    title: "Asset Tokenized",
-    message: "Your digital artwork 'Cosmic Dreams' has been successfully tokenized",
-    time: "2 minutes ago",
+    type: "info",
+    title: "Mint your first asset",
+    message: "Fast, secure and free minting.",
+    time: "Now",
+    date: today,
     read: false,
   },
   {
     id: "2",
     type: "activity",
-    title: "New Bid Received",
-    message: "Someone placed a bid of 0.5 ETH on your 'Abstract Vision' asset",
-    time: "1 hour ago",
+    title: "Welcome",
+    message: "Start exploring and creating digital assets with zero fees.",
+    time: "3 hours ago",
+    date: today,
     read: false,
   },
   {
     id: "3",
-    type: "info",
-    title: "License Agreement",
-    message: "Your licensing terms for 'Digital Masterpiece' have been updated",
-    time: "3 hours ago",
-    read: true,
-  },
-  {
-    id: "4",
-    type: "warning",
-    title: "Verification Required",
-    message: "Please verify your identity to complete the asset transfer",
+    type: "success",
+    title: "Smart Account",
+    message: "Your account has been successfully created on Starknet blockchain.",
     time: "1 day ago",
+    date: today,
     read: true,
   },
 ]

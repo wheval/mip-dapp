@@ -44,7 +44,7 @@ export function CreatorDashboard({ creator, assetCount }: CreatorDashboardProps)
   const stats = [
     {
       icon: Briefcase,
-      label: "Total Assets",
+      label: "Assets",
       value: creator.totalAssets || assetCount,
       color: "text-blue-600",
       bgColor: "bg-blue-50 dark:bg-blue-950",
@@ -176,7 +176,7 @@ export function CreatorDashboard({ creator, assetCount }: CreatorDashboardProps)
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground flex items-center">
                     <Users className="w-5 h-5 mr-2 text-primary" />
-                    Personal Information
+                    More Information
                   </h3>
 
                   <div className="space-y-3">
@@ -274,14 +274,14 @@ export function CreatorDashboard({ creator, assetCount }: CreatorDashboardProps)
               <div className="bg-muted/30 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                   <Zap className="w-5 h-5 mr-2 text-primary" />
-                  Verified Social Accounts
+                   Social Accounts
                 </h3>
 
                 <div className="space-y-3">
                   <VerifiedSocialBadges verifiedAccounts={verifiedAccounts} size="md" showLabels={true} />
 
                   <p className="text-xs text-muted-foreground">
-                    Verified accounts help establish creator authenticity and build trust in the IP community.
+                    Social accounts help establish creator authenticity and build trust in the IP community.
                   </p>
                 </div>
               </div>
