@@ -18,16 +18,17 @@ import {
   Bell,
   Settings,
 } from "lucide-react"
+import { Logo } from "./mip-logo"
 
 const socialLinks = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Globe, href: "#", label: "Website" },
+  { icon: Twitter, href: "https://x.com/mediolanoapp", label: "Twitter" },
+  { icon: Github, href: "https://github.com/mediolano-app", label: "GitHub" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/mediolano/", label: "LinkedIn" },
+  { icon: Globe, href: "https://mediolano.xyz", label: "Website" },
 ]
 
 const mainNavLinks = [
-  { href: "/", label: "Home", icon: Home },
+  { href: "/", label: "Start", icon: Home },
   { href: "/create", label: "Create", icon: Plus },
   { href: "/portfolio", label: "Portfolio", icon: Briefcase },
   { href: "/transfer", label: "Transfer", icon: Send },
@@ -84,17 +85,19 @@ export function Footer() {
           {/* Logo & Description */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
+              
+               <Logo />
+              
               <div>
                 <h3 className="font-bold text-foreground text-xl">MIP</h3>
-                <p className="text-sm text-muted-foreground">Mediolano IP</p>
+                <p className="text-sm text-muted-foreground">My Intellectual Property</p>
               </div>
             </Link>
             <p className="text-muted-foreground max-w-md">
-              Transform your content into protected intellectual property with frictionless tokenization on Starknet.
-              Secure, fast, and designed for creators who value their work.
+              Transform your content into protected intellectual property with frictionless tokenization.
+            </p>
+            <p className="text-muted-foreground max-w-md">
+              Free, fast and secure! Tokenize, protect and trade you intellectual property onchain.
             </p>
             <div className="flex flex-wrap gap-2">
               {socialLinks.map((social) => {
@@ -170,7 +173,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-muted-foreground">© 2024 Mediolano. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">© 2025 Mediolano. All rights reserved.</p>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>Powered on Starknet</span>
               <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
