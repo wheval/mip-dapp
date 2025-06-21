@@ -92,12 +92,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo & Description */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-center space-x-3">
-              <LogoMip />
-              <div>
-               <LogoMediolano />
-              </div>
-            </Link>
+            <div className="inline-flex items-center">
+             <LogoMip />
+             <LogoMediolano /> 
+            </div>
             <p className="text-muted-foreground max-w-md">
               Transform your content into protected intellectual property with frictionless tokenization.
             </p>
@@ -206,11 +204,10 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-muted-foreground">© 2025 Mediolano</p>
+            <p className="text-sm text-muted-foreground">© 2025 <Link href='https://mediolano.xyz' title="Mediolano - Programmable IP for the Integrity Web"> Mediolano</Link></p>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>Powered on Starknet</span>
-              <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
-              <span>Made with ❤️ for creators</span>
+              <span>❤️</span>
             </div>
           </div>
         </div>
