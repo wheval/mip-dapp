@@ -68,6 +68,8 @@ const getProtectionIcon = (status: string) => {
   }
 }
 
+
+
 export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }: ExpandableAssetCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -110,7 +112,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                     </Link>
                     <p className="text-sm text-muted-foreground line-clamp-2 mt-1 mb-2">{asset.description}</p>
 
-                    <div className="flex items-center space-x-4 mb-2">
+                    <div className="flex items-center space-x-4 mb-4">
                       <Badge className={`${getLicenseColor(asset.licenseType)} border-0 text-xs`}>
                         {asset.licenseType.replace("-", " ").toUpperCase()}
                       </Badge>
@@ -314,7 +316,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
               alt={asset.title}
               width={400}
               height={300}
-              className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105 cursor-pointer"
+              className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105 cursor-pointer"
             />
           </Link>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

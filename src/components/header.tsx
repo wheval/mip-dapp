@@ -31,12 +31,9 @@ export function Header() {
         <div className="flex items-center justify-between">
 
           {/* Logo */}
-          <Link href="/" className="group">
-            <div className="relative">
+          
               <LogoMip />
-              
-            </div>
-          </Link>
+           
 
           {/* Right Side Controls */}
           <div className="flex items-center space-x-2">

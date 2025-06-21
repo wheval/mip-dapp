@@ -275,8 +275,8 @@ export function Timeline() {
                       src={asset.mediaUrl || "/placeholder.svg"}
                       alt={asset.title}
                       width={600}
-                      height={300}
-                      className="w-full h-48 object-cover cursor-pointer"
+                      height={400}
+                      className="w-full h-64 object-cover cursor-pointer"
                     />
                     <div className="absolute top-3 right-3">
                       <Badge className={`${getLicenseColor(asset.licenseType)} text-xs`}>
@@ -321,10 +321,11 @@ export function Timeline() {
                           {asset.creator.verified && <Shield className="w-3 h-3 text-blue-500" />}
                         </div>
                         <div className="flex items-center space-x-2">
+                          <span className="text-xs text-muted-foreground">{asset.timestamp}</span>
                           <Badge variant="outline" className="text-xs capitalize">
                             {asset.type}
                           </Badge>
-                          <span className="text-xs text-muted-foreground">{asset.timestamp}</span>
+                          
                         </div>
                       </div>
                     </div>
@@ -360,6 +361,7 @@ export function Timeline() {
                   {/* Actions */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
+                      
                       <Button
                         variant="ghost"
                         size="sm"
@@ -369,6 +371,9 @@ export function Timeline() {
                         <Share className="w-4 h-4 mr-1" />
                         Share
                       </Button>
+
+
+                  
 
                       {asset.externalUrl && (
                         <Button
@@ -386,8 +391,9 @@ export function Timeline() {
                     </div>
 
                     <div className="flex items-center space-x-2">
+
                       <Link href={`/asset/${asset.slug}`}>
-                        <Button variant="outline" size="sm">
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                           <Eye className="w-4 h-4 mr-1" />
                           View
                         </Button>
