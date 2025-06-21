@@ -19,6 +19,7 @@ import {
   Settings,
 } from "lucide-react"
 import { LogoMediolano } from "./logo-mediolano"
+import { LogoMip } from "./logo-mip"
 
 const socialLinks = [
   { icon: Twitter, href: "https://x.com/mediolanoapp", label: "Twitter" },
@@ -57,23 +58,30 @@ export function Footer() {
           <div className="text-center space-y-4">
             <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 mb-2">
               <Sparkles className="w-3 h-3 mr-1" />
-              Showcase Your IP
+              Take the next step
             </Badge>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Take the next step and license and monetize your assets with Mediolano Dapp
+              License and monetize your assets
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Transform your intellectual property into valuable digital assets. Join thousands of creators who trust
-              MIP for secure, frictionless IP tokenization.
+              Transform your intellectual property into valuable digital assets and join the onchain revolution.
+              With Mediolano, you can easily tokenize, protect, and trade your content, ensuring it reaches its full potential.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
+
+              <Link href="https://ip.mediolano.app" target="_blank">
               <Button size="lg" className="group">
-                Get Started Now
+                Open Mediolano Dapp
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
+              </Link>
+              
+              <Link href="https://mediolano.xyz" target="_blank">
               <Button variant="outline" size="lg">
                 Learn More
               </Button>
+              </Link>
+
             </div>
           </div>
         </div>
@@ -85,12 +93,9 @@ export function Footer() {
           {/* Logo & Description */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center space-x-3">
-              
-               <LogoMediolano />
-              
+              <LogoMip />
               <div>
-                <h3 className="font-bold text-foreground text-xl">MIP</h3>
-                <p className="text-sm text-muted-foreground">My Intellectual Property</p>
+               <LogoMediolano />
               </div>
             </Link>
             <p className="text-muted-foreground max-w-md">
@@ -160,10 +165,38 @@ export function Footer() {
             <nav className="space-y-3">
               
                 <Link
-                  href="/docs"
+                  href="https://github.com/mediolano-app/mip-dapp"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  Documentation
+                  Github Repository
+                </Link>
+
+                <Link
+                  href="https://mediolano.xyz"
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  Mediolano Website
+                </Link>
+
+                <Link
+                  href="https://x.com/mediolanoapp"
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  X Mediolano
+                </Link>
+
+                <Link
+                  href="https://www.linkedin.com/company/mediolano/"
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  LinkedIn Mediolano
+                </Link>
+
+                <Link
+                  href="https://t.me/mediolanoapp"
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  Telegram Mediolano
                 </Link>
             
             </nav>
@@ -173,7 +206,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-muted-foreground">© 2025 Mediolano. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">© 2025 Mediolano</p>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>Powered on Starknet</span>
               <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
