@@ -15,6 +15,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import { LogoMip } from "./logo-mip"
 
 
 export function Header() {
@@ -32,8 +33,8 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="group">
             <div className="relative">
-              <h1 className="text-2xl font-bold text-foreground flex items-center space-x-2">
-                MIP </h1>
+              <LogoMip />
+              
             </div>
           </Link>
 

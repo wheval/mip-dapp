@@ -18,7 +18,7 @@ import {
   Bell,
   Settings,
 } from "lucide-react"
-import { Logo } from "./mip-logo"
+import { LogoMediolano } from "./logo-mediolano"
 
 const socialLinks = [
   { icon: Twitter, href: "https://x.com/mediolanoapp", label: "Twitter" },
@@ -86,7 +86,7 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-flex items-center space-x-3">
               
-               <Logo />
+               <LogoMediolano />
               
               <div>
                 <h3 className="font-bold text-foreground text-xl">MIP</h3>
