@@ -2,32 +2,25 @@
 
 Fast, secure and free! Transform your content into protected intellectual property with frictionless tokenization on #Starknet
 
-![mip-screen2 (1)](https://github.com/user-attachments/assets/07eb8b5c-ba61-4c22-9119-c838a3882e84)
+MIP empowers artists, creators, and organizations protect their creative work and make money from it — without needing to understand anything about cryptocurrency or even technology.
 
-Quick links:
-<br>
-<a href="https://ip.mediolano.app">Mediolano Dapp (Sepolia)</a>
-<br>
-<a href="https://mediolano.xyz">Website mediolano.xyz</a>
-<br>
-<a href="https://t.me/MediolanoStarknet">Telegram</a> | <a href="https://discord.gg/NhqdTvyA">Discord</a> | <a href="https://x.com/mediolanoapp">X / Twitter</a>
-<br>
+It’s built using powerful tools that work behind the scenes to keep costs free, transactions fast, and your ownership secure. With MIP, anyone can turn their creative content—like music, art, writing, or videos—into digital assets that are protected and easy to share or sell.
 
-
+MIP integrates Mediolano Protocol to enable instant tokenization and protection of creative works in accordance with the Berne Convention (1886), which spans 181 countries. This legal infrastructure guarantees global recognition of authorship and provides verifiable proof of ownership for 50 to 70 years, depending on the jurisdiction.
 
 > [!IMPORTANT]
 
 > MIP dapp is in constant development and the current version runs on Starknet's Sepolia devnet. Use for testing purposes only. 
 
+![mip-screen2 (1)](https://github.com/user-attachments/assets/07eb8b5c-ba61-4c22-9119-c838a3882e84)
 
-## Mediolano - Programmable IP for the Integrity Web
 
-MIP provides seamless tokenization services for intellectual property, leveraging Starknet’s smart contract intelligence for digital assets to empower creators, collectors, and organizations to protect and monetize their IP assets frictionless and free.
 
-Registering intellectual property on MIP means your asset is automatically tokenized and protected in 181 countries, according to The Berne Convention for the Protection of Literary and Artistic Works, adopted in 1886. MIP assets generate Proof of Ownership to guarantee recognition of the authorship of IP.
+# Mediolano - Programmable IP for the Integrity Web
 
-MIP Dapp offers permissionless services with ZERO FEES for Programmable IP, such as artwork, videos, music, literary works, AI models, software, and other works of authorship. The copyright is immutable time stamped on Starknet public blockchain, and settled on Ethereum, providing Proof of Ownership valid for 50-70 years, in accord with the legal jurisdiction. Tokenizing intellectual property with smart contracts opens the door to countless opportunities, from integrations with communities and games to monetization with AI Agents.
+<a href="https://mediolano.xyz">Website mediolano.xyz</a>
 
+Governed by a DAO (Decentralized Autonomous Organization), Mediolano champions transparent, decentralized decision-making in alignment with core web3 and cypherpunk principles. Our mission is to foster long-term value and sustainability for the entire ecosystem—from users to partners—by operating in the collective interest of the network.
 
 
 ## Roadmap
@@ -95,3 +88,14 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+<hr>
+
+Quick links:
+<br>
+<a href="https://ip.mediolano.app">Mediolano Dapp (Sepolia)</a>
+<br>
+<a href="https://x.com/mediolanoapp">X / Twitter</a>
+<br>
+<a href="https://t.me/MediolanoStarknet">Telegram</a>
+<br>
