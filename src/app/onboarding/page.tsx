@@ -14,32 +14,61 @@ export default function OnboardingComponent() {
   const { createWalletAsync, isLoading, isError } = useCreateWallet();
   const { getToken } = useAuth();
 
+  // State for form validation and errors
+  const [pinError, setPinError] = React.useState<string>("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [generalError, setGeneralError] = React.useState<string>("");
+
+  // PIN validation function
+  const validatePin = (pin: string): string => {
+    if (!pin || pin.trim() === '') {
+      return 'PIN is required';
+    }
+    if (!/^\d+$/.test(pin)) {
+      return 'PIN must contain only numbers';
+    }
+    if (pin.length < 6) {
+      return 'PIN must be at least 6 characters';
+    }
+    if (pin.length > 12) {
+      return 'PIN must be no more than 12 characters';
+    }
+    return '';
+  };
+
+  // Handle PIN input change for real-time validation
+  const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pin = e.target.value;
+    const error = validatePin(pin);
+    setPinError(error);
+    // Clear general error when user starts typing
+    if (generalError) {
+      setGeneralError("");
+    }
+  };
 
   // This function handles the form submission
-  // In a complete implementation, this would:
-  // 1. Collect user data from the form
-  // 2. Call the completeOnboarding server action to update user's publicMetadata
-  // 3. Set onboardingComplete: true in the user's publicMetadata
-  // 4. Reload the user data to refresh session claims
-  // 5. Redirect to the main application page
   const handleSubmit = async (formData: FormData) => {
     try {
-      const pin = formData.get('pin') as string;
-      
-      if (!pin || pin.trim() === '') {
-        throw new Error('PIN is required');
-      }
+      setIsSubmitting(true);
+      setGeneralError("");
 
-      if (!/^\d+$/.test(pin)) {
-        throw new Error('PIN must contain only numbers');
+      const pin = formData.get('pin') as string;
+
+      // Validate PIN
+      const pinValidationError = validatePin(pin);
+      if (pinValidationError) {
+        setPinError(pinValidationError);
+        return;
       }
 
       console.log('Creating wallet...');
-      const token = await getToken({ template: "workshop" });
+      const token = await getToken({ template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME });
       console.log("Token received:", token);
       if (!token) {
         throw new Error("No bearer token found");
       }
+
       const response = await createWalletAsync({
         encryptKey: pin,
         bearerToken: token,
@@ -62,22 +91,55 @@ export default function OnboardingComponent() {
       }
 
       await user?.reload();
+
+      router.refresh();
       router.push("/");
     } catch (error) {
       console.error('Error in handleSubmit:', error);
-      // You might want to show this error to the user
-      alert(error instanceof Error ? error.message : 'An error occurred');
+      setGeneralError(error instanceof Error ? error.message : 'An unexpected error occurred');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
-  if (isLoading) {
-    return <div>Creating wallet...</div>;
+  if (isLoading || isSubmitting) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="backdrop-blur-md bg-cyan-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full text-white border border-cyan-300/20 text-center"
+        >
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-300 mx-auto mb-4"></div>
+          <div className="text-cyan-300 font-semibold">Creating your wallet...</div>
+          <p className="text-sm text-cyan-200/70 mt-2">Please wait while we set up your account</p>
+        </motion.div>
+      </main>
+    );
   }
 
   if (isError) {
-    return <div>Error creating wallet</div>;
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="backdrop-blur-md bg-red-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full text-white border border-red-300/20 text-center"
+        >
+          <div className="text-red-300 font-semibold text-xl mb-2">⚠️ Error</div>
+          <p className="text-red-200/70">Failed to create wallet. Please try again.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-400/20 hover:bg-red-400/30 transition text-white rounded-lg font-medium"
+          >
+            Try Again
+          </button>
+        </motion.div>
+      </main>
+    );
   }
-
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex items-center justify-center p-4">
@@ -88,29 +150,67 @@ export default function OnboardingComponent() {
         className="backdrop-blur-md bg-cyan-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full text-white border border-cyan-300/20"
       >
         <h1 className="text-3xl font-extrabold mb-4 text-cyan-300">🌊 Onboarding</h1>
-        
+        <p className="text-cyan-200/80 mb-6">Create your secure wallet to get started</p>
+
+        {generalError && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-3 bg-red-400/10 border border-red-300/20 rounded-lg"
+          >
+            <p className="text-red-300 text-sm font-medium">❌ {generalError}</p>
+          </motion.div>
+        )}
+
         <form action={handleSubmit}>
-          <div className="space-y-4 mb-4">
+          <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-cyan-100">Enter your PIN</label>
-              <p className="text-xs text-cyan-200/70">This PIN will be used to create your wallet and encrypt your private key.</p>
+              <label className="block text-sm font-semibold text-cyan-100 mb-2">
+                Create your PIN
+              </label>
+              <p className="text-xs text-cyan-200/70 mb-3">
+                This PIN will encrypt your private key. Choose 6-12 numbers you'll remember.
+              </p>
               <input
                 type="password"
                 name="pin"
                 inputMode="numeric"
-                pattern="[0-9]{4}"
-                minLength={4}
-                maxLength={4}
+                pattern="[0-9]{6,12}"
+                minLength={6}
+                maxLength={12}
                 required
-                className="mt-2 w-full px-3 py-2 bg-cyan-200/10 border border-cyan-200/20 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-cyan-300 focus:border-cyan-300 text-white"
+                onChange={handlePinChange}
+                className={`w-full px-3 py-3 bg-cyan-200/10 border rounded-lg shadow-sm focus:outline-none focus:ring-2 text-white text-lg tracking-wider transition-all ${pinError
+                  ? 'border-red-300/50 focus:ring-red-300/50 focus:border-red-300'
+                  : 'border-cyan-200/20 focus:ring-cyan-300/50 focus:border-cyan-300'
+                  }`}
+                placeholder="Enter 6-12 digit PIN"
               />
+              {pinError && (
+                <motion.p
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-2 text-red-300 text-sm font-medium"
+                >
+                  ⚠️ {pinError}
+                </motion.p>
+              )}
+              {!pinError && (
+                <p className="mt-2 text-cyan-200/60 text-xs">
+                  💡 Tip: Use a PIN you can easily remember but others can't guess
+                </p>
+              )}
             </div>
           </div>
-          <button 
-            type="submit" 
-            className="w-full px-4 py-2 bg-cyan-400/20 hover:bg-cyan-400/30 transition text-white rounded-lg font-medium"
+          <button
+            type="submit"
+            disabled={!!pinError || isSubmitting}
+            className={`w-full px-4 py-3 rounded-lg font-semibold transition-all ${pinError || isSubmitting
+              ? 'bg-gray-400/20 text-gray-300 cursor-not-allowed'
+              : 'bg-cyan-400/20 hover:bg-cyan-400/30 text-white hover:shadow-lg transform hover:scale-[1.02]'
+              }`}
           >
-            Submit
+            {isSubmitting ? 'Creating Wallet...' : 'Create Wallet'}
           </button>
         </form>
       </motion.div>

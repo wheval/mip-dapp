@@ -1,31 +1,124 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "@/src/components/header"
 import { FloatingNavigation } from "@/src/components/floating-navigation"
-import { Card, CardContent } from "@/src/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { TrendingUp, Search, Grid3X3, List, Download, Star, Users, Shield, Plus } from "lucide-react"
-import { portfolioAssets } from "@/src/lib/mock-data"
+import { TrendingUp, Search, Grid3X3, List, Download, Star, Users, Shield, Plus, Wallet, Eye, Share2, Edit, Trash2, ExternalLink, Loader2, AlertTriangle, RefreshCw } from "lucide-react"
 import type { AssetIP } from "@/src/types/asset"
 import Link from "next/link"
 import { ExpandableAssetCard } from "@/src/components/expandable-asset-card"
+import Image from "next/image"
+import { toast } from "@/src/hooks/use-toast"
+import { useWalletAssets } from "@/src/hooks/use-wallet-assets"
+import { getWalletData } from "@/src/app/onboarding/_actions"
+import { useRouter } from "next/navigation"
 
 export default function PortfolioPage() {
+  const router = useRouter()
   const [selectedTab, setSelectedTab] = useState("owned")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("recent")
   const [filterBy, setFilterBy] = useState("all")
 
-  const ownedAssets = portfolioAssets.filter((asset) => asset.creator?.username !== "you")
+  // Wallet data state
+  const [walletData, setWalletData] = useState<{
+    publicKey: string;
+    encryptedPrivateKey: string
+  } | null>(null)
+
+  // Load wallet data on component mount
+  useEffect(() => {
+    const loadWallet = async () => {
+      try {
+        const data = await getWalletData()
+        if (data?.publicKey && data?.encryptedPrivateKey) {
+          setWalletData(data)
+        } else {
+          toast({
+            title: "Wallet Not Found",
+            description: "Please complete onboarding to create your wallet",
+            variant: "destructive",
+          })
+          router.push("/onboarding")
+        }
+      } catch (error) {
+        console.error('Error loading wallet:', error)
+        toast({
+          title: "Error Loading Wallet",
+          description: "Failed to load wallet data",
+          variant: "destructive",
+        })
+      }
+    }
+    loadWallet()
+  }, [router])
+
+  // Fetch real wallet assets
+  const {
+    assets: walletAssets,
+    nfts,
+    tokens,
+    isLoading: isLoadingAssets,
+    error: assetsError,
+    refetch: refetchAssets
+  } = useWalletAssets(walletData?.publicKey || null)
+
+  // Transform NFTs to asset format for display
+  const portfolioAssets = nfts.map(nft => ({
+    id: `${nft.contractAddress}_${nft.tokenId}`,
+    slug: `${nft.contractAddress}-${nft.tokenId}`,
+    title: nft.metadata?.name || `Token #${nft.tokenId}`,
+    author: "You", // Since these are owned assets
+    description: nft.metadata?.description || "Your NFT Asset",
+    type: "NFT",
+    template: "standard",
+    collection: nft.contractAddress === process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MIP ? "Mediolano" : "External",
+    collectionSlug: nft.contractAddress,
+    tags: (nft.metadata?.attributes?.map(attr => attr.value).join(", ") || "nft"),
+    mediaUrl: nft.metadata?.image || "/placeholder.svg",
+    externalUrl: `${process.env.NEXT_PUBLIC_EXPLORER_URL}/contract/${nft.contractAddress}/token/${nft.tokenId}`,
+    licenseType: "all-rights",
+    licenseDetails: "Full ownership rights",
+    ipVersion: "1.0",
+    commercialUse: true,
+    modifications: true,
+    attribution: false,
+    registrationDate: new Date().toISOString().split("T")[0],
+    protectionStatus: "Protected",
+    protectionScope: "Global",
+    protectionDuration: "Permanent",
+    creator: {
+      id: "current-user",
+      username: "you",
+      name: "You",
+      avatar: "/placeholder-user.jpg",
+      verified: true,
+      wallet: walletData?.publicKey || "",
+      bio: "NFT Owner",
+      followers: 0,
+      following: 0,
+      assets: nfts.length,
+    },
+    timestamp: "Owned",
+    attributes: nft.metadata?.attributes || [],
+    blockchain: "Starknet",
+    contractAddress: nft.contractAddress,
+    tokenId: nft.tokenId,
+    metadataUri: nft.tokenURI,
+  }))
+
+  // All assets from the wallet are "owned" since they're in the user's wallet
+  const ownedAssets = portfolioAssets // All NFTs in wallet are owned
   const createdAssets = portfolioAssets.filter(
-    (asset) => asset.creator?.username === "you" || asset.creator?.name === "You",
-  )
+    (asset) => asset.contractAddress === process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MIP
+  ) // Only assets from Mediolano contract are "created" by user
 
   const currentAssets = selectedTab === "owned" ? ownedAssets : createdAssets
 
@@ -48,6 +141,20 @@ export default function PortfolioPage() {
     }
   })
 
+  // Get unique categories from assets
+  const categories = ["all", ...Array.from(new Set([
+    ...portfolioAssets.map(asset => asset.type),
+    ...portfolioAssets.map(asset => asset.collection)
+  ]))]
+
+  // Portfolio statistics
+  const stats = {
+    totalAssets: portfolioAssets.length,
+    totalTokens: tokens.length,
+    totalValue: walletAssets?.totalValueUSD || 0,
+    uniqueCollections: new Set(portfolioAssets.map(asset => asset.collection)).size,
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
 
@@ -60,6 +167,14 @@ export default function PortfolioPage() {
                 <div>
                   <h1 className="text-3xl font-bold text-foreground mb-2">My IP Portfolio</h1>
                   <p className="text-muted-foreground">Manage your tokenized intellectual property</p>
+                  {walletData && (
+                    <div className="flex items-center space-x-2 mt-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-muted-foreground">
+                        {`${walletData.publicKey.slice(0, 6)}...${walletData.publicKey.slice(-4)}`}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
@@ -72,6 +187,34 @@ export default function PortfolioPage() {
                 </div>
               </div>
 
+              {/* Error State */}
+              {assetsError && (
+                <Card className="bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800 mb-6">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                          Failed to load portfolio assets
+                        </p>
+                        <p className="text-xs text-red-700 dark:text-red-300">
+                          {assetsError}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={refetchAssets}
+                        className="border-red-300 text-red-700 hover:bg-red-100"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Retry
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Stats Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                 <Card
@@ -81,7 +224,11 @@ export default function PortfolioPage() {
                   <CardContent className="p-4 text-center">
                     <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2 animate-pulse" />
                     <div className="text-lg font-bold text-blue-900 dark:text-blue-100">
-                      {ownedAssets.length + createdAssets.length}
+                      {isLoadingAssets ? (
+                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                      ) : (
+                        stats.totalAssets
+                      )}
                     </div>
                     <div className="text-xs text-blue-700 dark:text-blue-300">Total Assets</div>
                   </CardContent>
@@ -93,7 +240,13 @@ export default function PortfolioPage() {
                 >
                   <CardContent className="p-4 text-center">
                     <Star className="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-green-900 dark:text-green-100">{createdAssets.length}</div>
+                    <div className="text-lg font-bold text-green-900 dark:text-green-100">
+                      {isLoadingAssets ? (
+                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                      ) : (
+                        createdAssets.length
+                      )}
+                    </div>
                     <div className="text-xs text-green-700 dark:text-green-300">Created</div>
                   </CardContent>
                 </Card>
@@ -104,8 +257,14 @@ export default function PortfolioPage() {
                 >
                   <CardContent className="p-4 text-center">
                     <Users className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2 animate-pulse" />
-                    <div className="text-lg font-bold text-purple-900 dark:text-purple-100">{ownedAssets.length}</div>
-                    <div className="text-xs text-purple-700 dark:text-purple-300">Collected</div>
+                    <div className="text-lg font-bold text-purple-900 dark:text-purple-100">
+                      {isLoadingAssets ? (
+                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                      ) : (
+                        stats.totalTokens
+                      )}
+                    </div>
+                    <div className="text-xs text-purple-700 dark:text-purple-300">Tokens</div>
                   </CardContent>
                 </Card>
 
