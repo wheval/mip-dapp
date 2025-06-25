@@ -36,6 +36,7 @@ interface CollectionPreviewDrawerProps {
   coverPreview: any
   bannerPreview: any
   isFormValid: boolean
+  onCreateCollection: () => void
 }
 
 const contractTypeLabels = {
@@ -59,6 +60,7 @@ export function CollectionPreviewDrawer({
   coverPreview,
   bannerPreview,
   isFormValid,
+  onCreateCollection,
 }: CollectionPreviewDrawerProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -77,19 +79,20 @@ export function CollectionPreviewDrawer({
     setIsCreating(true)
     setCurrentStep(0)
 
-    // Simulate creation process with steps
-    for (let i = 0; i < creationSteps.length; i++) {
-      setCurrentStep(i)
-      await new Promise((resolve) => setTimeout(resolve, 800))
+    try {
+      // Show creation steps UI
+      for (let i = 0; i < creationSteps.length; i++) {
+        setCurrentStep(i)
+        await new Promise((resolve) => setTimeout(resolve, 600))
+      }
+      await onCreateCollection()
+
+      setIsCreating(false)
+      setCreationComplete(true)
+    } catch (error) {
+      setIsCreating(false)
+      console.error('Collection creation failed:', error)
     }
-
-    setIsCreating(false)
-    setCreationComplete(true)
-
-    toast({
-      title: "Collection Created Successfully!",
-      description: "Your IP collection is now live on Starknet",
-    })
   }
 
   const handleViewCollection = () => {
@@ -231,22 +234,20 @@ export function CollectionPreviewDrawer({
                   {creationSteps.map((step, index) => (
                     <div
                       key={index}
-                      className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                        index === currentStep
-                          ? "bg-primary/10 border border-primary/20"
-                          : index < currentStep
-                            ? "bg-green-50 dark:bg-green-900/20"
-                            : "bg-muted/20"
-                      }`}
+                      className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${index === currentStep
+                        ? "bg-primary/10 border border-primary/20"
+                        : index < currentStep
+                          ? "bg-green-50 dark:bg-green-900/20"
+                          : "bg-muted/20"
+                        }`}
                     >
                       <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                          index === currentStep
-                            ? "bg-primary text-primary-foreground"
-                            : index < currentStep
-                              ? "bg-green-600 text-white"
-                              : "bg-muted-foreground/20"
-                        }`}
+                        className={`w-6 h-6 rounded-full flex items-center justify-center ${index === currentStep
+                          ? "bg-primary text-primary-foreground"
+                          : index < currentStep
+                            ? "bg-green-600 text-white"
+                            : "bg-muted-foreground/20"
+                          }`}
                       >
                         {index < currentStep ? (
                           <CheckCircle className="w-4 h-4" />

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef, useCallback, useMemo } from "react"
+import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 
 import { Navigation } from "@/src/components/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -16,6 +16,8 @@ import { Switch } from "@/src/components/ui/switch"
 import { Separator } from "@/src/components/ui/separator"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/src/components/ui/dialog"
+import { PinInput } from "@/src/components/pin-input"
 import {
   Upload,
   ImageIcon,
@@ -48,6 +50,13 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import { toast } from "@/src/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import { useCallAnyContract } from "@chipi-pay/chipi-sdk"
+import { getWalletData } from "@/src/app/onboarding/_actions"
+import { useAuth } from "@clerk/nextjs"
+
+// Mediolano Protocol contract address
+const MEDIOLANO_CONTRACT = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MIP || "0x04b67deb64d285d3de684246084e74ad25d459989b7336786886ec63a28e0cd4"
 
 interface AssetData {
   // Essential fields
@@ -137,15 +146,32 @@ const quickTags = [
 ]
 
 export default function CreatePage() {
+  const router = useRouter()
+
+  const { getToken } = useAuth()
+  const { callAnyContractAsync, callAnyContractData, isLoading: isMinting, error: mintError } = useCallAnyContract()
+
+  // Upload and media state
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const [mediaFile, setMediaFile] = useState<File | null>(null)
   const [mediaPreview, setMediaPreview] = useState("")
   const [isDragOver, setIsDragOver] = useState(false)
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
   const [newTag, setNewTag] = useState("")
   const [mediaType, setMediaType] = useState<"upload" | "url">("upload")
+
+  // Wallet and minting state
+  const [walletData, setWalletData] = useState<{
+    publicKey: string;
+    encryptedPrivateKey: string
+  } | null>(null)
+  const [showPinDialog, setShowPinDialog] = useState(false)
+  const [isPinSubmitting, setIsPinSubmitting] = useState(false)
+  const [pinError, setPinError] = useState("")
+  const [txHash, setTxHash] = useState("")
+  const [tokenId, setTokenId] = useState("")
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [assetData, setAssetData] = useState<AssetData>({
@@ -171,6 +197,33 @@ export default function CreatePage() {
     protectionScope: "Global",
     protectionDuration: "Life + 70 years",
   })
+
+  // Load wallet data on component mount
+  useEffect(() => {
+    const loadWallet = async () => {
+      try {
+        const data = await getWalletData()
+        if (data?.publicKey && data?.encryptedPrivateKey) {
+          setWalletData(data)
+        } else {
+          toast({
+            title: "Wallet Not Found",
+            description: "Please complete onboarding to create your wallet",
+            variant: "destructive",
+          })
+          router.push("/onboarding")
+        }
+      } catch (error) {
+        console.error('Error loading wallet:', error)
+        toast({
+          title: "Error Loading Wallet",
+          description: "Failed to load wallet data",
+          variant: "destructive",
+        })
+      }
+    }
+    loadWallet()
+  }, [router])
 
   // Memoize computed values to prevent recalculation during render
   const isEssentialComplete = useMemo(() => {
@@ -267,27 +320,135 @@ export default function CreatePage() {
     setAssetData((prev) => ({ ...prev, type: typeId }))
   }, [])
 
-  const handleCreate = useCallback(async () => {
-    setIsCreating(true)
+  // Handle PIN submission for minting
+  const handlePinSubmit = async (pin: string) => {
+    if (!walletData) {
+      setPinError("Wallet data not available")
+      return
+    }
+
+    setIsPinSubmitting(true)
+    setPinError("")
 
     try {
-      // Simulate creation process
-      await new Promise((resolve) => setTimeout(resolve, 2500))
+      console.log('Getting Clerk authentication token...')
+      const token = await getToken({ template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME })
+      console.log("Token received:", token)
+      if (!token) {
+        throw new Error("No bearer token found")
+      }
+
+      console.log('Creating metadata for asset...')
+
+      // Create metadata object (in production, this would be uploaded to IPFS)
+      const metadata = {
+        name: assetData.title,
+        description: assetData.description,
+        image: assetData.mediaUrl,
+        external_url: assetData.externalUrl,
+        attributes: [
+          { trait_type: "Type", value: assetData.type },
+          { trait_type: "License", value: assetData.licenseType },
+          { trait_type: "Commercial Use", value: assetData.commercialUse.toString() },
+          { trait_type: "Modifications", value: assetData.modifications.toString() },
+          { trait_type: "Attribution", value: assetData.attribution.toString() },
+          { trait_type: "IP Version", value: assetData.ipVersion },
+          { trait_type: "Protection Status", value: assetData.protectionStatus },
+          { trait_type: "Protection Scope", value: assetData.protectionScope },
+          { trait_type: "Tags", value: assetData.tags.join(", ") },
+        ],
+        properties: {
+          creator: assetData.author,
+          collection: assetData.collection,
+          license_details: assetData.licenseDetails,
+          registration_date: assetData.registrationDate,
+          protection_duration: assetData.protectionDuration,
+        }
+      }
+
+      // In production, upload to IPFS and get the hash
+      const metadataUri = `data:application/json;base64,${btoa(JSON.stringify(metadata))}`
+
+      console.log('Minting NFT on Mediolano Protocol...')
+
+      const contractCall = {
+        encryptKey: pin,
+        bearerToken: token,
+        wallet: {
+          publicKey: walletData.publicKey,
+          encryptedPrivateKey: walletData.encryptedPrivateKey
+        },
+        calls: [
+          {
+            contractAddress: MEDIOLANO_CONTRACT,
+            functionName: "mint", // Adjust based on actual function name
+            calldata: [
+              walletData.publicKey, // to (recipient)
+              metadataUri, // tokenURI (metadata)
+            ]
+          }
+        ]
+      }
+
+      console.log('Mint contract call parameters:', contractCall)
+
+      // Mint NFT using Chipi SDK's callAnyContract
+      const mintResult = await callAnyContractAsync(contractCall)
+
+      console.log('Mint result:', mintResult)
+
+      if (mintResult) {
+        setTxHash(mintResult)
+        setTokenId(Date.now().toString()) // In production, parse from transaction receipt
+        setShowPinDialog(false)
+
+        toast({
+          title: "🎉 IP Asset Created!",
+          description: "Your content is now protected on the blockchain",
+        })
+
+        // Optional: redirect after successful mint
+        setTimeout(() => {
+          router.push("/portfolio")
+        }, 3000)
+      }
+    } catch (error) {
+      console.error('Minting failed:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Minting failed'
+      setPinError(errorMessage)
 
       toast({
-        title: "🎉 IP Asset Created!",
-        description: "Your content is now protected on the blockchain",
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create asset. Please try again.",
+        title: "Minting Failed",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
-      setIsCreating(false)
+      setIsPinSubmitting(false)
     }
-  }, [])
+  }
+
+  const handleCreate = useCallback(async () => {
+    if (!isEssentialComplete) {
+      toast({
+        title: "Missing Required Fields",
+        description: "Please fill in title and description",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!walletData) {
+      toast({
+        title: "Wallet Not Available",
+        description: "Please ensure your wallet is properly loaded",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Show PIN dialog for authentication
+    setShowPinDialog(true)
+  }, [isEssentialComplete, walletData])
 
   const clearMedia = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -442,11 +603,10 @@ export default function CreatePage() {
 
                       <TabsContent value="upload" className="mt-4">
                         <div
-                          className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 cursor-pointer ${
-                            isDragOver
-                              ? "border-primary bg-primary/5"
-                              : "border-border/50 hover:border-primary/50 hover:bg-muted/20"
-                          }`}
+                          className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 cursor-pointer ${isDragOver
+                            ? "border-primary bg-primary/5"
+                            : "border-border/50 hover:border-primary/50 hover:bg-muted/20"
+                            }`}
                           onDragOver={handleDragOver}
                           onDragLeave={handleDragLeave}
                           onDrop={handleDrop}
@@ -605,11 +765,10 @@ export default function CreatePage() {
                               <button
                                 key={type.id}
                                 onClick={() => handleTypeSelect(type.id)}
-                                className={`p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
-                                  assetData.type === type.id
-                                    ? "border-primary bg-primary/5 shadow-lg"
-                                    : "border-border hover:border-primary/50"
-                                }`}
+                                className={`p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${assetData.type === type.id
+                                  ? "border-primary bg-primary/5 shadow-lg"
+                                  : "border-border hover:border-primary/50"
+                                  }`}
                               >
                                 <div className="text-center space-y-2">
                                   <div
@@ -677,11 +836,10 @@ export default function CreatePage() {
                               key={tag}
                               onClick={() => addTag(tag)}
                               disabled={assetData.tags.includes(tag)}
-                              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                                assetData.tags.includes(tag)
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary"
-                              }`}
+                              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${assetData.tags.includes(tag)
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary"
+                                }`}
                             >
                               #{tag}
                             </button>
@@ -809,53 +967,106 @@ export default function CreatePage() {
                 </CardContent>
               </Card>
 
-              {/* Create Button */}
-              <div className="space-y-4">
-                {!isEssentialComplete && (
-                  <Card className="bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-3">
-                        <Info className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                        <div>
-                          <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                            Complete the required fields to continue
+              {/* Creation Success */}
+              {txHash && (
+                <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 animate-fade-in">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-green-900 dark:text-green-100 mb-2">IP Asset Created!</h3>
+                        <div className="space-y-2">
+                          <p className="text-sm text-green-700 dark:text-green-300">
+                            Your intellectual property has been successfully minted and protected on the blockchain.
                           </p>
-                          <p className="text-xs text-yellow-700 dark:text-yellow-300">
-                            Title and description are required
-                          </p>
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-medium text-green-900 dark:text-green-100">Token ID:</span>
+                              <code className="text-xs bg-green-200 dark:bg-green-800 px-2 py-1 rounded font-mono">
+                                {tokenId}
+                              </code>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-medium text-green-900 dark:text-green-100">Transaction:</span>
+                              <code className="text-xs bg-green-200 dark:bg-green-800 px-2 py-1 rounded font-mono break-all">
+                                {txHash}
+                              </code>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(`${process.env.NEXT_PUBLIC_EXPLORER_URL}/tx/${txHash}`, '_blank')}
+                                className="shrink-0"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                <Button
-                  onClick={handleCreate}
-                  disabled={!isEssentialComplete || isCreating}
-                  className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50"
-                >
-                  {isCreating ? (
-                    <div className="flex items-center space-x-3">
-                      <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
-                      <span>Creating Your IP Asset...</span>
                     </div>
-                  ) : (
-                    <div className="flex items-center space-x-3">
-                      <Sparkles className="w-6 h-6" />
-                      <span>Create IP Asset</span>
-                    </div>
-                  )}
-                </Button>
+                  </CardContent>
+                </Card>
+              )}
 
-                {isEssentialComplete && (
-                  <div className="text-center">
-                    <Button variant="ghost" size="sm" className="text-muted-foreground">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Preview Asset
-                    </Button>
+              {/* Create Button */}
+              <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-bold text-lg">Ready to Mint?</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {walletData ? "Your wallet is connected and ready" : "Loading wallet..."}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-3 h-3 rounded-full ${walletData ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`}></div>
+                        <span className="text-sm text-muted-foreground">
+                          {walletData ? "Ready" : "Loading"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={handleCreate}
+                          disabled={!isEssentialComplete || isMinting || !walletData}
+                          className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50"
+                        >
+                          {isMinting ? (
+                            <div className="flex items-center space-x-3">
+                              <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
+                              <span>Minting Your IP Asset...</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-3">
+                              <Sparkles className="w-6 h-6" />
+                              <span>Mint IP Asset</span>
+                            </div>
+                          )}
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="sr-only">Authenticate Minting</DialogTitle>
+                        </DialogHeader>
+                        <PinInput
+                          onSubmit={handlePinSubmit}
+                          isLoading={isPinSubmitting}
+                          title="Authenticate Minting"
+                          description="Enter your wallet PIN to mint your IP asset"
+                          submitText="Mint Asset"
+                          error={pinError}
+                          onCancel={() => setShowPinDialog(false)}
+                        />
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                )}
-              </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
