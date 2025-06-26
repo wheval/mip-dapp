@@ -104,16 +104,16 @@ export default function OnboardingComponent() {
 
   if (isLoading || isSubmitting) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex items-center justify-center p-4">
+      <main className="min-h-screen  flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="backdrop-blur-md bg-cyan-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full text-white border border-cyan-300/20 text-center"
+          className="backdrop-blur-md bg-blue-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-blue-300/20 text-center"
         >
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-300 mx-auto mb-4"></div>
-          <div className="text-cyan-300 font-semibold">Creating your wallet...</div>
-          <p className="text-sm text-cyan-200/70 mt-2">Please wait while we set up your account</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-300 mx-auto mb-4"></div>
+          <div className=" font-semibold">Creating your wallet...</div>
+          <p className="text-sm  mt-2">Please wait while we set up your account</p>
         </motion.div>
       </main>
     );
@@ -121,18 +121,18 @@ export default function OnboardingComponent() {
 
   if (isError) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex items-center justify-center p-4">
+      <main className="min-h-screen  flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="backdrop-blur-md bg-red-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full text-white border border-red-300/20 text-center"
+          className="backdrop-blur-md bg-red-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-red-300/20 text-center"
         >
           <div className="text-red-300 font-semibold text-xl mb-2">⚠️ Error</div>
           <p className="text-red-200/70">Failed to create wallet. Please try again.</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-400/20 hover:bg-red-400/30 transition text-white rounded-lg font-medium"
+            className="mt-4 px-4 py-2 bg-red-400/20 hover:bg-red-400/30 transition  rounded-lg font-medium"
           >
             Try Again
           </button>
@@ -142,15 +142,15 @@ export default function OnboardingComponent() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] flex items-center justify-center p-4">
+    <main className="min-h-screen  flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="backdrop-blur-md bg-cyan-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full text-white border border-cyan-300/20"
+        className="backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-blue-300/20"
       >
-        <h1 className="text-3xl font-extrabold mb-4 text-cyan-300">🌊 Onboarding</h1>
-        <p className="text-cyan-200/80 mb-6">Create your secure wallet to get started</p>
+        <h1 className="text-3xl font-extrabold mb-4 ">Secure your assets</h1>
+        <p className=" mb-6">Create your secure code to get started</p>
 
         {generalError && (
           <motion.div
@@ -165,10 +165,10 @@ export default function OnboardingComponent() {
         <form action={handleSubmit}>
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-cyan-100 mb-2">
+              <label className="block text-sm font-semibold  mb-2">
                 Create your PIN
               </label>
-              <p className="text-xs text-cyan-200/70 mb-3">
+              <p className="text-xs  mb-3">
                 This PIN will encrypt your private key. Choose 6-12 numbers you'll remember.
               </p>
               <input
@@ -180,9 +180,9 @@ export default function OnboardingComponent() {
                 maxLength={12}
                 required
                 onChange={handlePinChange}
-                className={`w-full px-3 py-3 bg-cyan-200/10 border rounded-lg shadow-sm focus:outline-none focus:ring-2 text-white text-lg tracking-wider transition-all ${pinError
+                className={`w-full px-3 py-3 bg-blue-200/10 border rounded-lg shadow-sm focus:outline-none focus:ring-2  text-lg tracking-wider transition-all ${pinError
                   ? 'border-red-300/50 focus:ring-red-300/50 focus:border-red-300'
-                  : 'border-cyan-200/20 focus:ring-cyan-300/50 focus:border-cyan-300'
+                  : 'border-blue-200/20 focus:ring-blue-300/50 focus:border-blue-300'
                   }`}
                 placeholder="Enter 6-12 digit PIN"
               />
@@ -196,7 +196,7 @@ export default function OnboardingComponent() {
                 </motion.p>
               )}
               {!pinError && (
-                <p className="mt-2 text-cyan-200/60 text-xs">
+                <p className="mt-2  text-xs">
                   💡 Tip: Use a PIN you can easily remember but others can't guess
                 </p>
               )}
@@ -206,8 +206,8 @@ export default function OnboardingComponent() {
             type="submit"
             disabled={!!pinError || isSubmitting}
             className={`w-full px-4 py-3 rounded-lg font-semibold transition-all ${pinError || isSubmitting
-              ? 'bg-gray-400/20 text-gray-300 cursor-not-allowed'
-              : 'bg-cyan-400/20 hover:bg-cyan-400/30 text-white hover:shadow-lg transform hover:scale-[1.02]'
+              ? 'bg-gray-400/20  cursor-not-allowed'
+              : 'bg-blue-400/20 hover:bg-blue-400/30  hover:shadow-lg transform hover:scale-[1.02]'
               }`}
           >
             {isSubmitting ? 'Creating Wallet...' : 'Create Wallet'}
