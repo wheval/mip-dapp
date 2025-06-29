@@ -112,7 +112,7 @@ export function PinInput({
                                 maxLength={12}
                                 value={pin}
                                 onChange={handlePinChange}
-                                placeholder="Enter your 6-12 digit PIN"
+                                placeholder="Enter your 6~12 digit PIN"
                                 className={`pr-10 text-lg tracking-wider transition-all ${pinError
                                     ? 'border-red-300/50 focus:ring-red-300/50 focus:border-red-300'
                                     : 'border-border/20 focus:ring-primary/50 focus:border-primary'

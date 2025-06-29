@@ -124,16 +124,16 @@ export function FloatingNavigation() {
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
                       <TrendingUp className="w-3 h-3 text-primary" />
-                      <span className="text-sm font-bold text-foreground">2.4K</span>
+                      <span className="text-sm font-bold text-foreground">MIP</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Assets</span>
+                    <span className="text-xs text-muted-foreground">Protocol</span>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center space-x-1 mb-1">
                       <FolderOpen className="w-3 h-3 text-orange-500" />
-                      <span className="text-sm font-bold text-foreground">156</span>
+                      <span className="text-sm font-bold text-foreground">Zero</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Collections</span>
+                    <span className="text-xs text-muted-foreground">Fees</span>
                   </div>
                 </div>
               </div>

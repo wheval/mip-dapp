@@ -27,7 +27,7 @@ export const completeOnboarding = async (walletData: WalletData) => {
 
     return { success: true, metadata: res.publicMetadata }
   } catch (err) {
-    console.error('Server: Error in completeOnboarding:', err)
+    console.error('Server: Error in complete Onboarding:', err)
     return { error: err instanceof Error ? err.message : 'There was an error updating the user metadata.' }
   }
 }

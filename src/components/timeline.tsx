@@ -442,7 +442,7 @@ export function Timeline() {
                           <div className="flex items-center space-x-2 mb-2">
                             <Shield className="w-4 h-4 text-green-500" />
                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                              Protection
+                              Proof of Ownership
                             </span>
                           </div>
                           <div>
@@ -485,7 +485,7 @@ export function Timeline() {
                         <div className="flex items-center space-x-2 mb-3">
                           <Award className="w-4 h-4 text-orange-500" />
                           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                            License Permissions
+                            Licensing {asset.licenseType}
                           </span>
                         </div>
                         <div className="grid grid-cols-3 gap-3">
@@ -558,7 +558,7 @@ export function Timeline() {
           {/* End of results */}
           {!hasMore && paginatedAssets.length > 0 && (
             <div className="text-center py-8">
-              <p className="text-sm text-muted-foreground">You've reached the end of the timeline</p>
+              <p className="text-sm text-muted-foreground">That's all for today</p>
             </div>
           )}
         </div>
