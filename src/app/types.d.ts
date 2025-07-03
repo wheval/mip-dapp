@@ -1,1 +1,0 @@
-declare module '@chipi-pay/chipi-sdk'; 
