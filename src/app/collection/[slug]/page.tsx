@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, use } from "react"
 import { Header } from "@/src/components/header"
 import { FloatingNavigation } from "@/src/components/floating-navigation"
 import { Card, CardContent } from "@/src/components/ui/card"
@@ -40,9 +40,9 @@ import {
 } from "@/src/components/ui/dropdown-menu"
 
 interface CollectionPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export default function CollectionPage({ params }: CollectionPageProps) {
@@ -50,7 +50,10 @@ export default function CollectionPage({ params }: CollectionPageProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("recent")
 
-  const collection = collections.find((c) => c.slug === params.slug)
+  // Unwrap the params Promise
+  const { slug } = use(params)
+  
+  const collection = collections.find((c) => c.slug === slug)
 
   if (!collection) {
     notFound()
@@ -97,6 +100,19 @@ export default function CollectionPage({ params }: CollectionPageProps) {
     }
   }
 
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      })
+    } catch {
+      return dateString
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
       <main className="pb-6">
@@ -110,7 +126,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
             </div>
           )}
 
@@ -156,7 +172,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                     </div>
 
                     {/* Creator Info */}
-                    <div className="flex items-center space-x-3">
+                    <div className="flex pt-3 items-center space-x-3">
                       <Avatar className="w-10 h-10 border-2 border-background">
                         <AvatarImage
                           src={collection.creator.avatar || "/placeholder.svg"}
@@ -167,85 +183,67 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                       <div>
                         <div className="flex items-center space-x-2">
                           <Link href={`/creator/${collection.creator.username}`}>
-                            <span
-                              className={`font-medium hover:underline ${collection.bannerImage ? "text-white" : "text-foreground"}`}
-                            >
+                            <span className="font-medium hover:underline text-black dark:text-white">
                               {collection.creator.name}
                             </span>
                           </Link>
                           {collection.creator.verified && <CheckCircle className="w-4 h-4 text-blue-400" />}
                         </div>
-                        <div
-                          className={`text-sm ${collection.bannerImage ? "text-gray-300" : "text-muted-foreground"}`}
-                        >
-                          Created {collection.createdAt}
+                        <div className="text-sm text-gray-700 dark:text-gray-400">
+                          Created {formatDate(collection.createdAt)}
                         </div>
                       </div>
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 justify-items-start sm:grid-cols-3 gap-4">
                       <div className="text-center">
-                        <div
-                          className={`text-2xl font-bold ${collection.bannerImage ? "text-white" : "text-foreground"}`}
-                        >
+                        <div className="text-2xl font-bold text-black dark:text-white">
                           {collection.assets}
                         </div>
-                        <div
-                          className={`text-sm ${collection.bannerImage ? "text-gray-300" : "text-muted-foreground"}`}
-                        >
+                        <div className="text-sm text-gray-700 dark:text-gray-400">
                           Assets
                         </div>
                       </div>
                       <div className="text-center">
-                        <div
-                          className={`text-2xl font-bold ${collection.bannerImage ? "text-white" : "text-foreground"}`}
-                        >
-                          {collection.blockchain}
+                        <div className="text-2xl font-bold text-black dark:text-white">
+                          {collection.floorPrice || "N/A"}
                         </div>
-                        <div
-                          className={`text-sm ${collection.bannerImage ? "text-gray-300" : "text-muted-foreground"}`}
-                        >
-                          Network
+                        <div className="text-sm text-gray-700 dark:text-gray-400">
+                          Floor Price
                         </div>
                       </div>
-                      {collection.floorPrice && (
-                        <div className="text-center">
-                          <div
-                            className={`text-2xl font-bold ${collection.bannerImage ? "text-white" : "text-foreground"}`}
-                          >
-                            {collection.floorPrice}
-                          </div>
-                          <div
-                            className={`text-sm ${collection.bannerImage ? "text-gray-300" : "text-muted-foreground"}`}
-                          >
-                            Floor Price
-                          </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-black dark:text-white">
+                          {collection.totalVolume || "N/A"}
                         </div>
-                      )}
+                        <div className="text-sm text-gray-700 dark:text-gray-400">
+                          Total Volume
+                        </div>
+                      </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex flex-wrap gap-3">
-                      <Button className="hover:scale-105 transition-transform">
-                        <Heart className="w-4 h-4 mr-2" />
-                        Follow Collection
+                      <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Asset
                       </Button>
-                      <Button variant="outline" className="hover:scale-105 transition-transform">
+                      <Button variant="outline" className="border-gray-400 text-black hover:bg-gray-100 dark:border-primary dark:text-white dark:hover:bg-primary/10">
                         <Share className="w-4 h-4 mr-2" />
                         Share
                       </Button>
-                      <Button variant="outline" className="hover:scale-105 transition-transform">
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
+                      <Button variant="outline" className="border-gray-400 text-black hover:bg-gray-100 dark:border-primary dark:text-white dark:hover:bg-primary/10">
+                        <Heart className="w-4 h-4 mr-2" />
+                        Like
                       </Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="outline" size="icon" className="hover:scale-105 transition-transform">
+                          <Button variant="outline" size="icon" className="border-gray-400 text-black hover:bg-gray-100 dark:border-primary dark:text-white dark:hover:bg-primary/10">
                             <MoreVertical className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent>
                           <DropdownMenuItem>
                             <Edit className="w-4 h-4 mr-2" />
                             Edit Collection
@@ -257,7 +255,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem>
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            View on Blockchain
+                            View on Chain
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -269,13 +267,32 @@ export default function CollectionPage({ params }: CollectionPageProps) {
           </div>
         </div>
 
-        {/* Collection Assets */}
-        <div className="px-4 py-8 border-t border-border/30">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">Collection Assets</h2>
-                <p className="text-muted-foreground">{collectionAssets.length} items in this collection</p>
+        {/* Collection Content */}
+        <div className="px-4">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Filters and Controls */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+              <div className="flex flex-wrap gap-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Search assets..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 w-64"
+                  />
+                </div>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="recent">Most Recent</SelectItem>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="type">Type</SelectItem>
+                    <SelectItem value="author">Author</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -283,7 +300,6 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                   variant={viewMode === "grid" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("grid")}
-                  className="w-9 h-9 p-0 hover:scale-105 transition-transform"
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
@@ -291,44 +307,26 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setViewMode("list")}
-                  className="w-9 h-9 p-0 hover:scale-105 transition-transform"
                 >
                   <List className="w-4 h-4" />
                 </Button>
               </div>
             </div>
 
-            {/* Search and Filters */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search assets in this collection..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-background/50"
-                />
+            {/* Asset Grid */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-foreground">
+                  Assets ({sortedAssets.length})
+                </h2>
               </div>
-
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-40 bg-background/50">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recent">Recent</SelectItem>
-                  <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="type">Type</SelectItem>
-                  <SelectItem value="author">Author</SelectItem>
-                </SelectContent>
-              </Select>
+              <AssetGrid assets={sortedAssets} viewMode={viewMode} />
             </div>
-
-            {/* Assets Grid */}
-            <AssetGrid assets={sortedAssets} viewMode={viewMode} />
           </div>
         </div>
       </main>
-    
+
+      <FloatingNavigation />
     </div>
   )
 }

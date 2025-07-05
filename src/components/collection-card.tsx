@@ -16,7 +16,7 @@ interface CollectionCardProps {
 
 export function CollectionCard({ collection, variant = "default" }: CollectionCardProps) {
   const getCategoryColor = (category: string) => {
-    if (!category) return "defaultColor"; // Replace with your default color
+    if (!category) return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
     switch (category.toLowerCase()) {
       case "digital art":
         return "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200"
@@ -30,10 +30,29 @@ export function CollectionCard({ collection, variant = "default" }: CollectionCa
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
       case "ai art":
         return "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
+      case "photography":
+        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
     }
   }
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  // Calculate mock stats based on assets count
+  const mockViews = collection.assets * 47
+  const mockLikes = collection.assets * 12
 
   if (variant === "compact") {
     return (
@@ -69,7 +88,7 @@ export function CollectionCard({ collection, variant = "default" }: CollectionCa
 
           <div className="flex items-center space-x-2">
             <div className="text-right">
-              <div className="text-sm font-medium text-foreground">X</div>
+              <div className="text-sm font-medium text-foreground">{collection.assets}</div>
               <div className="text-xs text-muted-foreground">assets</div>
             </div>
             <Link href={`/collection/${collection.slug}`}>
@@ -138,11 +157,11 @@ export function CollectionCard({ collection, variant = "default" }: CollectionCa
               </div>
               <div className="flex items-center space-x-1">
                 <Eye className="w-3 h-3" />
-                <span>X</span>
+                <span>{mockViews.toLocaleString()}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Heart className="w-3 h-3" />
-                <span>X</span>
+                <span>{mockLikes.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -217,15 +236,21 @@ export function CollectionCard({ collection, variant = "default" }: CollectionCa
         <div className="grid grid-cols-3 gap-3 mb-4 text-center">
           <div>
             <div className="text-sm font-bold text-foreground">{collection.assets}</div>
-            <div className="text-xs text-muted-foreground">Assets</div>
+            <div className="flex items-center justify-center text-xs text-muted-foreground">
+              <FolderOpen className="w-3 h-3" />
+            </div>
           </div>
           <div>
-            <div className="text-sm font-bold text-foreground">x</div>
-            <div className="text-xs text-muted-foreground">Views</div>
+            <div className="text-sm font-bold text-foreground">{mockViews.toLocaleString()}</div>
+            <div className="flex items-center justify-center text-xs text-muted-foreground">
+              <Eye className="w-3 h-3" />
+            </div>
           </div>
           <div>
-            <div className="text-sm font-bold text-foreground">x</div>
-            <div className="text-xs text-muted-foreground">Likes</div>
+            <div className="text-sm font-bold text-foreground">{mockLikes.toLocaleString()}</div>
+            <div className="flex items-center justify-center text-xs text-muted-foreground">
+              <Heart className="w-3 h-3" />
+            </div>
           </div>
         </div>
 
@@ -239,7 +264,7 @@ export function CollectionCard({ collection, variant = "default" }: CollectionCa
         <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
           <div className="flex items-center space-x-1">
             <Calendar className="w-3 h-3" />
-            <span>Created {collection.createdAt}</span>
+            <span>Created {formatDate(collection.createdAt)}</span>
           </div>
           <div className="flex items-center space-x-1">
             <TrendingUp className="w-3 h-3" />
