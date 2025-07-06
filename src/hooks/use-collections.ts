@@ -1,16 +1,14 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { collectionsService, type CollectionFilters, type PaginatedCollections } from '@/src/lib/collections-service'
 import type { Collection } from '@/src/types/asset'
 import { collections as mockCollections } from '@/src/lib/mock-data'
 
-// Re-export types for external use
 export type { CollectionFilters } from '@/src/lib/collections-service'
 
 export interface UseCollectionsOptions {
     filters?: CollectionFilters
     page?: number
     limit?: number
-    enableRealData?: boolean
     userAddress?: string
 }
 
@@ -18,6 +16,7 @@ export interface UseCollectionsReturn {
     collections: Collection[]
     filteredCollections: Collection[]
     featuredCollections: Collection[]
+    userCollections: Collection[]
     isLoading: boolean
     error: string | null
     page: number
@@ -56,25 +55,27 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
         filters = {},
         page: initialPage = 1,
         limit = 20,
-        enableRealData = false,
         userAddress
     } = options
 
     const [collections, setCollections] = useState<Collection[]>([])
+    const [userCollections, setUserCollections] = useState<Collection[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [currentFilters, setCurrentFilters] = useState<CollectionFilters>(filters)
     const [page, setPage] = useState(initialPage)
     const [total, setTotal] = useState(0)
     const [hasMore, setHasMore] = useState(false)
+    
+    // Circuit breaker to prevent infinite retries
+    const fetchingRef = useRef(false)
+    const lastFetchParamsRef = useRef<string>('')
+    const errorCountRef = useRef(0)
+    const MAX_RETRIES = 3
 
-    // Memoized filtered collections for client-side filtering (when using mock data)
+    // Memoized filtered collections for client-side filtering 
     const filteredCollections = useMemo(() => {
-        if (enableRealData) {
-            return collections // Server-side filtering
-        }
-
-        // Client-side filtering for mock data
+        // Apply client-side filtering 
         let filtered = [...collections]
 
         if (currentFilters.search) {
@@ -113,11 +114,9 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
                     case 'assets':
                         return b.assets - a.assets
                     case 'views':
-                        // Mock view count based on assets
-                        return (b.assets * 47) - (a.assets * 47)
+                        return (b.views || 0) - (a.views || 0)
                     case 'likes':
-                        // Mock like count based on assets
-                        return (b.assets * 12) - (a.assets * 12)
+                        return (b.likes || 0) - (a.likes || 0)
                     case 'recent':
                     default:
                         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -126,7 +125,7 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
         }
 
         return filtered
-    }, [collections, currentFilters, enableRealData])
+    }, [collections, currentFilters])
 
     // Memoized featured collections
     const featuredCollections = useMemo(() => {
@@ -139,74 +138,112 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
     }, [filteredCollections])
 
     const totalViews = useMemo(() => {
-        return totalAssets * 47 // Mock calculation
-    }, [totalAssets])
+        return filteredCollections.reduce((sum, collection) => sum + (collection.views || 0), 0)
+    }, [filteredCollections])
 
     const totalLikes = useMemo(() => {
-        return totalAssets * 12 // Mock calculation
-    }, [totalAssets])
+        return filteredCollections.reduce((sum, collection) => sum + (collection.likes || 0), 0)
+    }, [filteredCollections])
 
-    // Fetch collections function
+    // Fetch collections function with circuit breaker - only fetches raw data, no filtering
     const fetchCollections = useCallback(async (pageNum: number = 1, append: boolean = false) => {
-        if (isLoading) return
+        // Create unique key for this fetch request (only based on pagination, not filters)
+        const fetchKey = `${pageNum}`
+        
+        // Prevent duplicate concurrent calls
+        if (fetchingRef.current) {
+            console.log('Fetch already in progress, skipping...')
+            return
+        }
 
-        setIsLoading(true)
+        // Check if this is the same request as last time
+        if (fetchKey === lastFetchParamsRef.current && !append) {
+            console.log('Same fetch params as last time, skipping...')
+            return
+        }
+
+        // Circuit breaker: stop retrying after max failures
+        if (errorCountRef.current >= MAX_RETRIES) {
+            console.log(`Max retries (${MAX_RETRIES}) reached, stopping fetch attempts`)
+            setError('Unable to connect to contract. Please check your network connection.')
+            return
+        }
+
+        fetchingRef.current = true
+        lastFetchParamsRef.current = fetchKey
+        
+        if (!append) {
+            setIsLoading(true)
+        }
         setError(null)
 
         try {
-            if (enableRealData) {
-                // Fetch from MIP Protocol
-                if (userAddress) {
-                    const userCollections = await collectionsService.getUserCollections(userAddress)
-                    setCollections(userCollections)
-                    setTotal(userCollections.length)
-                    setHasMore(false)
-                } else {
-                    const result = await collectionsService.getCollections(currentFilters, pageNum, limit)
-                    if (append) {
-                        setCollections(prev => [...prev, ...result.collections])
-                    } else {
-                        setCollections(result.collections)
-                    }
-                    setTotal(result.total)
-                    setHasMore(result.hasMore)
-                }
+            // Fetch all collections without server-side filtering for better client-side performance
+            console.log('Fetching general collections...', userAddress ? `(wallet connected: ${userAddress})` : '(no wallet connected)')
+            const result = await collectionsService.getCollections({}, pageNum, limit) // No filters passed to server
+            
+            if (append) {
+                setCollections(prev => [...prev, ...result.collections])
             } else {
-                // Use mock data
-                setCollections(mockCollections)
-                setTotal(mockCollections.length)
-                setHasMore(false)
+                setCollections(result.collections)
             }
+            setTotal(result.total)
+            setHasMore(result.hasMore)
+            errorCountRef.current = 0 // Reset error count on success
+            
+            // TODO: In the future, we could add user-specific filtering or additional user collections here
+            // when userAddress is available, but for now we show all public collections
         } catch (err) {
             console.error('Error fetching collections:', err)
-            setError(err instanceof Error ? err.message : 'Failed to fetch collections')
+            errorCountRef.current += 1
             
-            // Fallback to mock data on error
-            if (enableRealData) {
-                setCollections(mockCollections)
-                setTotal(mockCollections.length)
+            const errorMessage = err instanceof Error ? err.message : 'Failed to fetch collections'
+            setError(`${errorMessage} (Attempt ${errorCountRef.current}/${MAX_RETRIES})`)
+            
+            // Set empty state on error
+            if (!append) {
+                setCollections([])
+                setTotal(0)
                 setHasMore(false)
             }
         } finally {
             setIsLoading(false)
+            fetchingRef.current = false
         }
-    }, [currentFilters, limit, enableRealData, userAddress, isLoading])
+    }, [limit, userAddress]) // Removed currentFilters dependency to prevent reloads on filter changes
 
     // Load more collections (pagination)
     const loadMore = useCallback(async () => {
-        if (hasMore && !isLoading) {
+        if (hasMore && !fetchingRef.current) {
             const nextPage = page + 1
             setPage(nextPage)
             await fetchCollections(nextPage, true)
         }
-    }, [hasMore, isLoading, page, fetchCollections])
+    }, [hasMore, page, fetchCollections])
 
-    // Set filters and refetch
+    // Set filters - now purely client-side, no server reload
     const setFilters = useCallback((newFilters: CollectionFilters) => {
+        console.log('Setting new filters (client-side only):', newFilters)
         setCurrentFilters(newFilters)
-        setPage(1)
-        setCollections([])
+        // No need to reset page or refetch data - filtering is done client-side
     }, [])
+
+    // Fetch user collections
+    const fetchUserCollections = useCallback(async () => {
+        if (!userAddress) {
+            setUserCollections([])
+            return
+        }
+
+        try {
+            console.log('Fetching user collections for:', userAddress)
+            const userCollectionsResult = await collectionsService.getUserCollections(userAddress)
+            setUserCollections(userCollectionsResult)
+        } catch (err) {
+            console.error('Error fetching user collections:', err)
+            setUserCollections([])
+        }
+    }, [userAddress])
 
     // Set page and refetch
     const setPageAndFetch = useCallback((newPage: number) => {
@@ -216,61 +253,44 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
 
     // Refetch collections
     const refetch = useCallback(async () => {
+        console.log('Manual refetch requested')
         setPage(1)
         setCollections([])
+        setUserCollections([]) // Also clear user collections
+        errorCountRef.current = 0 // Reset error count on manual refetch
+        lastFetchParamsRef.current = '' // Reset fetch params
         await fetchCollections(1, false)
-    }, [fetchCollections])
+        if (userAddress) {
+            await fetchUserCollections() // Also refetch user collections if user is connected
+        }
+    }, [fetchCollections, fetchUserCollections, userAddress])
 
-    // Create collection function
+    // Create collection function (placeholder - service method doesn't exist yet)
     const createCollection = useCallback(async (data: CreateCollectionData): Promise<CreateCollectionResult> => {
-        try {
-            if (enableRealData) {
-                const result = await collectionsService.createCollection(
-                    data.name,
-                    data.description,
-                    data.coverImage,
-                    data.category,
-                    data.isPublic
-                )
-
-                if (result.success) {
-                    // Refetch collections to include the new one
-                    await refetch()
-                }
-
-                return result
-            } else {
-                // Mock creation for development
-                return {
-                    success: true,
-                    collectionId: `mock-${Date.now()}`
-                }
-            }
-        } catch (error) {
-            console.error('Error creating collection:', error)
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : 'Failed to create collection'
-            }
+        // TODO: Implement when service method is available
+        console.warn('Create collection not implemented yet')
+        return {
+            success: false,
+            error: 'Create collection functionality not implemented yet'
         }
-    }, [enableRealData, refetch])
+    }, [])
 
-    // Initial fetch and refetch when filters change
+    // Fetch collections only on mount and when essential parameters change
     useEffect(() => {
+        console.log('useEffect triggered - fetching collections...')
         fetchCollections(1, false)
-    }, [fetchCollections])
+    }, [limit, userAddress]) // Only refetch when limit or userAddress changes, not filters
 
-    // Refetch when filters change
+    // Fetch user collections when userAddress changes
     useEffect(() => {
-        if (page === 1) {
-            fetchCollections(1, false)
-        }
-    }, [currentFilters, page, fetchCollections])
+        fetchUserCollections()
+    }, [fetchUserCollections])
 
     return {
         collections,
         filteredCollections,
         featuredCollections,
+        userCollections,
         isLoading,
         error,
         page,
@@ -291,33 +311,70 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
 /**
  * Hook for managing a single collection
  */
-export function useCollection(collectionId: string, enableRealData: boolean = false) {
+export function useCollection(collectionIdentifier: string) {
     const [collection, setCollection] = useState<Collection | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const fetchCollection = useCallback(async () => {
-        if (!collectionId) return
+        if (!collectionIdentifier) return
 
         setIsLoading(true)
         setError(null)
 
         try {
-            if (enableRealData) {
-                const result = await collectionsService.getCollection(collectionId)
+            let result: Collection | null = null
+            
+            // First, try to get by ID if the identifier is numeric
+            if (/^\d+$/.test(collectionIdentifier)) {
+                console.log(`Fetching collection by ID: ${collectionIdentifier}`)
+                result = await collectionsService.getCollection(collectionIdentifier)
+            }
+            
+            // If not found by ID or identifier is not numeric, search by slug
+            if (!result) {
+                console.log(`Searching for collection by slug: ${collectionIdentifier}`)
+                // Get all collections and find by slug
+                const allCollectionsResult = await collectionsService.getCollections({}, 1, 100) // Get first 100 collections
+                result = allCollectionsResult.collections.find(c => c.slug === collectionIdentifier) || null
+                
+                if (!result) {
+                    // Also try with numeric ID from the identifier
+                    const idFromSlug = collectionIdentifier.replace(/^collection-/, '')
+                    if (/^\d+$/.test(idFromSlug)) {
+                        console.log(`Trying to fetch collection by extracted ID: ${idFromSlug}`)
+                        result = await collectionsService.getCollection(idFromSlug)
+                    }
+                }
+            }
+            
+            if (result) {
                 setCollection(result)
+                setError(null)
             } else {
-                // Find in mock data
-                const mockCollection = mockCollections.find(c => c.id === collectionId || c.slug === collectionId)
-                setCollection(mockCollection || null)
+                throw new Error(`Collection not found: ${collectionIdentifier}`)
             }
         } catch (err) {
             console.error('Error fetching collection:', err)
             setError(err instanceof Error ? err.message : 'Failed to fetch collection')
+            
+            // Fallback to mock data on error
+            const mockCollection = mockCollections.find(c => 
+                c.id === collectionIdentifier || 
+                c.slug === collectionIdentifier ||
+                c.id === collectionIdentifier.replace(/^collection-/, '')
+            )
+            
+            if (mockCollection) {
+                setCollection(mockCollection)
+                setError(null)
+            } else {
+                setCollection(null)
+            }
         } finally {
             setIsLoading(false)
         }
-    }, [collectionId, enableRealData])
+    }, [collectionIdentifier])
 
     useEffect(() => {
         fetchCollection()
@@ -334,10 +391,8 @@ export function useCollection(collectionId: string, enableRealData: boolean = fa
 /**
  * Hook for managing collection stats
  */
-export function useCollectionStats(enableRealData: boolean = false) {
-    const { collections, totalAssets, totalViews, totalLikes, isLoading, error } = useCollections({
-        enableRealData
-    })
+export function useCollectionStats() {
+    const { collections, totalAssets, totalViews, totalLikes, isLoading, error } = useCollections()
 
     const stats = useMemo(() => {
         return {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, use } from "react"
+import { useState, use, useEffect } from "react"
 import { Header } from "@/src/components/header"
 import { FloatingNavigation } from "@/src/components/floating-navigation"
 import { Card, CardContent } from "@/src/components/ui/card"
@@ -9,6 +9,8 @@ import { Button } from "@/src/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
+import { Skeleton } from "@/src/components/ui/skeleton"
+import { Alert, AlertDescription } from "@/src/components/ui/alert"
 import {
   MoreVertical,
   Eye,
@@ -25,9 +27,14 @@ import {
   ExternalLink,
   Edit,
   Settings,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react"
 import { collections, timelineAssets } from "@/src/lib/mock-data"
+import { useCollection } from "@/src/hooks/use-collections"
+import { collectionsService } from "@/src/lib/collections-service"
 import type { AssetIP } from "@/src/types/asset"
+import { formatDate } from "@/src/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -49,18 +56,93 @@ export default function CollectionPage({ params }: CollectionPageProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("recent")
+  const [collectionAssets, setCollectionAssets] = useState<AssetIP[]>([])
+  const [assetsLoading, setAssetsLoading] = useState(false)
+  const [assetsError, setAssetsError] = useState<string | null>(null)
 
-  // Unwrap the params Promise
   const { slug } = use(params)
   
-  const collection = collections.find((c) => c.slug === slug)
+  const { collection, isLoading, error, refetch } = useCollection(slug)
 
-  if (!collection) {
-    notFound()
+  useEffect(() => {
+    const fetchAssets = async () => {
+      if (!collection?.id) return
+      
+      setAssetsLoading(true)
+      setAssetsError(null)
+      
+      try {
+        const assets = await collectionsService.getCollectionAssets(collection.id)
+        setCollectionAssets(assets)
+      } catch (error) {
+        console.error('Error fetching collection assets:', error)
+        setAssetsError(error instanceof Error ? error.message : 'Failed to fetch assets')
+        
+        const mockAssets = timelineAssets.filter((asset) => 
+          asset.collectionSlug === collection.slug || asset.collection === collection.id
+        )
+        setCollectionAssets(mockAssets)
+      } finally {
+        setAssetsLoading(false)
+      }
+    }
+
+    fetchAssets()
+  }, [collection?.id, collection?.slug])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
+        <main className="pb-6">
+          <div className="px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                <Skeleton className="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl" />
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <Skeleton className="h-8 w-64 mb-2" />
+                    <Skeleton className="h-4 w-96" />
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Skeleton className="w-10 h-10 rounded-full" />
+                    <div>
+                      <Skeleton className="h-4 w-32 mb-1" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+        <FloatingNavigation />
+      </div>
+    )
   }
 
-  // Filter assets that belong to this collection
-  const collectionAssets = timelineAssets.filter((asset) => asset.collectionSlug === collection.slug)
+  if (error || !collection) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
+        <main className="pb-6">
+          <div className="px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <Alert className="animate-fade-in-up">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="flex items-center justify-between">
+                  <span>{error || 'Collection not found'}</span>
+                  <Button variant="outline" size="sm" onClick={refetch}>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Retry
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </main>
+        <FloatingNavigation />
+      </div>
+    )
+  }
 
   const filteredAssets = collectionAssets.filter(
     (asset) =>
@@ -100,18 +182,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      })
-    } catch {
-      return dateString
-    }
-  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
@@ -213,10 +284,10 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                           Floor Price
                         </div>
                       </div>
-                      <div className="text-center">
+                        <div className="text-center">
                         <div className="text-2xl font-bold text-black dark:text-white">
                           {collection.totalVolume || "N/A"}
-                        </div>
+                          </div>
                         <div className="text-sm text-gray-700 dark:text-gray-400">
                           Total Volume
                         </div>
@@ -325,7 +396,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
           </div>
         </div>
       </main>
-
+    
       <FloatingNavigation />
     </div>
   )

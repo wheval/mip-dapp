@@ -21,11 +21,13 @@ import {
     Plus, 
     Filter,
     AlertCircle,
-    RefreshCw
+    RefreshCw,
+    Star
 } from "lucide-react"
 import { useCollections, type CollectionFilters } from "@/src/hooks/use-collections"
 import type { Collection } from "@/src/types/asset"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export interface IPCollectionBrowserProps {
     // Display Configuration
@@ -39,7 +41,6 @@ export interface IPCollectionBrowserProps {
     showViewToggle?: boolean
     
     // Data Configuration
-    enableRealData?: boolean
     userAddress?: string
     limit?: number
     
@@ -67,7 +68,7 @@ export interface IPCollectionBrowserProps {
     // Initial State
     initialFilters?: CollectionFilters
     initialViewMode?: "grid" | "list"
-    initialTab?: "all" | "featured"
+    initialTab?: "all" | "featured" | "my"
 }
 
 export function IPCollectionBrowser({
@@ -79,7 +80,6 @@ export function IPCollectionBrowser({
     showTabs = true,
     showCreateButton = true,
     showViewToggle = true,
-    enableRealData = false,
     userAddress,
     limit = 20,
     variant = "full",
@@ -98,6 +98,7 @@ export function IPCollectionBrowser({
     initialFilters = {},
     initialTab = "all"
 }: IPCollectionBrowserProps) {
+    const router = useRouter()
     const [searchQuery, setSearchQuery] = useState(initialFilters.search || "")
     const [sortBy, setSortBy] = useState(initialFilters.sortBy || "recent")
     const [filterBy, setFilterBy] = useState(initialFilters.category || "all")
@@ -109,6 +110,7 @@ export function IPCollectionBrowser({
         collections,
         filteredCollections,
         featuredCollections,
+        userCollections,
         isLoading,
         error,
         page,
@@ -123,7 +125,6 @@ export function IPCollectionBrowser({
     } = useCollections({
         filters: currentFilters,
         limit,
-        enableRealData,
         userAddress
     })
 
@@ -140,8 +141,18 @@ export function IPCollectionBrowser({
         onFilterChange?.(newFilters)
     }, [searchQuery, sortBy, filterBy, selectedTab, setFilters, onFilterChange])
 
+    // Reset to "all" tab if user disconnects and currently on "my" tab
+    useEffect(() => {
+        if (!userAddress && selectedTab === "my") {
+            setSelectedTab("all")
+        }
+    }, [userAddress, selectedTab])
+
     // Get current collections based on tab
-    const currentCollections = selectedTab === "featured" ? featuredCollections : filteredCollections
+    const currentCollections = 
+        selectedTab === "featured" ? featuredCollections :
+        selectedTab === "my" ? userCollections :
+        filteredCollections
 
     // Handle collection click
     const handleCollectionClick = useCallback((collection: Collection) => {
@@ -160,6 +171,13 @@ export function IPCollectionBrowser({
         }
     }, [enablePagination, hasMore, loadMore])
 
+    // Handle tab selection with proper typing
+    const handleTabChange = useCallback((value: string) => {
+        if (value === "all" || value === "featured" || value === "my") {
+            setSelectedTab(value)
+        }
+    }, [])
+
     // Grid column classes
     const gridColsClass = {
         "1": "grid-cols-1",
@@ -169,59 +187,195 @@ export function IPCollectionBrowser({
         "5": "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
     }
 
-    // Render loading skeleton
-    const renderLoadingSkeleton = () => (
-        <div className={`grid gap-6 ${gridColsClass[gridCols]}`}>
-            {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i} className="overflow-hidden">
-                    <Skeleton className="w-full h-40" />
-                    <CardContent className="p-4">
-                        <Skeleton className="h-6 w-3/4 mb-2" />
-                        <Skeleton className="h-4 w-full mb-4" />
-                        <div className="flex items-center justify-between">
-                            <Skeleton className="h-4 w-20" />
-                            <Skeleton className="h-8 w-24" />
-                        </div>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
-    )
-
-    // Render error state
-    const renderError = () => (
-        <Alert className="animate-fade-in-up">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="flex items-center justify-between">
-                <span>{error}</span>
-                <Button variant="outline" size="sm" onClick={refetch}>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Retry
-                </Button>
-            </AlertDescription>
-        </Alert>
-    )
-
-    // Render empty state
-    const renderEmptyState = () => (
-        <div className="text-center py-16 animate-fade-in-up">
-            <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                <FolderOpen className="w-10 h-10 text-muted-foreground" />
+    // Render enhanced loading skeleton with different states
+    const renderLoadingSkeleton = () => {
+        const skeletonCount = selectedTab === "my" ? 3 : 6 // Fewer skeletons for personal collections
+        
+        return (
+            <div className="space-y-6">
+                {/* Loading indicator with status */}
+                <div className="flex items-center justify-center py-4">
+                    <div className="flex items-center space-x-3 text-muted-foreground">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                        <span className="text-sm">
+                            {selectedTab === "my" 
+                                ? "Loading your collections..." 
+                                : selectedTab === "featured"
+                                ? "Loading featured collections..."
+                                : "Discovering collections on Starknet..."}
+                        </span>
+                    </div>
+                </div>
+                
+                {/* Skeleton grid */}
+                <div className={`grid gap-6 ${gridColsClass[gridCols]}`}>
+                    {Array.from({ length: skeletonCount }).map((_, i) => (
+                        <Card key={i} className="overflow-hidden animate-pulse">
+                            <Skeleton className="w-full h-40 bg-gradient-to-r from-muted/50 via-muted to-muted/50" />
+                            <CardContent className="p-4 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-5 w-16 rounded-full" />
+                                </div>
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-2/3" />
+                                <div className="flex items-center justify-between pt-2">
+                                    <div className="flex items-center space-x-4">
+                                        <Skeleton className="h-4 w-12" />
+                                        <Skeleton className="h-4 w-12" />
+                                        <Skeleton className="h-4 w-12" />
+                                    </div>
+                                    <Skeleton className="h-8 w-24 rounded-md" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+                
+                {/* Additional loading info for first-time users */}
+                {selectedTab === "all" && (
+                    <div className="text-center mt-8">
+                        <p className="text-xs text-muted-foreground">
+                            Connecting to Starknet • Fetching collection data • Processing metadata
+                        </p>
+                    </div>
+                )}
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-3">No collections found</h3>
-            <p className="text-muted-foreground mb-6">
-                {selectedTab === "featured" 
-                    ? "No featured collections available" 
-                    : "Start creating collections or adjust your filters"}
+        )
+    }
+
+    // Render error state with improved fallback UI
+    const renderError = () => (
+        <div className="text-center py-16 animate-fade-in-up">
+            <div className="w-20 h-20 bg-red-50 dark:bg-red-950 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="w-10 h-10 text-red-500 dark:text-red-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-3">Unable to Load Collections</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                We're having trouble connecting to the Starknet network. This could be due to network issues or contract unavailability.
             </p>
-            {showCreateButton && (
-                <Button onClick={handleCreateClick} className="hover:scale-105 transition-transform">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Collection
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button onClick={refetch} className="hover:scale-105 transition-transform">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Try Again
                 </Button>
-            )}
+                <Button 
+                    variant="outline" 
+                    onClick={() => window.location.reload()}
+                    className="hover:scale-105 transition-transform"
+                >
+                    Reload Page
+                </Button>
+            </div>
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground max-w-md mx-auto">
+                <p className="font-medium mb-2">Troubleshooting:</p>
+                <ul className="text-left space-y-1">
+                    <li>• Check your internet connection</li>
+                    <li>• Try refreshing the page</li>
+                    <li>• The Starknet network might be experiencing issues</li>
+                </ul>
+            </div>
         </div>
     )
+
+    // Render enhanced empty state
+    const renderEmptyState = () => {
+        const getEmptyStateContent = () => {
+            if (selectedTab === "featured") {
+                return {
+                    icon: <Star className="w-10 h-10 text-yellow-500" />,
+                    title: "No Featured Collections",
+                    description: "Featured collections will appear here when they become available. Check back soon!",
+                    showCreate: false
+                }
+            }
+            
+            if (selectedTab === "my") {
+                return {
+                    icon: <FolderOpen className="w-10 h-10 text-blue-500" />,
+                    title: userAddress ? "No Collections Yet" : "Connect Your Wallet",
+                    description: userAddress 
+                        ? "You haven't created any collections yet. Start building your IP portfolio today!"
+                        : "Connect your wallet to view and manage your IP collections.",
+                    showCreate: Boolean(userAddress)
+                }
+            }
+            
+            // All collections tab
+            if (searchQuery || filterBy !== "all" || sortBy !== "recent") {
+                return {
+                    icon: <Filter className="w-10 h-10 text-purple-500" />,
+                    title: "No Results Found",
+                    description: "Try adjusting your filters or search terms to find collections.",
+                    showCreate: false
+                }
+            }
+            
+            return {
+                icon: <FolderOpen className="w-10 h-10 text-muted-foreground" />,
+                title: "No Collections Available",
+                description: "The MIP Protocol is just getting started. Be among the first to create IP collections!",
+                showCreate: true
+            }
+        }
+        
+        const content = getEmptyStateContent()
+        
+        return (
+            <div className="text-center py-16 animate-fade-in-up">
+                <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    {content.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">{content.title}</h3>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    {content.description}
+                </p>
+                
+                {/* Action buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    {showCreateButton && content.showCreate && (
+                        <Button onClick={handleCreateClick} className="hover:scale-105 transition-transform">
+                            <Plus className="w-4 h-4 mr-2" />
+                            {selectedTab === "my" ? "Create Your First Collection" : "Create Collection"}
+                        </Button>
+                    )}
+                    
+                    {/* Additional helpful actions */}
+                    {selectedTab === "all" && (searchQuery || filterBy !== "all") && (
+                        <Button 
+                            variant="outline" 
+                            onClick={() => {
+                                setSearchQuery("")
+                                setFilterBy("all")
+                                setSortBy("recent")
+                            }}
+                            className="hover:scale-105 transition-transform"
+                        >
+                            Clear Filters
+                        </Button>
+                    )}
+                    
+                    {!userAddress && selectedTab === "my" && (
+                        <Button 
+                            variant="outline"
+                            onClick={() => router.push("/onboarding")}
+                            className="hover:scale-105 transition-transform"
+                        >
+                            Connect Wallet
+                        </Button>
+                    )}
+                </div>
+                
+                {/* Additional helpful tips */}
+                {selectedTab === "all" && !searchQuery && filterBy === "all" && (
+                    <div className="mt-8 p-4 bg-muted/30 rounded-lg text-sm text-muted-foreground max-w-md mx-auto">
+                        <p className="font-medium mb-2">What are IP Collections?</p>
+                        <p className="text-left">Collections group related intellectual property assets together, making it easier to discover, license, and manage IP rights on the blockchain.</p>
+                    </div>
+                )}
+            </div>
+        )
+    }
 
     // Render collection grid
     const renderCollectionGrid = () => {
@@ -368,7 +522,7 @@ export function IPCollectionBrowser({
                 )}
 
                 {enableSorting && (
-                    <Select value={sortBy} onValueChange={setSortBy}>
+                    <Select value={sortBy} onValueChange={(value) => setSortBy(value as "recent" | "name" | "assets" | "views" | "likes")}>
                         <SelectTrigger className="w-full sm:w-40 bg-background/50">
                             <SelectValue placeholder="Sort by" />
                         </SelectTrigger>
@@ -433,15 +587,20 @@ export function IPCollectionBrowser({
         if (!showTabs) return null
 
         return (
-            <Tabs value={selectedTab} onValueChange={setSelectedTab as any} className="w-full">
+            <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <TabsList className="grid w-full sm:w-auto grid-cols-2 bg-muted/50">
+                    <TabsList className={`grid w-full sm:w-auto ${userAddress ? 'grid-cols-3' : 'grid-cols-2'} bg-muted/50`}>
                         <TabsTrigger value="all" className="data-[state=active]:bg-background">
                             All Collections ({collections.length})
                         </TabsTrigger>
                         <TabsTrigger value="featured" className="data-[state=active]:bg-background">
                             Featured ({featuredCollections.length})
                         </TabsTrigger>
+                        {userAddress && (
+                            <TabsTrigger value="my" className="data-[state=active]:bg-background">
+                                My Collections ({userCollections.length})
+                            </TabsTrigger>
+                        )}
                     </TabsList>
                     {renderViewToggle()}
                 </div>
@@ -531,7 +690,6 @@ export function DashboardCollectionBrowser(props: Partial<IPCollectionBrowserPro
             title="Your Collections"
             subtitle="Manage your IP collections and assets"
             showCreateButton={true}
-            enableRealData={true}
             gridCols="3"
         />
     )

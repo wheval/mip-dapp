@@ -2,7 +2,7 @@ import { RpcProvider, Contract, CallData, num, validateAndParseAddress } from "s
 
 // StarkNet RPC Provider
 const provider = new RpcProvider({
-    nodeUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL || "https://starknet-mainnet.public.blastapi.io/rpc/v0_7",
+    nodeUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL || "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
 })
 
 // Contract addresses for common tokens and NFTs
@@ -123,8 +123,8 @@ export class StarkNetService {
     }
 
     /**
- * Get token balance for an address
- */
+     * Get token balance for an address
+     */
     public async getTokenBalance(
         tokenContract: string,
         walletAddress: string
@@ -166,8 +166,8 @@ export class StarkNetService {
     }
 
     /**
- * Get NFT assets for an address
- */
+     * Get NFT assets for an address
+     */
     public async getNFTAssets(
         nftContract: string,
         walletAddress: string
@@ -284,8 +284,8 @@ export class StarkNetService {
     }
 
     /**
- * Estimate transaction fee
- */
+     * Estimate transaction fee
+     */
     public async estimateTransactionFee(
         contractAddress: string,
         functionName: string,
@@ -322,8 +322,8 @@ export class StarkNetService {
     }
 
     /**
- * Get transaction status
- */
+     * Get transaction status
+     */
     public async getTransactionStatus(txHash: string): Promise<{
         status: "PENDING" | "ACCEPTED_ON_L1" | "ACCEPTED_ON_L2" | "REJECTED" | "NOT_RECEIVED"
         block_number?: number
