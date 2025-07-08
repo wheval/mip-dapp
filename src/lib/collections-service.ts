@@ -1,5 +1,5 @@
 import { RpcProvider, Contract, CallData, num, validateAndParseAddress } from "starknet"
-import { starknetService } from "./starknet-service"
+import { starknetService } from "../services/starknet.service"
 import type { Collection, AssetIP } from "@/src/types/asset"
 import { ip_collection_abi } from "@/src/abi/ip_collection"
 
