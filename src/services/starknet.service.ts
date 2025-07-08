@@ -4,7 +4,7 @@ import {
   validateAndParseAddress,
   uint256,
 } from "starknet";
-import { ERC721_ABI } from "../abis/ERC721_ABI";
+import { ERC721_ABI } from "../abi/ERC721_ABI";
 import type {
   TokenBalanceERC721,
   NFTAsset,
@@ -12,7 +12,7 @@ import type {
   WalletAssets,
   IPortfolioReturnTypeObj,
 } from "../types/asset";
-import { ERC20_ABI } from "../abis/ERC20_ABI";
+import { ERC20_ABI } from "../abi/ERC20_ABI";
 import { CONTRACTS, provider } from "./constant";
 
 export class StarkNetService {
