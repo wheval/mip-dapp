@@ -61,6 +61,8 @@ export interface Collection {
     wallet: string
   }
   assets: number
+  views?: number
+  likes?: number
   floorPrice?: string
   totalVolume?: string
   createdAt: string
