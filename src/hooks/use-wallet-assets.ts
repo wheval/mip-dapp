@@ -28,8 +28,6 @@ export function useGetPortfolioAssets(
   loading: boolean;
   error: any;
 } {
-  walletAddress =
-    "0x0765A3b1Bd65A3C4A0cC7322DDd9e56EA947cadfb0fc38949df319Abcd30E519";
   const [portfolioAssets, setPortfolioAssets] = useState<
     IPortfolioReturnTypeObj[] | null
   >(null);
