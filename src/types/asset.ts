@@ -53,24 +53,26 @@ export interface Collection {
   coverImage: string;
   bannerImage?: string;
   creator: {
-    id: string;
-    username: string;
-    name: string;
-    avatar: string;
-    verified: boolean;
-    wallet: string;
-  };
-  assets: number;
-  floorPrice?: string;
-  totalVolume?: string;
-  createdAt: string;
-  updatedAt: string;
-  category: string;
-  tags: string;
-  isPublic: boolean;
-  isFeatured: boolean;
-  blockchain: string;
-  contractAddress?: string;
+    id: string
+    username: string
+    name: string
+    avatar: string
+    verified: boolean
+    wallet: string
+  }
+  assets: number
+  views?: number
+  likes?: number
+  floorPrice?: string
+  totalVolume?: string
+  createdAt: string
+  updatedAt: string
+  category: string
+  tags: string
+  isPublic: boolean
+  isFeatured: boolean
+  blockchain: string
+  contractAddress?: string
 }
 
 export interface Creator {

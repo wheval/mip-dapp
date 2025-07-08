@@ -40,7 +40,7 @@ export class StarkNetService {
 
   /**
    * P-Limit light weight lib
-   * Simple lib to bypass rpc rate limit abit and then run retry if we ever hit limit.
+   * Simple lib to bypass RPC rate limit abit and then run retry if we ever hit limit.
    */
   public delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -126,51 +126,53 @@ export class StarkNetService {
 
       if (nftBalance === 0) return [];
 
-      const tasks: (() => Promise<NFTAsset | null>)[] = Array.from(
-        { length: Math.min(nftBalance, 50) },
-        (_, i) => async () =>
-          this.withRetry(async () => {
-            const tokenIndex = uint256.bnToUint256(BigInt(i));
+      const tasks: (() => Promise<IPortfolioReturnTypeObj | null>)[] =
+        Array.from(
+          { length: Math.min(nftBalance, 50) },
+          (_, i) => async () =>
+            this.withRetry(async () => {
+              const tokenIndex = uint256.bnToUint256(BigInt(i));
 
-            const tokenIdBigInt = await contract.token_of_owner_by_index(
-              walletAddress,
-              tokenIndex
-            );
-            const tokenId = tokenIdBigInt.toString();
-            let tokenURI: string | undefined;
-            let metadata: any = undefined;
+              const tokenIdBigInt = await contract.token_of_owner_by_index(
+                walletAddress,
+                tokenIndex
+              );
+              const tokenId = tokenIdBigInt.toString();
+              let tokenURI: string | undefined;
+              let metadata: any = undefined;
 
-            try {
-              const uriResult = await contract.tokenURI(BigInt(tokenId));
-              tokenURI = Array.isArray(uriResult)
-                ? this.feltArrayToString(uriResult)
-                : uriResult.toString();
+              try {
+                const uriResult = await contract.tokenURI(BigInt(tokenId));
+                tokenURI = Array.isArray(uriResult)
+                  ? this.feltArrayToString(uriResult)
+                  : uriResult.toString();
 
-              if (
-                tokenURI?.startsWith("http") ||
-                tokenURI?.startsWith("ipfs://")
-              ) {
-                metadata = await this.fetchMetadata(tokenURI);
-              } else if (tokenURI?.startsWith("data:application/json")) {
-                const jsonData = tokenURI.split(",")[1];
-                metadata = JSON.parse(atob(jsonData));
+                if (
+                  tokenURI?.startsWith("http") ||
+                  tokenURI?.startsWith("ipfs://")
+                ) {
+                  metadata = await this.fetchMetadata(tokenURI);
+                } else if (tokenURI?.startsWith("data:application/json")) {
+                  const jsonData = tokenURI.split(",")[1];
+                  metadata = JSON.parse(atob(jsonData));
+                }
+              } catch (e) {
+                console.warn(`Failed to get metadata for token ${tokenId}`, e);
               }
-            } catch (e) {
-              console.warn(`Failed to get metadata for token ${tokenId}`, e);
-            }
 
-            return {
-              contractAddress: contract.address,
-              tokenId,
-              tokenURI,
-              metadata,
-              type: "ERC721",
-            } as NFTAsset;
-          })
-      );
+              return {
+                contractAddress: contract.address,
+                tokenId,
+                tokenURI,
+                metadata,
+
+                type: "ERC721",
+              } as IPortfolioReturnTypeObj;
+            })
+        );
 
       const results = await this.runWithConcurrency(tasks, this.MAX_CONCURRENT);
-      return results.filter((r): r is NFTAsset => r !== null);
+      return results.filter((r): r is IPortfolioReturnTypeObj => r !== null);
     } catch (err) {
       console.error("Error in getMyNFTAssets:", err);
       return [];
@@ -332,13 +334,6 @@ export class StarkNetService {
     }
 
     try {
-      const nf = await this.getMyNFTAssets(
-        CONTRACTS.MEDIOLANO,
-        normalizedAddress
-      );
-
-      console.log(nf, "nf");
-
       //   Get common token balances
       const tokenPromises = Object.entries(CONTRACTS).map(([symbol, address]) =>
         this.getTokenBalance(address, normalizedAddress)
@@ -433,6 +428,7 @@ export class StarkNetService {
 
       // @ts-ignore - StarkNet receipt types are complex and dynamic
       const status =
+    //   @ts-ignore 
         receipt.finality_status || receipt.execution_status || "PENDING";
       // @ts-ignore - Block number might not always be present
       const blockNumber = receipt.block_number;
