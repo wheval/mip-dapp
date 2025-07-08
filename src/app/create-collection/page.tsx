@@ -10,7 +10,7 @@ import { Label } from "@/src/components/ui/label"
 import { Textarea } from "@/src/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/src/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { PinInput } from "@/src/components/pin-input"
 import { Upload, ImageIcon, LinkIcon, X, FolderOpen, ArrowLeft, FileImage, ExternalLink, CheckCircle } from "lucide-react"
 import Link from "next/link"
@@ -24,6 +24,7 @@ import { useAuth } from "@clerk/nextjs"
 
 // Mediolano Protocol contract address
 const COLLECTION_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS || "0x04b67deb64d285d3de684246084e74ad25d459989b7336786886ec63a28e0cd4"
+const TEMPLATE_TOKEN = process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME || ""
 
 interface CollectionFormData {
   name: string
@@ -48,8 +49,13 @@ export default function CreateCollectionPage() {
   // Clerk auth for token generation
   const { getToken } = useAuth()
 
+   // Get Bearer Token from Clerk
+ const getBearerToken = async () => {
+  return await getToken({ template: TEMPLATE_TOKEN }) 
+  }
+
   // Chipi SDK hooks
-  const { callAnyContractAsync, callAnyContractData, isLoading: isDeploying, error: deployError } = useCallAnyContract()
+  const { callAnyContractAsync, callAnyContractData, isLoading: isDeploying, isError: deployError } = useCallAnyContract()
 
   // Form state
   const [formData, setFormData] = useState<CollectionFormData>({
@@ -75,8 +81,9 @@ export default function CreateCollectionPage() {
   const [pinError, setPinError] = useState("")
   const [txHash, setTxHash] = useState("")
   const [contractAddress, setContractAddress] = useState("")
+  const [currentStep, setCurrentStep] = useState(0)
 
-  // Load wallet data on component mount
+    // Load wallet data
   useEffect(() => {
     const loadWallet = async () => {
       try {
@@ -201,82 +208,139 @@ export default function CreateCollectionPage() {
     }
   }
 
-  // Handle PIN submission for collection creation
-  const handlePinSubmit = async (pin: string) => {
+  // Create collection via factory contract
+  const createCollection = async (pin: string) => {
     if (!walletData) {
-      setPinError("Wallet data not available")
-      return
+      throw new Error("Wallet data not available")
     }
 
+    const token = await getBearerToken()
+    
+    if (!token) {
+      throw new Error("No bearer token found")
+    }
+
+    console.log('Creating collection metadata...')
+
+    // Create collection metadata
+    const collectionMetadata = {
+      name: formData.name,
+      description: formData.description,
+      image: coverPreview?.url || "",
+      banner_image: bannerPreview?.url || "",
+      external_link: "",
+      seller_fee_basis_points: 250, // 2.5% royalty
+      fee_recipient: walletData.publicKey,
+      attributes: [
+        { trait_type: "Category", value: formData.category },
+        { trait_type: "Contract Type", value: formData.contractType },
+        { trait_type: "Creator", value: walletData.publicKey },
+      ]
+    }
+
+    console.log('Creating collection on factory contract...')
+
+    // Create collection using Chipi SDK
+    const contractCall = {
+      encryptKey: pin,
+      wallet: {
+        publicKey: walletData.publicKey,
+        encryptedPrivateKey: walletData.encryptedPrivateKey
+      },
+      contractAddress: COLLECTION_FACTORY_ADDRESS,
+      calls: [
+        {
+          contractAddress: COLLECTION_FACTORY_ADDRESS,
+          entrypoint: "createCollection",
+          calldata: [
+            formData.name, // collection name
+            "MIPCO", // symbol
+            JSON.stringify(collectionMetadata), // metadata
+          ]
+        }
+      ],
+      bearerToken: token,
+    }
+
+    const result = await callAnyContractAsync(contractCall)
+
+    console.log('Collection creation result:', result)
+    return result
+  }
+
+
+
+  const creationSteps = [
+    { title: "Preparing Collection", description: "Setting up your collection metadata" },
+    { title: "Deploying Contract", description: "Creating smart contract on Starknet" },
+    { title: "Configuring Settings", description: "Applying your collection preferences" },
+    { title: "Finalizing Collection", description: "Making your collection live" },
+  ]
+
+  // Handle collection creation with PIN
+  const handleCreateCollectionWithPin = async (pin: string) => {
     setIsPinSubmitting(true)
     setPinError("")
+    setCurrentStep(0)
+    setShowPinDialog(false) // Close PIN dialog
+    
+    // Validate form and wallet before proceeding
+    if (!isFormValid) {
+      const error = "Please fill in all required fields"
+      setPinError(error)
+      toast({
+        title: "Missing Required Fields",
+        description: error,
+        variant: "destructive",
+      })
+      setIsPinSubmitting(false)
+      throw new Error("Form validation failed")
+    }
+
+    if (!walletData) {
+      const error = "Please ensure your wallet is properly loaded"
+      setPinError(error)
+      toast({
+        title: "Wallet Not Available",
+        description: error,
+        variant: "destructive",
+      })
+      setIsPinSubmitting(false)
+      throw new Error("Wallet not available")
+    }
 
     try {
-      console.log('Getting Clerk authentication token...')
-      const token = await getToken({ template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME })
-      console.log("Token received:", token)
-      if (!token) {
-        throw new Error("No bearer token found")
+      // Show creation steps UI
+      for (let i = 0; i < creationSteps.length; i++) {
+        setCurrentStep(i)
+        await new Promise((resolve) => setTimeout(resolve, 600))
       }
 
-      console.log('Creating collection metadata...')
+      const result = await createCollection(pin)
 
-      // Create collection metadata
-      const collectionMetadata = {
-        name: formData.name,
-        description: formData.description,
-        image: coverPreview?.url || "",
-        banner_image: bannerPreview?.url || "",
-        external_link: "",
-        seller_fee_basis_points: 250, // 2.5% royalty
-        fee_recipient: walletData.publicKey,
-        attributes: [
-          { trait_type: "Category", value: formData.category },
-          { trait_type: "Contract Type", value: formData.contractType },
-          { trait_type: "Creator", value: walletData.publicKey },
-        ]
-      }
+      if (result) {
+        // Clear form on success
+        setFormData({
+          name: "",
+          description: "",
+          category: "",
+          coverImage: "",
+          bannerImage: "",
+          contractType: "erc721",
+        })
+        setCoverPreview(null)
+        setBannerPreview(null)
 
-      console.log('Deploying collection contract...')
-
-      const contractCall = {
-        encryptKey: pin,
-        bearerToken: token,
-        wallet: {
-          publicKey: walletData.publicKey,
-          encryptedPrivateKey: walletData.encryptedPrivateKey
-        },
-        calls: [
-          {
-            contractAddress: COLLECTION_FACTORY_ADDRESS,
-            functionName: "createCollection", // Adjust based on actual function name
-            calldata: [
-              formData.name, // collection name
-              "MIPCO",
-              JSON.stringify(collectionMetadata), // metadata
-              walletData.publicKey, // owner
-            ]
-          }
-        ]
-      }
-
-      console.log('Contract call parameters:', contractCall)
-
-      // Deploy collection contract using Chipi SDK
-      const deployResult = await callAnyContractAsync(contractCall)
-
-      console.log('Deploy result:', deployResult)
-
-      if (deployResult) {
-        setTxHash(deployResult)
+        setTxHash(result)
         setContractAddress(`0x${Math.random().toString(16).slice(2, 42)}`) // In production, parse from transaction receipt
-        setShowPinDialog(false)
 
         toast({
           title: "🎉 Collection Created!",
           description: "Your collection contract has been deployed successfully",
         })
 
+        setIsPinSubmitting(false)
+        
         // Optional: redirect after successful deployment
         setTimeout(() => {
           router.push("/collections")
@@ -285,48 +349,18 @@ export default function CreateCollectionPage() {
     } catch (error) {
       console.error('Collection creation failed:', error)
       const errorMessage = error instanceof Error ? error.message : 'Collection creation failed'
+      
       setPinError(errorMessage)
-
       toast({
         title: "Creation Failed",
         description: errorMessage,
         variant: "destructive",
       })
-    } finally {
+      
       setIsPinSubmitting(false)
+      setCurrentStep(0)
+      throw error // Re-throw so the drawer can handle loading state
     }
-  }
-
-  const handleCreateCollection = async () => {
-    console.log('🚀 handleCreateCollection called!', {
-      isFormValid,
-      walletData: !!walletData,
-      formData
-    })
-
-    if (!isFormValid) {
-      console.log('❌ Form validation failed')
-      toast({
-        title: "Missing Required Fields",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      })
-      return
-    }
-
-    if (!walletData) {
-      console.log('❌ Wallet not available')
-      toast({
-        title: "Wallet Not Available",
-        description: "Please ensure your wallet is properly loaded",
-        variant: "destructive",
-      })
-      return
-    }
-
-    console.log('✅ Validation passed, opening PIN dialog')
-    // Show PIN dialog for authentication
-    setShowPinDialog(true)
   }
 
   const isFormValid = Boolean(formData.name.trim() && formData.description.trim() && formData.category && formData.contractType && walletData)
@@ -616,7 +650,11 @@ export default function CreateCollectionPage() {
                   coverPreview={coverPreview}
                   bannerPreview={bannerPreview}
                   isFormValid={isFormValid}
-                  onCreateCollection={handleCreateCollection}
+                  onShowPinDialog={() => setShowPinDialog(true)}
+                  isCreating={isPinSubmitting}
+                  creationComplete={!!txHash}
+                  currentStep={currentStep}
+                  creationSteps={creationSteps}
                 />
               </div>
             </div>
@@ -631,10 +669,10 @@ export default function CreateCollectionPage() {
             <DialogTitle className="sr-only">Authenticate Collection Creation</DialogTitle>
           </DialogHeader>
           <PinInput
-            onSubmit={handlePinSubmit}
+            onSubmit={handleCreateCollectionWithPin}
             isLoading={isPinSubmitting}
             title="Authenticate Collection Creation"
-            description="Enter your wallet PIN to deploy your collection contract"
+            description="Enter your wallet PIN to create your collection"
             submitText="Create Collection"
             error={pinError}
             onCancel={() => setShowPinDialog(false)}

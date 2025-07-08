@@ -13,6 +13,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/src/components/ui/drawer"
+
 import {
   CheckCircle,
   Eye,
@@ -36,7 +37,11 @@ interface CollectionPreviewDrawerProps {
   coverPreview: any
   bannerPreview: any
   isFormValid: boolean
-  onCreateCollection: () => void
+  onShowPinDialog: () => void
+  isCreating: boolean
+  creationComplete: boolean
+  currentStep: number
+  creationSteps: Array<{ title: string; description: string }>
 }
 
 const contractTypeLabels = {
@@ -60,40 +65,21 @@ export function CollectionPreviewDrawer({
   coverPreview,
   bannerPreview,
   isFormValid,
-  onCreateCollection,
+  onShowPinDialog,
+  isCreating,
+  creationComplete,
+  currentStep,
+  creationSteps,
 }: CollectionPreviewDrawerProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
-  const [creationComplete, setCreationComplete] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
 
-  const creationSteps = [
-    { title: "Preparing Collection", description: "Setting up your collection metadata" },
-    { title: "Deploying Contract", description: "Creating smart contract on Starknet" },
-    { title: "Configuring Settings", description: "Applying your collection preferences" },
-    { title: "Finalizing Collection", description: "Making your collection live" },
-  ]
-
-  const handleCreate = async () => {
-    setIsCreating(true)
-    setCurrentStep(0)
-
-    try {
-      // Show creation steps UI
-      for (let i = 0; i < creationSteps.length; i++) {
-        setCurrentStep(i)
-        await new Promise((resolve) => setTimeout(resolve, 600))
-      }
-      await onCreateCollection()
-
-      setIsCreating(false)
-      setCreationComplete(true)
-    } catch (error) {
-      setIsCreating(false)
-      console.error('Collection creation failed:', error)
-    }
+  const handleCreate = () => {
+    // Show PIN dialog immediately
+    onShowPinDialog()
   }
+
+
 
   const handleViewCollection = () => {
     // Generate a slug from the collection name
@@ -111,8 +97,6 @@ export function CollectionPreviewDrawer({
   }
 
   const resetCreation = () => {
-    setCreationComplete(false)
-    setCurrentStep(0)
     setIsOpen(false)
   }
 
