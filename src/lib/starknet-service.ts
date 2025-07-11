@@ -2,7 +2,7 @@ import { RpcProvider, Contract, CallData, num, validateAndParseAddress } from "s
 
 // StarkNet RPC Provider
 const provider = new RpcProvider({
-    nodeUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL || "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
+    nodeUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL || "https://starknet-mainnet.public.blastapi.io/rpc/v0_7",
 })
 
 // Contract addresses for common tokens and NFTs
