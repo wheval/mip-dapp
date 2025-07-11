@@ -21,6 +21,8 @@ import { useCallAnyContract } from "@chipi-pay/chipi-sdk"
 import { getWalletData } from "@/src/app/onboarding/_actions"
 import { toast } from "@/src/hooks/use-toast"
 import { useAuth } from "@clerk/nextjs"
+import { ipfsService, type IPFSMetadata } from "@/src/lib/ipfs-service"
+
 
 // Mediolano Protocol contract address
 const COLLECTION_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS || "0x04b67deb64d285d3de684246084e74ad25d459989b7336786886ec63a28e0cd4"
@@ -33,6 +35,9 @@ interface CollectionFormData {
   coverImage: string
   bannerImage: string
   contractType: string
+  externalUrl: string
+  visibility: string
+  tags: string[]
 }
 
 interface ImagePreview {
@@ -65,6 +70,9 @@ export default function CreateCollectionPage() {
     coverImage: "",
     bannerImage: "",
     contractType: "erc721",
+    externalUrl: "",
+    visibility: "public",
+    tags: [],
   })
 
   const [coverPreview, setCoverPreview] = useState<ImagePreview | null>(null)
@@ -82,6 +90,12 @@ export default function CreateCollectionPage() {
   const [txHash, setTxHash] = useState("")
   const [contractAddress, setContractAddress] = useState("")
   const [currentStep, setCurrentStep] = useState(0)
+  const [isUploadingToIPFS, setIsUploadingToIPFS] = useState(false)
+  const [ipfsHashes, setIpfsHashes] = useState<{
+    metadata?: string
+    coverImage?: string
+    bannerImage?: string
+  }>({})
 
     // Load wallet data
   useEffect(() => {
@@ -208,8 +222,55 @@ export default function CreateCollectionPage() {
     }
   }
 
-  // Create collection via factory contract
-  const createCollection = async (pin: string) => {
+  // Tags management
+  const [currentTag, setCurrentTag] = useState("")
+
+  const addTag = (tag: string) => {
+    const trimmedTag = tag.trim()
+    if (trimmedTag && !formData.tags.includes(trimmedTag) && formData.tags.length < 5) {
+      handleInputChange("tags", [...formData.tags, trimmedTag])
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
+    handleInputChange("tags", formData.tags.filter(tag => tag !== tagToRemove))
+  }
+
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setCurrentTag(value)
+
+    // Auto-add tag when comma is typed
+    if (value.includes(",")) {
+      const newTags = value.split(",").map(tag => tag.trim()).filter(tag => tag)
+      newTags.forEach(tag => addTag(tag))
+      setCurrentTag("")
+    }
+  }
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && currentTag.trim()) {
+      e.preventDefault()
+      addTag(currentTag)
+      setCurrentTag("")
+    }
+    
+    // Handle backspace to remove last tag when input is empty
+    if (e.key === "Backspace" && !currentTag && formData.tags.length > 0) {
+      removeTag(formData.tags[formData.tags.length - 1])
+    }
+  }
+
+
+  const creationSteps = [
+    { title: "Uploading to IPFS", description: "Storing metadata and images on IPFS" },
+    { title: "Preparing Collection", description: "Setting up your collection metadata" },
+    { title: "Deploying Contract", description: "Creating smart contract on Starknet" },
+    { title: "Finalizing Collection", description: "Making your collection live" },
+  ]
+
+  // Create collection with proper step tracking
+  const createCollectionWithStepTracking = async (pin: string) => {
     if (!walletData) {
       throw new Error("Wallet data not available")
     }
@@ -220,62 +281,102 @@ export default function CreateCollectionPage() {
       throw new Error("No bearer token found")
     }
 
-    console.log('Creating collection metadata...')
+    setIsUploadingToIPFS(true)
+    let uploadedImageHashes = { ...ipfsHashes }
 
-    // Create collection metadata
-    const collectionMetadata = {
-      name: formData.name,
-      description: formData.description,
-      image: coverPreview?.url || "",
-      banner_image: bannerPreview?.url || "",
-      external_link: "",
-      seller_fee_basis_points: 250, // 2.5% royalty
-      fee_recipient: walletData.publicKey,
-      attributes: [
-        { trait_type: "Category", value: formData.category },
-        { trait_type: "Contract Type", value: formData.contractType },
-        { trait_type: "Creator", value: walletData.publicKey },
+    try {
+      console.log('Uploading images to IPFS...')
+
+      // Upload cover image to IPFS if it's a file
+      if (coverPreview?.type === "file" && coverPreview.file) {
+        const coverUpload = await ipfsService.uploadFile(coverPreview.file)
+        uploadedImageHashes.coverImage = coverUpload.hash
+      }
+
+      // Upload banner image to IPFS if it's a file  
+      if (bannerPreview?.type === "file" && bannerPreview.file) {
+        const bannerUpload = await ipfsService.uploadFile(bannerPreview.file)
+        uploadedImageHashes.bannerImage = bannerUpload.hash
+      }
+
+      // Create collection metadata with IPFS hashes
+      const collectionMetadata: IPFSMetadata = {
+        name: formData.name,
+        description: formData.description,
+        image: uploadedImageHashes.coverImage 
+          ? `ipfs://${uploadedImageHashes.coverImage}` 
+          : (coverPreview?.url || ""),
+        banner_image: uploadedImageHashes.bannerImage 
+          ? `ipfs://${uploadedImageHashes.bannerImage}` 
+          : (bannerPreview?.url || ""),
+        external_url: formData.externalUrl || "",
+        seller_fee_basis_points: 250, // 2.5% royalty
+        fee_recipient: walletData.publicKey,
+        attributes: [
+          { trait_type: "Category", value: formData.category },
+          { trait_type: "Contract Type", value: formData.contractType },
+          { trait_type: "Creator", value: walletData.publicKey },
+        ],
+        category: formData.category,
+        visibility: formData.visibility,
+        type: `${"collection"}/${formData.contractType}`,
+        tags: formData.tags.map(tag => tag.trim()).filter(tag => tag),
+        created_at: new Date().toISOString()
+      }
+
+      const metadataUpload = await ipfsService.uploadMetadata(
+        collectionMetadata, 
+        `${formData.name} Collection Metadata`
+      )
+      uploadedImageHashes.metadata = metadataUpload.hash
+
+      // IPFS upload complete - update state and move to step 2
+      setIpfsHashes(uploadedImageHashes)
+      setIsUploadingToIPFS(false)
+      setCurrentStep(1) 
+      await new Promise((resolve) => setTimeout(resolve, 800))
+
+      // Step 3: Contract deployment
+      setCurrentStep(2)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      const callData = [
+        formData.name, // collection name
+        "MIPCO", // symbol
+        `ipfs://${metadataUpload.hash}`, // base URI with IPFS hash
       ]
+      
+      const call = {
+        contractAddress: COLLECTION_FACTORY_ADDRESS,
+        entrypoint: "create_collection",
+        calldata: callData
+      }
+
+      // Create collection using Chipi SDK
+      const contractCall = {
+        encryptKey: pin,
+        bearerToken: token,
+        wallet: {
+          publicKey: walletData.publicKey,
+          encryptedPrivateKey: walletData.encryptedPrivateKey
+        },
+        contractAddress: COLLECTION_FACTORY_ADDRESS,
+        calls: [call]
+      }
+
+      const result = await callAnyContractAsync(contractCall)
+      
+      // Step 4: Finalizing
+      setCurrentStep(3)
+      await new Promise((resolve) => setTimeout(resolve, 600))
+
+      return result
+    } catch (error) {
+      setIsUploadingToIPFS(false)
+      console.error('IPFS upload or collection creation failed:', error)
+      throw error
     }
-
-    console.log('Creating collection on factory contract...')
-
-    // Create collection using Chipi SDK
-    const contractCall = {
-      encryptKey: pin,
-      wallet: {
-        publicKey: walletData.publicKey,
-        encryptedPrivateKey: walletData.encryptedPrivateKey
-      },
-      contractAddress: COLLECTION_FACTORY_ADDRESS,
-      calls: [
-        {
-          contractAddress: COLLECTION_FACTORY_ADDRESS,
-          entrypoint: "createCollection",
-          calldata: [
-            formData.name, // collection name
-            "MIPCO", // symbol
-            JSON.stringify(collectionMetadata), // metadata
-          ]
-        }
-      ],
-      bearerToken: token,
-    }
-
-    const result = await callAnyContractAsync(contractCall)
-
-    console.log('Collection creation result:', result)
-    return result
   }
-
-
-
-  const creationSteps = [
-    { title: "Preparing Collection", description: "Setting up your collection metadata" },
-    { title: "Deploying Contract", description: "Creating smart contract on Starknet" },
-    { title: "Configuring Settings", description: "Applying your collection preferences" },
-    { title: "Finalizing Collection", description: "Making your collection live" },
-  ]
 
   // Handle collection creation with PIN
   const handleCreateCollectionWithPin = async (pin: string) => {
@@ -310,13 +411,11 @@ export default function CreateCollectionPage() {
     }
 
     try {
-      // Show creation steps UI
-      for (let i = 0; i < creationSteps.length; i++) {
-        setCurrentStep(i)
-        await new Promise((resolve) => setTimeout(resolve, 600))
-      }
-
-      const result = await createCollection(pin)
+     
+      setCurrentStep(0)
+      
+      
+      const result = await createCollectionWithStepTracking(pin)
 
       if (result) {
         // Clear form on success
@@ -327,21 +426,24 @@ export default function CreateCollectionPage() {
           coverImage: "",
           bannerImage: "",
           contractType: "erc721",
+          externalUrl: "",
+          visibility: "public",
+          tags: [],
         })
         setCoverPreview(null)
         setBannerPreview(null)
+        setCurrentTag("")
 
         setTxHash(result)
         setContractAddress(`0x${Math.random().toString(16).slice(2, 42)}`) // In production, parse from transaction receipt
 
         toast({
           title: "🎉 Collection Created!",
-          description: "Your collection contract has been deployed successfully",
+          description: `Your collection contract has been deployed successfully. Metadata stored on IPFS: ${ipfsHashes.metadata?.slice(0, 12)}...`,
         })
 
         setIsPinSubmitting(false)
         
-        // Optional: redirect after successful deployment
         setTimeout(() => {
           router.push("/collections")
         }, 3000)
@@ -444,6 +546,73 @@ export default function CreateCollectionPage() {
                       onChange={(e) => handleInputChange("description", e.target.value)}
                       className="bg-background/50 min-h-[100px]"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="externalUrl">External URL</Label>
+                      <Input
+                        id="externalUrl"
+                        placeholder="https://your-collection-website.com"
+                        value={formData.externalUrl}
+                        onChange={(e) => handleInputChange("externalUrl", e.target.value)}
+                        className="bg-background/50"
+                      />
+                      <p className="text-xs text-muted-foreground">Link to your collection's website or external page</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Visibility</Label>
+                      <RadioGroup
+                        value={formData.visibility}
+                        onValueChange={(value) => handleInputChange("visibility", value)}
+                        className="flex space-x-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="public" id="public" />
+                          <Label htmlFor="public">Public</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="private" id="private" />
+                          <Label htmlFor="private">Private</Label>
+                        </div>
+                      </RadioGroup>
+                      <p className="text-xs text-muted-foreground">Choose collection visibility</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tags">Tags</Label>
+                    <div className="flex flex-wrap items-center gap-2 px-3 py-2 bg-background/50 rounded-lg border border-muted-foreground/25">
+                      {formData.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="flex items-center bg-primary/10 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full"
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => removeTag(tag)}
+                            className="ml-1 text-primary hover:text-primary-dark"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                      <input
+                        id="tags"
+                        type="text"
+                        placeholder={formData.tags.length >= 5 ? "Maximum 5 tags reached" : "Add tags (e.g., #music, #art, #collectible) (max 5)"}
+                        value={currentTag}
+                        onChange={handleTagInputChange}
+                        onKeyDown={handleTagInputKeyDown}
+                        disabled={formData.tags.length >= 5}
+                        className="flex-1 text-sm bg-transparent outline-none border-none disabled:opacity-50"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                        Tags help users discover your collection ({formData.tags.length}/5)
+                      </p>
                   </div>
                 </CardContent>
               </Card>
@@ -651,7 +820,7 @@ export default function CreateCollectionPage() {
                   bannerPreview={bannerPreview}
                   isFormValid={isFormValid}
                   onShowPinDialog={() => setShowPinDialog(true)}
-                  isCreating={isPinSubmitting}
+                  isCreating={isPinSubmitting || isUploadingToIPFS}
                   creationComplete={!!txHash}
                   currentStep={currentStep}
                   creationSteps={creationSteps}
