@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { collectionsService, type CollectionFilters, type PaginatedCollections } from '@/src/lib/collections-service'
+import { collectionsService, type CollectionFilters, type PaginatedCollections } from '@/src/services/collections.service'
 import type { Collection } from '@/src/types/asset'
 import { collections as mockCollections } from '@/src/lib/mock-data'
 
-export type { CollectionFilters } from '@/src/lib/collections-service'
+export type { CollectionFilters } from '@/src/services/collections.service'
 
 export interface UseCollectionsOptions {
     filters?: CollectionFilters
@@ -247,7 +247,7 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
     useEffect(() => {
         console.log('useEffect triggered - fetching collections...')
         fetchCollections(1, false)
-    }, [limit, userAddress])
+    },  [fetchCollections])  
 
     useEffect(() => {
         fetchUserCollections()

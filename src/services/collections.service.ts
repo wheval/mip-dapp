@@ -1,12 +1,12 @@
 import { RpcProvider, Contract, CallData, num, validateAndParseAddress } from "starknet"
-import { starknetService } from "./starknet-service"
+import { starknetService } from "./starknet.service"
 import type { Collection, AssetIP } from "@/src/types/asset"
 import { ip_collection_abi } from "@/src/abi/ip_collection"
 
 // MIP Protocol Contract ABI for collections
-const MIP_COLLECTIONS_ABI = ip_collection_abi
+const MIP_COLLECTIONS_ABI = ip_collection_abi;
 // MIP Protocol Contract Address (from environment or default)
-const MIP_COLLECTIONS_CONTRACT = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS 
+const MIP_COLLECTIONS_CONTRACT = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS;
 
 export interface MIPCollection {
     id: string
@@ -126,9 +126,8 @@ export class CollectionsService {
                 }
             }
 
-            // Start with a range of collection IDs to check
-            // In production, this should be tracked through events or a dedicated registry
-            const maxCollectionId = 100 // Adjust this range as needed
+            // this should be tracked through events or a dedicated registry
+            const maxCollectionId = 50
             
             const collectionCheckPromises = Array.from({ length: maxCollectionId }, (_, i) => {
                 const collectionId = i + 1
@@ -700,9 +699,7 @@ export class CollectionsService {
     }
 
     private async parseCollectionData(data: ContractCollection, index: number): Promise<Collection | null> {
-        try {
-            console.log("Parsing collection data:", data)
-            
+        try {           
             // Start with basic collection structure using contract data
             // Based on the ABI, Collection struct has: name, symbol, base_uri, owner, is_active
             let collection: Collection = {
