@@ -14,3 +14,4 @@ export const provider = new RpcProvider({
     process.env.NEXT_PUBLIC_STARKNET_RPC_URL ||
     "https://starknet-mainnet.public.blastapi.io/rpc/v0_7",
 });
+export const IPFS_URL = process.env.NEXT_PUBLIC_PINATA_HOST!;
