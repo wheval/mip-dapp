@@ -2,7 +2,7 @@
 
 import * as Yup from "yup";
 import type React from "react";
-import { useState, useRef, useCallback, useEffect, Fragment } from "react";
+import { useState, useRef, useCallback, Fragment } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
@@ -54,7 +54,6 @@ import {
   licenseType,
   quickTags,
 } from "@/src/services/static-data";
-import { AssetData } from "@/src/types/asset";
 import { CONTRACTS } from "@/src/services/constant";
 import { SelectInput } from "../ui/forms/select-input";
 import { handleNewTagChange, handleNewTagKeyDown, tryAddTag } from "./util";
@@ -98,36 +97,12 @@ export default function CreateAssetView() {
   // Upload and media state
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
-  // Wallet and minting state
-
   const [showPinDialog, setShowPinDialog] = useState(false);
   const [isPinSubmitting, setIsPinSubmitting] = useState(false);
   const [pinError, setPinError] = useState("");
   const [txHash, setTxHash] = useState("");
   const [tokenId, setTokenId] = useState("");
-  const [assetData] = useState<AssetData>({
-    // Essential fields - empty by default for user input
-    title: "",
-    description: "",
-    mediaUrl: "",
-    externalUrl: "",
 
-    // Advanced fields with smart defaults
-    type: "post", // Default to "Post" like social media
-    tags: [],
-    author: "Anonymous Creator",
-    collection: "mip-collection", // Default to MIP Collection
-    licenseType: "all-rights",
-    licenseDetails: "",
-    ipVersion: "1.0",
-    commercialUse: false,
-    modifications: false,
-    attribution: true,
-    registrationDate: new Date().toISOString().split("T")[0],
-    protectionStatus: "Protected",
-    protectionScope: "Global",
-    protectionDuration: "Life + 70 years",
-  });
   const initialValues = {
     title: "",
     description: "",
@@ -195,7 +170,7 @@ export default function CreateAssetView() {
           { trait_type: "IP Version", value: values.ipVersion },
           {
             trait_type: "Protection Status",
-            value: assetData.protectionStatus,
+            value: values.protectionStatus,
           },
           { trait_type: "Protection Scope", value: values.protectionScope },
           { trait_type: "Tags", value: values.tags.join(", ") },
@@ -236,7 +211,7 @@ export default function CreateAssetView() {
             contractAddress: MEDIOLANO_CONTRACT,
             entrypoint: "mint",
             calldata: [
-              publicKey, // to (recipient)
+              values.collection, //
               result.cid, // tokenURI (metadata)
             ],
           },
