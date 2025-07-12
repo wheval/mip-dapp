@@ -45,8 +45,7 @@ import {
 import { toast } from "@/src/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useCallAnyContract } from "@chipi-pay/chipi-sdk";
-import { getWalletData } from "@/src/app/onboarding/_actions";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { FormWrapper } from "../ui/forms/wrapper";
 import { TextAreaInput, TextInput } from "../ui/forms/input";
 import {
@@ -86,6 +85,10 @@ export default function CreateAssetView() {
   const router = useRouter();
   const uploaderRef = useRef<MediaUploaderRef>(null);
   const { getToken } = useAuth();
+  const { user } = useUser();
+  const publicKey = user?.publicMetadata?.publicKey as string;
+  const encryptedPrivateKey = user?.publicMetadata
+    ?.encryptedPrivateKey as string;
   const {
     callAnyContractAsync,
     isLoading: isMinting,
@@ -96,16 +99,12 @@ export default function CreateAssetView() {
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   // Wallet and minting state
-  const [walletData, setWalletData] = useState<{
-    publicKey: string;
-    encryptedPrivateKey: string;
-  } | null>(null);
+
   const [showPinDialog, setShowPinDialog] = useState(false);
   const [isPinSubmitting, setIsPinSubmitting] = useState(false);
   const [pinError, setPinError] = useState("");
   const [txHash, setTxHash] = useState("");
   const [tokenId, setTokenId] = useState("");
-
   const [assetData] = useState<AssetData>({
     // Essential fields - empty by default for user input
     title: "",
@@ -153,36 +152,9 @@ export default function CreateAssetView() {
     newTag: "",
   };
 
-  // Load wallet data on component mount
-  useEffect(() => {
-    const loadWallet = async () => {
-      try {
-        const data = await getWalletData();
-        if (data?.publicKey && data?.encryptedPrivateKey) {
-          setWalletData(data);
-        } else {
-          toast({
-            title: "Wallet Not Found",
-            description: "Please complete onboarding to create your wallet",
-            variant: "destructive",
-          });
-          router.push("/onboarding");
-        }
-      } catch (error) {
-        console.error("Error loading wallet:", error);
-        toast({
-          title: "Error Loading Wallet",
-          description: "Failed to load wallet data",
-          variant: "destructive",
-        });
-      }
-    };
-    loadWallet();
-  }, [router]);
-
   // Handle PIN submission for minting
   const handlePinSubmit = async (pin: string, values: typeof initialValues) => {
-    if (!walletData) {
+    if (!user) {
       setPinError("Wallet data not available");
       return;
     }
@@ -255,8 +227,8 @@ export default function CreateAssetView() {
         encryptKey: pin,
         bearerToken: token,
         wallet: {
-          publicKey: walletData.publicKey,
-          encryptedPrivateKey: walletData.encryptedPrivateKey,
+          publicKey: publicKey,
+          encryptedPrivateKey: encryptedPrivateKey,
         },
         contractAddress: MEDIOLANO_CONTRACT,
         calls: [
@@ -264,7 +236,7 @@ export default function CreateAssetView() {
             contractAddress: MEDIOLANO_CONTRACT,
             entrypoint: "mint",
             calldata: [
-              walletData.publicKey, // to (recipient)
+              publicKey, // to (recipient)
               result.cid, // tokenURI (metadata)
             ],
           },
@@ -305,7 +277,7 @@ export default function CreateAssetView() {
   };
 
   const handleCreate = useCallback(async () => {
-    if (!walletData) {
+    if (!user) {
       toast({
         title: "Wallet Not Available",
         description: "Please ensure your wallet is properly loaded",
@@ -316,7 +288,7 @@ export default function CreateAssetView() {
 
     // Show PIN dialog for authentication
     setShowPinDialog(true);
-  }, [walletData]);
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-background">
@@ -774,7 +746,7 @@ export default function CreateAssetView() {
                                 Ready to Mint?
                               </h3>
                               <p className="text-sm text-muted-foreground">
-                                {walletData
+                                {user
                                   ? "Your wallet is connected and ready"
                                   : "Loading wallet..."}
                               </p>
@@ -782,11 +754,11 @@ export default function CreateAssetView() {
                             <div className="flex items-center space-x-2">
                               <div
                                 className={`w-3 h-3 rounded-full ${
-                                  walletData ? "bg-green-500" : "bg-yellow-500"
+                                  user ? "bg-green-500" : "bg-yellow-500"
                                 } animate-pulse`}
                               ></div>
                               <span className="text-sm text-muted-foreground">
-                                {walletData ? "Ready" : "Loading"}
+                                {user ? "Ready" : "Loading"}
                               </span>
                             </div>
                           </div>
@@ -799,7 +771,7 @@ export default function CreateAssetView() {
                               <Button
                                 type="submit"
                                 onClick={handleCreate}
-                                disabled={isMinting || !walletData || !isValid}
+                                disabled={isMinting || !user || !isValid}
                                 className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50"
                               >
                                 {isMinting ? (
