@@ -18,8 +18,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "MIP Dapp",
-  description: "Frictionless tokenization. Powered on Starknet",
+  title: "MIP",
+  description: "Own your content! Create, manage, and share your IP onchain.",
 };
 
 export default function RootLayout({
