@@ -112,8 +112,8 @@ export default function OnboardingComponent() {
           className="backdrop-blur-md bg-blue-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-blue-300/20 text-center"
         >
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-300 mx-auto mb-4"></div>
-          <div className=" font-semibold">Creating your wallet...</div>
-          <p className="text-sm  mt-2">Please wait while we set up your account</p>
+          <div className=" font-semibold">Creating your account...</div>
+          <p className="text-sm  mt-2">Setting up your self-custody wallet.</p>
         </motion.div>
       </main>
     );
@@ -129,7 +129,7 @@ export default function OnboardingComponent() {
           className="backdrop-blur-md bg-red-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-red-300/20 text-center"
         >
           <div className="text-red-300 font-semibold text-xl mb-2">⚠️ Error</div>
-          <p className="text-red-200/70">Failed to create wallet. Please try again.</p>
+          <p className="text-red-200/70">Failed to create wallet. Please try again or contact our support.</p>
           <button
             onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-red-400/20 hover:bg-red-400/30 transition  rounded-lg font-medium"
@@ -169,7 +169,7 @@ export default function OnboardingComponent() {
                 Create your PIN
               </label>
               <p className="text-xs  mb-3">
-                This PIN will encrypt your private key. Choose 6-12 numbers you'll remember.
+                This code will protect and secure your assets. Choose 6-12 numbers that you'll remember.
               </p>
               <input
                 type="password"
@@ -197,7 +197,7 @@ export default function OnboardingComponent() {
               )}
               {!pinError && (
                 <p className="mt-2  text-xs">
-                  💡 Tip: Use a PIN you can easily remember but others can't guess
+                  💡 Tip: Use a PIN code you can easily remember but others can't guess
                 </p>
               )}
             </div>
@@ -210,7 +210,7 @@ export default function OnboardingComponent() {
               : 'bg-blue-400/20 hover:bg-blue-400/30  hover:shadow-lg transform hover:scale-[1.02]'
               }`}
           >
-            {isSubmitting ? 'Creating Wallet...' : 'Create Wallet'}
+            {isSubmitting ? 'Creating wallet account...' : 'Create wallet account'}
           </button>
         </form>
       </motion.div>
