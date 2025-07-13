@@ -31,7 +31,7 @@ import { useTransfer } from "@chipi-pay/chipi-sdk"
 import { getWalletData } from "@/src/app/onboarding/_actions"
 import { useAuth } from "@clerk/nextjs"
 import { useWalletAssets, useTransactionFeeEstimate } from "@/src/hooks/use-wallet-assets"
-import { starknetService } from "@/src/lib/starknet-service"
+import { starknetService } from "@/src/services/starknet.service"
 
 // Mediolano Protocol contract address (replace with actual contract)
 const MEDIOLANO_CONTRACT = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MIP || "0x04b67deb64d285d3de684246084e74ad25d459989b7336786886ec63a28e0cd4"

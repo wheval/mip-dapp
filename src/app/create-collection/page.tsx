@@ -21,7 +21,7 @@ import { useCallAnyContract } from "@chipi-pay/chipi-sdk"
 import { getWalletData } from "@/src/app/onboarding/_actions"
 import { toast } from "@/src/hooks/use-toast"
 import { useAuth } from "@clerk/nextjs"
-import { ipfsService, type IPFSMetadata } from "@/src/lib/ipfs-service"
+import { ipfsService, type IPFSMetadata } from "@/src/services/ipfs.service"
 
 
 // Mediolano Protocol contract address

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { IPFSMetadata, IPFSUploadResponse } from '@/lib/ipfs-service'
+import { IPFSMetadata, IPFSUploadResponse } from '@/src/services/ipfs.service'
 
 const PINATA_API_KEY = process.env.PINATA_API_KEY
 const PINATA_SECRET_KEY = process.env.PINATA_SECRET_KEY
