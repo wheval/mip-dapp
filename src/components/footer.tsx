@@ -161,6 +161,13 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold text-foreground">Resources</h4>
             <nav className="space-y-3">
+
+              <Link
+                  href="/faq"
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  Frequently Asked Questions
+                </Link>
               
                 <Link
                   href="https://github.com/mediolano-app/mip-dapp"
@@ -173,7 +180,7 @@ export function Footer() {
                   href="https://mediolano.xyz"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  Mediolano Website
+                  Discover Website
                 </Link>
 
                 <Link
