@@ -34,7 +34,7 @@ import { collections, timelineAssets } from "@/src/lib/mock-data"
 import { useCollection } from "@/src/hooks/use-collections"
 import { collectionsService } from "@/src/services/collections.service"
 import type { AssetIP } from "@/src/types/asset"
-import { formatDate } from "@/src/lib/utils"
+import { formatDate, shortenAddress } from "@/src/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -64,7 +64,7 @@ export default function CollectionPage({ params }: CollectionPageProps) {
   
   const { collection, isLoading, error, refetch } = useCollection(slug)
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchAssets = async () => {
       if (!collection?.id) return
       
@@ -255,13 +255,16 @@ export default function CollectionPage({ params }: CollectionPageProps) {
                         <div className="flex items-center space-x-2">
                           <Link href={`/creator/${collection.creator.username}`}>
                             <span className="font-medium hover:underline text-black dark:text-white">
-                              {collection.creator.name}
+                              {shortenAddress(collection.creator.wallet)} 
+                              {/* use the name attached to thi address ot use the agddress shotrtnend */}
                             </span>
                           </Link>
                           {collection.creator.verified && <CheckCircle className="w-4 h-4 text-blue-400" />}
                         </div>
-                        <div className="text-sm text-gray-700 dark:text-gray-400">
-                          Created {formatDate(collection.createdAt)}
+                        <div className="flex items-center space-x-2">
+                          <div className="text-sm text-gray-700 dark:text-gray-400">
+                            Created {formatDate(collection.createdAt)}
+                          </div>
                         </div>
                       </div>
                     </div>

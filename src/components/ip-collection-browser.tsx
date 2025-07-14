@@ -24,7 +24,8 @@ import {
     RefreshCw,
     Star
 } from "lucide-react"
-import { useCollections, type CollectionFilters } from "@/src/hooks/use-collections"
+import { useCollections} from "@/src/hooks/use-collections"
+import { CollectionFilters } from "@/src/services/collections.service"
 import type { Collection } from "@/src/types/asset"
 import Link from "next/link"
 import { useRouter } from "next/navigation"

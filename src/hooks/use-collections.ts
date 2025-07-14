@@ -3,7 +3,6 @@ import { collectionsService, type CollectionFilters, type PaginatedCollections }
 import type { Collection } from '@/src/types/asset'
 import { collections as mockCollections } from '@/src/lib/mock-data'
 
-export type { CollectionFilters } from '@/src/services/collections.service'
 
 export interface UseCollectionsOptions {
     filters?: CollectionFilters
@@ -133,18 +132,15 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
         
         // Prevent duplicate concurrent calls
         if (fetchingRef.current) {
-            console.log('Fetch already in progress, skipping...')
             return
         }
 
         // Check if this is the same request as last time
         if (fetchKey === lastFetchParamsRef.current && !append) {
-            console.log('Same fetch params as last time, skipping...')
             return
         }
 
         if (errorCountRef.current >= MAX_RETRIES) {
-            console.log(`Max retries (${MAX_RETRIES}) reached, stopping fetch attempts`)
             setError('Unable to load collections. The service may be temporarily unavailable.')
             return
         }
@@ -158,7 +154,6 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
         setError(null)
 
         try {
-            console.log('Fetching collections...', userAddress ? `(wallet: ${userAddress})` : '(no wallet)')
             const result = await collectionsService.getCollections({}, pageNum, limit)
             
             if (append) {
@@ -198,7 +193,6 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
     }, [hasMore, page, fetchCollections])
 
     const setFilters = useCallback((newFilters: CollectionFilters) => {
-        console.log('Setting new filters (client-side only):', newFilters)
         setCurrentFilters(newFilters)
     }, [])
 
@@ -209,7 +203,6 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
         }
 
         try {
-            console.log('Fetching user collections for:', userAddress)
             const userCollectionsResult = await collectionsService.getUserCollections(userAddress)
             setUserCollections(userCollectionsResult)
         } catch (err) {
@@ -224,7 +217,6 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
     }, [fetchCollections])
 
     const refetch = useCallback(async () => {
-        console.log('Manual refetch requested')
         setPage(1)
         errorCountRef.current = 0
         lastFetchParamsRef.current = ''
@@ -245,7 +237,6 @@ export function useCollections(options: UseCollectionsOptions = {}): UseCollecti
     }, [fetchCollections, fetchUserCollections, userAddress])
 
     useEffect(() => {
-        console.log('useEffect triggered - fetching collections...')
         fetchCollections(1, false)
     },  [fetchCollections])  
 

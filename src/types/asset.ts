@@ -73,6 +73,14 @@ export interface Collection {
   isFeatured: boolean
   blockchain: string
   contractAddress?: string
+  // IPFS/contract metadata fields
+  externalUrl?: string
+  sellerFeeBasisPoints?: number
+  feeRecipient?: string
+  attributes?: Array<{ trait_type: string; value: string }>
+  type?: string
+  visibility?: string
+  requireApproval?: boolean
 }
 
 export interface Creator {
