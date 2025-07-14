@@ -82,6 +82,8 @@ export interface CollectionMetadata {
     type?: string
     tags?: string[]
     created_at?: string
+    createdAt?: string
+    timestamp?: string
     creator?: string
 }
 
@@ -737,6 +739,7 @@ export class CollectionsService {
     private async parseTokenToAsset(token: ContractToken, tokenIdentifier: string): Promise<AssetIP | null> {
         try {
             // Start with basic asset structure
+            let registrationDate: string = "";
             let asset: AssetIP = {
                 id: tokenIdentifier,
                 slug: `asset-${tokenIdentifier}`,
@@ -756,7 +759,7 @@ export class CollectionsService {
                 commercialUse: true,
                 modifications: true,
                 attribution: true,
-                registrationDate: new Date().toISOString(),
+                registrationDate: "", // will be set after IPFS metadata
                 protectionStatus: "Active",
                 protectionScope: "Global",
                 protectionDuration: "Perpetual",
@@ -839,6 +842,14 @@ export class CollectionsService {
                                 asset.attribution = attributionAttr.value.toLowerCase() === 'true'
                             }
                         }
+                        // Prefer created_at, createdAt, or timestamp from IPFS metadata for registrationDate
+                        if (metadata.created_at && !isNaN(Date.parse(metadata.created_at))) {
+                            registrationDate = metadata.created_at;
+                        } else if (metadata.createdAt && !isNaN(Date.parse(metadata.createdAt))) {
+                            registrationDate = metadata.createdAt;
+                        } else if (metadata.timestamp && !isNaN(Date.parse(metadata.timestamp))) {
+                            registrationDate = metadata.timestamp;
+                        }
                     } else {
                         // If metadata is null, the metadata_uri might be a direct image URL
                         console.log(`No JSON metadata found for token ${tokenIdentifier}, treating metadata_uri as direct image`)
@@ -855,7 +866,8 @@ export class CollectionsService {
                     asset.mediaUrl = processedImageUrl
                 }
             }
-
+            // Set registrationDate from IPFS metadata if available, otherwise fallback to undefined
+            asset.registrationDate = registrationDate;
             return asset
         } catch (error) {
             console.error(`Error parsing token ${tokenIdentifier}:`, error)
@@ -1112,18 +1124,21 @@ export class CollectionsService {
     private getIPFSGatewayUrl(ipfsHash: string): string {
         // Remove ipfs:// prefix if present
         const cleanHash = ipfsHash.replace('ipfs://', '')
-        
+        // Use custom gateway from env if set
+        const customGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
+        if (customGateway) {
+            // Ensure trailing slash and /ipfs/ path
+            return customGateway.replace(/\/$/, '') + '/ipfs/' + cleanHash;
+        }
         // List of reliable IPFS gateways (in order of preference)
         const gateways = [
             'https://ipfs.io/ipfs/',
             'https://gateway.pinata.cloud/ipfs/',
-            'https://dweb.link/ipfs/',
             'https://cloudflare-ipfs.com/ipfs/',
             'https://ipfs.fleek.co/ipfs/'
-        ]
-        
-        // For now, use the primary gateway, but this could be extended to try multiple gateways
-        return gateways[0] + cleanHash
+        ];
+        // Use the first fallback gateway
+        return gateways[0] + cleanHash;
     }
 
     /**
@@ -1140,7 +1155,6 @@ export class CollectionsService {
         // Handle IPFS URLs with different gateways (production might use different gateways)
         if (imageData.includes('ipfs.io/ipfs/') || 
             imageData.includes('gateway.pinata.cloud/ipfs/') ||
-            imageData.includes('dweb.link/ipfs/') ||
             imageData.includes('cloudflare-ipfs.com/ipfs/')) {
             return imageData
         }
@@ -1181,7 +1195,7 @@ export class CollectionsService {
         try {
             // Default to contract data
             let creatorAddress = data.owner || "unknown"
-            let createdAt = new Date().toISOString()
+            let createdAt: string = "";
 
             // Start with contract data
             let collection: Collection = {
@@ -1204,8 +1218,8 @@ export class CollectionsService {
                 likes: undefined,
                 floorPrice: undefined,
                 totalVolume: undefined,
-                createdAt: createdAt,
-                updatedAt: createdAt,
+                createdAt: "", // will be set after IPFS metadata
+                updatedAt: "",
                 category: "digital art", // Default fallback, will be updated from IPFS metadata
                 tags: "",
                 isPublic: Boolean(data.is_active),
@@ -1232,11 +1246,17 @@ export class CollectionsService {
                                 wallet: creatorAddress || "0x0"
                             }
                         }
-                        // Use IPFS createdAt if available
-                        if (metadata.created_at) {
-                            createdAt = metadata.created_at
-                            collection.createdAt = createdAt
-                            collection.updatedAt = createdAt
+                        // Use IPFS createdAt if available (try created_at, createdAt, timestamp)
+                        if (metadata.created_at && !isNaN(Date.parse(metadata.created_at))) {
+                            createdAt = metadata.created_at;
+                        } else if (metadata.createdAt && !isNaN(Date.parse(metadata.createdAt))) {
+                            createdAt = metadata.createdAt;
+                        } else if (metadata.timestamp && !isNaN(Date.parse(metadata.timestamp))) {
+                            createdAt = metadata.timestamp;
+                        }
+                        if (createdAt) {
+                            collection.createdAt = createdAt;
+                            collection.updatedAt = createdAt;
                         }
                         // ...existing IPFS metadata parsing logic...
                         collection.name = metadata.name || collection.name
@@ -1289,7 +1309,13 @@ export class CollectionsService {
                     collection.assets = Number(stats.total_minted || 0)
                 }
             } catch (statsError) {}
-
+            
+            if (!collection.createdAt) {
+                collection.createdAt = "";
+            }
+            if (!collection.updatedAt) {
+                collection.updatedAt = collection.createdAt;
+            }
             return collection
         } catch (error) {
             return null

@@ -53,26 +53,26 @@ export interface Collection {
   coverImage: string;
   bannerImage?: string;
   creator: {
-    id: string
-    username: string
-    name: string
-    avatar: string
-    verified: boolean
-    wallet: string
-  }
-  assets: number
-  views?: number
-  likes?: number
-  floorPrice?: string
-  totalVolume?: string
-  createdAt: string
-  updatedAt: string
-  category: string
-  tags: string
-  isPublic: boolean
-  isFeatured: boolean
-  blockchain: string
-  contractAddress?: string
+    id: string;
+    username: string;
+    name: string;
+    avatar: string;
+    verified: boolean;
+    wallet: string;
+  };
+  assets: number;
+  views?: number;
+  likes?: number;
+  floorPrice?: string;
+  totalVolume?: string;
+  createdAt: string;
+  updatedAt: string;
+  category: string;
+  tags: string;
+  isPublic: boolean;
+  isFeatured: boolean;
+  blockchain: string;
+  contractAddress?: string;
   // IPFS/contract metadata fields
   externalUrl?: string
   sellerFeeBasisPoints?: number
@@ -189,4 +189,28 @@ export interface IPortfolioReturnTypeObj {
   tokenURI: string;
   metadata: Metadata;
   type: string;
+}
+
+export interface AssetData {
+  // Essential fields
+  title: string;
+  description: string;
+  mediaUrl: string;
+  externalUrl: string;
+
+  // Advanced fields with defaults
+  type: string;
+  tags: string[];
+  author: string;
+  collection: string;
+  licenseType: string;
+  licenseDetails: string;
+  ipVersion: string;
+  commercialUse: boolean;
+  modifications: boolean;
+  attribution: boolean;
+  registrationDate: string;
+  protectionStatus: string;
+  protectionScope: string;
+  protectionDuration: string;
 }

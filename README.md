@@ -61,6 +61,32 @@ Ccontributions are **greatly appreciated**. If you have a feature or suggestion 
 
 ## Getting Started
 
+### IPFS Configuration
+
+The MIP dApp now supports IPFS storage for collection metadata and images. To enable IPFS functionality, you'll need to configure server-side environment variables:
+
+Create a `.env.local` file in your project root and add:
+
+```bash
+# Pinata IPFS Service Configuration (recommended)
+# Note: These are server-side only - do NOT use NEXT_PUBLIC_ prefix
+PINATA_JWT=your_pinata_jwt_token
+# OR use API key method
+PINATA_API_KEY=your_pinata_api_key
+PINATA_SECRET_KEY=your_pinata_secret_key
+
+# Optional: Custom IPFS Gateway (this one can be public)
+NEXT_PUBLIC_PINATA_GATEWAY=https://your-custom-gateway.com/ipfs/
+```
+
+#### Getting Pinata Credentials:
+
+1. Sign up for a free account at [pinata.cloud](https://pinata.cloud)
+2. Go to API Keys section in your dashboard
+3. Create a new API key with pinning permissions
+4. Use the JWT token (recommended) or API Key + Secret
+
+> **Note:** If IPFS is not configured, the app will fall back to development mode with simulated IPFS hashes for testing.
 
 ### Running locally
 
