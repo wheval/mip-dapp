@@ -38,14 +38,13 @@ import { SiTelegram } from "react-icons/si"
 
 const supportChannels = [
   {
-    title: "Live Chat",
-    description: "Connect with our team on Telegram",
+    title: "Community Chat",
+    description: "Connect with our community on Telegram",
     icon: MessageCircle,
     color: "bg-green-500",
     responseTime: "minutes",
     availability: "24/7",
-    bestFor: "Quick questions, urgent issues, real-time troubleshooting",
-    satisfaction: "98%",
+    bestFor: "Quick questions, urgent issues, real-time support",
     languages: ["English", "Portuguese"],
   },
   {
@@ -53,22 +52,10 @@ const supportChannels = [
     description: "Detailed assistance with comprehensive solutions",
     icon: Mail,
     color: "bg-blue-500",
-    responseTime: "< 1 hour",
+    responseTime: "hours",
     availability: "24/7",
     bestFor: "Complex issues, detailed explanations, documentation requests",
-    satisfaction: "96%",
     languages: ["English", "Spanish", "Portuguese"],
-  },
-  {
-    title: "Phone Support",
-    description: "Direct phone support for critical matters",
-    icon: Phone,
-    color: "bg-purple-500",
-    responseTime: "Immediate",
-    availability: "Business hours",
-    bestFor: "Urgent issues, enterprise customers, complex integrations",
-    satisfaction: "99%",
-    languages: ["English", "Spanish"],
   },
   {
     title: "Video Call",
@@ -78,8 +65,7 @@ const supportChannels = [
     responseTime: "Scheduled",
     availability: "Business hours",
     bestFor: "Integration help, training sessions, complex troubleshooting",
-    satisfaction: "99%",
-    languages: ["English"],
+    languages: ["English", "Portuguese"],
   },
 ]
 
@@ -219,28 +205,28 @@ const supportResources = [
     title: "Knowledge Base",
     description: "Comprehensive guides and tutorials",
     icon: BookOpen,
-    articles: "200+",
+    articles: "0",
     color: "bg-blue-500",
   },
   {
     title: "Video Tutorials",
     description: "Step-by-step video guides",
     icon: Video,
-    articles: "50+",
+    articles: "0",
     color: "bg-green-500",
   },
   {
     title: "API Documentation",
     description: "Complete API reference",
     icon: Code,
-    articles: "30+",
+    articles: "0",
     color: "bg-purple-500",
   },
   {
     title: "Community Forum",
     description: "Connect with other users",
     icon: Users,
-    articles: "1000+",
+    articles: "0",
     color: "bg-orange-500",
   },
 ]
@@ -284,7 +270,7 @@ export default function SupportPage() {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Get support for all your programmable IP needs. Our team is ready to assist the best we can.
+              Get support for all your programmable IP needs. Our team is ready to assist you with any questions, issues, or feedback you may have. Whether you're a creator, developer, or business, we're here to ensure your experience with MIP is smooth and successful. 
             </p>
 
             {/* Support Stats */}
@@ -317,7 +303,7 @@ export default function SupportPage() {
             <p className="text-muted-foreground">Multiple ways to get expert help when you need it</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
             {supportChannels.map((channel, index) => {
               const Icon = channel.icon
               return (
@@ -349,13 +335,7 @@ export default function SupportPage() {
                         <span className="text-sm text-muted-foreground">Availability:</span>
                         <span className="text-sm font-medium">{channel.availability}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Satisfaction:</span>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                          <span className="text-sm font-medium">{channel.satisfaction}</span>
-                        </div>
-                      </div>
+                     
                       <div className="pt-2 border-t border-border/50">
                         <span className="text-sm text-muted-foreground">Best for:</span>
                         <p className="text-sm font-medium mt-1">{channel.bestFor}</p>
@@ -468,7 +448,7 @@ export default function SupportPage() {
         <div className="text-center">
           <Card className="bg-gradient-to-r from-primary/5 via-purple-500/5 to-pink-500/5 border-border/50">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold text-foreground mb-4">How it works?</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-4">How MIP works?</h3>
               <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
                With MIP your intellectual property is protected by the blockchain, ensuring your assets are secure, verifiable, and globally recognized. Here’s how it works: 
               </p>
