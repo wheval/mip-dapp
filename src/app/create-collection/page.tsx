@@ -25,7 +25,7 @@ import { ipfsService, type IPFSMetadata } from "@/src/services/ipfs.service"
 
 
 // Mediolano Protocol contract address
-const COLLECTION_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS || "0x04b67deb64d285d3de684246084e74ad25d459989b7336786886ec63a28e0cd4"
+const COLLECTION_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS || "0x02f751e0c4f221ffcc5084af0d5f97af1d448670f57b48462d68318ea90e77e3"
 const TEMPLATE_TOKEN = process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME || ""
 
 interface CollectionFormData {

@@ -162,46 +162,43 @@ export function Footer() {
             <h4 className="font-semibold text-foreground">Resources</h4>
             <nav className="space-y-3">
 
-              <Link
+                <Link
                   href="/faq"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  Frequently Asked Questions
+                  FAQ
+                </Link>
+
+
+                <Link
+                  href="/support"
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  Support
                 </Link>
               
                 <Link
                   href="https://github.com/mediolano-app/mip-dapp"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  Github Repository
+                  OSS Repo
                 </Link>
 
-                <Link
-                  href="https://mediolano.xyz"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Discover Website
-                </Link>
 
                 <Link
-                  href="https://x.com/mediolanoapp"
+                  href="https://x.com/mip_app"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  X Mediolano
+                  MIP on X
                 </Link>
 
-                <Link
-                  href="https://www.linkedin.com/company/mediolano/"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  LinkedIn Mediolano
-                </Link>
+          
 
                 <Link
-                  href="https://t.me/mediolanoapp"
+                  href="https://instagram.com/ip.lounge"
                   className="block text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
-                  Telegram Mediolano
+                  IP Lounge
                 </Link>
             
             </nav>
