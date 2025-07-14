@@ -22,3 +22,14 @@ export const formatDate = (dateString: string): string => {
     return dateString
   }
 } 
+
+/**
+ * Shortens a wallet address to a specified number of characters
+ * @param address - The wallet address to shorten
+ * @param chars - The number of characters to keep on each side of the ellipsis
+ * @returns The shortened wallet address
+ */
+export const shortenAddress = (address: string, chars = 6): string => {
+    if (!address) return ""
+    return `${address.slice(0, chars)}...${address.slice(-chars)}`
+}
