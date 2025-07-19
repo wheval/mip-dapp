@@ -1192,12 +1192,9 @@ export class CollectionsService {
      * Parse collection data with enhanced metadata handling
      */
     private async parseCollectionData(data: ContractCollection, index: number): Promise<Collection | null> {
-        try {
-            // Default to contract data
+        try {           
             let creatorAddress = data.owner || "unknown"
             let createdAt: string = "";
-
-            // Start with contract data
             let collection: Collection = {
                 id: index.toString(),
                 slug: `collection-${index}`,

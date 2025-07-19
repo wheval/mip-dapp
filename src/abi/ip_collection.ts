@@ -1,16 +1,16 @@
 export const ip_collection_abi = [
   {
-    "type": "impl",
     "name": "UpgradeableImpl",
+    "type": "impl",
     "interface_name": "openzeppelin_upgrades::interface::IUpgradeable"
   },
   {
-    "type": "interface",
     "name": "openzeppelin_upgrades::interface::IUpgradeable",
+    "type": "interface",
     "items": [
       {
-        "type": "function",
         "name": "upgrade",
+        "type": "function",
         "inputs": [
           {
             "name": "new_class_hash",
@@ -23,13 +23,13 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "impl",
     "name": "IPCollectionImpl",
+    "type": "impl",
     "interface_name": "ip_collection_erc_721::interfaces::IIPCollection::IIPCollection"
   },
   {
-    "type": "struct",
     "name": "core::byte_array::ByteArray",
+    "type": "struct",
     "members": [
       {
         "name": "data",
@@ -46,8 +46,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "struct",
     "name": "core::integer::u256",
+    "type": "struct",
     "members": [
       {
         "name": "low",
@@ -60,8 +60,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "struct",
     "name": "core::array::Span::<core::integer::u256>",
+    "type": "struct",
     "members": [
       {
         "name": "snapshot",
@@ -70,8 +70,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "enum",
     "name": "core::bool",
+    "type": "enum",
     "variants": [
       {
         "name": "False",
@@ -84,8 +84,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "struct",
     "name": "ip_collection_erc_721::types::Collection",
+    "type": "struct",
     "members": [
       {
         "name": "name",
@@ -114,8 +114,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "struct",
     "name": "ip_collection_erc_721::types::CollectionStats",
+    "type": "struct",
     "members": [
       {
         "name": "total_minted",
@@ -144,8 +144,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "struct",
     "name": "ip_collection_erc_721::types::TokenData",
+    "type": "struct",
     "members": [
       {
         "name": "collection_id",
@@ -166,12 +166,12 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "interface",
     "name": "ip_collection_erc_721::interfaces::IIPCollection::IIPCollection",
+    "type": "interface",
     "items": [
       {
-        "type": "function",
         "name": "create_collection",
+        "type": "function",
         "inputs": [
           {
             "name": "name",
@@ -194,8 +194,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "mint",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -204,6 +204,10 @@ export const ip_collection_abi = [
           {
             "name": "recipient",
             "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "token_uri",
+            "type": "core::byte_array::ByteArray"
           }
         ],
         "outputs": [
@@ -214,8 +218,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "batch_mint",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -224,6 +228,10 @@ export const ip_collection_abi = [
           {
             "name": "recipients",
             "type": "core::array::Array::<core::starknet::contract_address::ContractAddress>"
+          },
+          {
+            "name": "token_uris",
+            "type": "core::array::Array::<core::byte_array::ByteArray>"
           }
         ],
         "outputs": [
@@ -234,8 +242,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "burn",
+        "type": "function",
         "inputs": [
           {
             "name": "token",
@@ -246,8 +254,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "batch_burn",
+        "type": "function",
         "inputs": [
           {
             "name": "tokens",
@@ -258,8 +266,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "transfer_token",
+        "type": "function",
         "inputs": [
           {
             "name": "from",
@@ -278,8 +286,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "batch_transfer",
+        "type": "function",
         "inputs": [
           {
             "name": "from",
@@ -298,8 +306,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "list_user_tokens_per_collection",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -318,8 +326,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "list_user_collections",
+        "type": "function",
         "inputs": [
           {
             "name": "user",
@@ -334,8 +342,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "get_collection",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -350,8 +358,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "is_valid_collection",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -366,8 +374,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "get_collection_stats",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -382,8 +390,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "is_collection_owner",
+        "type": "function",
         "inputs": [
           {
             "name": "collection_id",
@@ -402,8 +410,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "get_token",
+        "type": "function",
         "inputs": [
           {
             "name": "token",
@@ -418,8 +426,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "is_valid_token",
+        "type": "function",
         "inputs": [
           {
             "name": "token",
@@ -436,17 +444,17 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "impl",
     "name": "OwnableMixinImpl",
+    "type": "impl",
     "interface_name": "openzeppelin_access::ownable::interface::OwnableABI"
   },
   {
-    "type": "interface",
     "name": "openzeppelin_access::ownable::interface::OwnableABI",
+    "type": "interface",
     "items": [
       {
-        "type": "function",
         "name": "owner",
+        "type": "function",
         "inputs": [],
         "outputs": [
           {
@@ -456,8 +464,8 @@ export const ip_collection_abi = [
         "state_mutability": "view"
       },
       {
-        "type": "function",
         "name": "transfer_ownership",
+        "type": "function",
         "inputs": [
           {
             "name": "new_owner",
@@ -468,15 +476,15 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "renounce_ownership",
+        "type": "function",
         "inputs": [],
         "outputs": [],
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "transferOwnership",
+        "type": "function",
         "inputs": [
           {
             "name": "newOwner",
@@ -487,8 +495,8 @@ export const ip_collection_abi = [
         "state_mutability": "external"
       },
       {
-        "type": "function",
         "name": "renounceOwnership",
+        "type": "function",
         "inputs": [],
         "outputs": [],
         "state_mutability": "external"
@@ -496,8 +504,8 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "constructor",
     "name": "constructor",
+    "type": "constructor",
     "inputs": [
       {
         "name": "owner",
@@ -510,381 +518,381 @@ export const ip_collection_abi = [
     ]
   },
   {
-    "type": "event",
-    "name": "openzeppelin_introspection::src5::SRC5Component::Event",
     "kind": "enum",
+    "name": "openzeppelin_introspection::src5::SRC5Component::Event",
+    "type": "event",
     "variants": []
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "key",
         "name": "previous_owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "key",
         "name": "new_owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "type": "core::starknet::contract_address::ContractAddress"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "key",
         "name": "previous_owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "key",
         "name": "new_owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "type": "core::starknet::contract_address::ContractAddress"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "enum",
     "name": "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
-    "kind": "enum",
+    "type": "event",
     "variants": [
       {
+        "kind": "nested",
         "name": "OwnershipTransferred",
-        "type": "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-        "kind": "nested"
+        "type": "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred"
       },
       {
+        "kind": "nested",
         "name": "OwnershipTransferStarted",
-        "type": "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-        "kind": "nested"
+        "type": "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "class_hash",
-        "type": "core::starknet::class_hash::ClassHash",
-        "kind": "data"
+        "type": "core::starknet::class_hash::ClassHash"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "enum",
     "name": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
-    "kind": "enum",
+    "type": "event",
     "variants": [
       {
+        "kind": "nested",
         "name": "Upgraded",
-        "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
-        "kind": "nested"
+        "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::CollectionCreated",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "collection_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "name",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       },
       {
+        "kind": "data",
         "name": "symbol",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       },
       {
+        "kind": "data",
         "name": "base_uri",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::CollectionUpdated",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "collection_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "name",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       },
       {
+        "kind": "data",
         "name": "symbol",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       },
       {
+        "kind": "data",
         "name": "base_uri",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       },
       {
+        "kind": "data",
         "name": "timestamp",
-        "type": "core::integer::u64",
-        "kind": "data"
+        "type": "core::integer::u64"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenMinted",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "collection_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "token_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "owner",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "metadata_uri",
-        "type": "core::byte_array::ByteArray",
-        "kind": "data"
+        "type": "core::byte_array::ByteArray"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenMintedBatch",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "collection_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "token_ids",
-        "type": "core::array::Span::<core::integer::u256>",
-        "kind": "data"
+        "type": "core::array::Span::<core::integer::u256>"
       },
       {
+        "kind": "data",
         "name": "owners",
-        "type": "core::array::Array::<core::starknet::contract_address::ContractAddress>",
-        "kind": "data"
+        "type": "core::array::Array::<core::starknet::contract_address::ContractAddress>"
       },
       {
+        "kind": "data",
         "name": "operator",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "timestamp",
-        "type": "core::integer::u64",
-        "kind": "data"
+        "type": "core::integer::u64"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenBurned",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "collection_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "token_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "operator",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "timestamp",
-        "type": "core::integer::u64",
-        "kind": "data"
+        "type": "core::integer::u64"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenBurnedBatch",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "tokens",
-        "type": "core::array::Array::<core::byte_array::ByteArray>",
-        "kind": "data"
+        "type": "core::array::Array::<core::byte_array::ByteArray>"
       },
       {
+        "kind": "data",
         "name": "operator",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "timestamp",
-        "type": "core::integer::u64",
-        "kind": "data"
+        "type": "core::integer::u64"
       }
     ]
   },
   {
-    "type": "event",
+    "kind": "struct",
     "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferred",
-    "kind": "struct",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "collection_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "token_id",
-        "type": "core::integer::u256",
-        "kind": "data"
+        "type": "core::integer::u256"
       },
       {
+        "kind": "data",
         "name": "operator",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "timestamp",
-        "type": "core::integer::u64",
-        "kind": "data"
+        "type": "core::integer::u64"
       }
     ]
   },
   {
-    "type": "event",
-    "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferredBatch",
     "kind": "struct",
+    "name": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferredBatch",
+    "type": "event",
     "members": [
       {
+        "kind": "data",
         "name": "from",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "to",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "tokens",
-        "type": "core::array::Array::<core::byte_array::ByteArray>",
-        "kind": "data"
+        "type": "core::array::Array::<core::byte_array::ByteArray>"
       },
       {
+        "kind": "data",
         "name": "operator",
-        "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "data"
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
+        "kind": "data",
         "name": "timestamp",
-        "type": "core::integer::u64",
-        "kind": "data"
+        "type": "core::integer::u64"
       }
     ]
   },
   {
-    "type": "event",
-    "name": "ip_collection_erc_721::IPCollection::IPCollection::Event",
     "kind": "enum",
+    "name": "ip_collection_erc_721::IPCollection::IPCollection::Event",
+    "type": "event",
     "variants": [
       {
+        "kind": "flat",
         "name": "SRC5Event",
-        "type": "openzeppelin_introspection::src5::SRC5Component::Event",
-        "kind": "flat"
+        "type": "openzeppelin_introspection::src5::SRC5Component::Event"
       },
       {
+        "kind": "flat",
         "name": "OwnableEvent",
-        "type": "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
-        "kind": "flat"
+        "type": "openzeppelin_access::ownable::ownable::OwnableComponent::Event"
       },
       {
+        "kind": "flat",
         "name": "UpgradeableEvent",
-        "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
-        "kind": "flat"
+        "type": "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event"
       },
       {
+        "kind": "nested",
         "name": "CollectionCreated",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::CollectionCreated",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::CollectionCreated"
       },
       {
+        "kind": "nested",
         "name": "CollectionUpdated",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::CollectionUpdated",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::CollectionUpdated"
       },
       {
+        "kind": "nested",
         "name": "TokenMinted",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenMinted",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenMinted"
       },
       {
+        "kind": "nested",
         "name": "TokenMintedBatch",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenMintedBatch",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenMintedBatch"
       },
       {
+        "kind": "nested",
         "name": "TokenBurned",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenBurned",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenBurned"
       },
       {
+        "kind": "nested",
         "name": "TokenBurnedBatch",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenBurnedBatch",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenBurnedBatch"
       },
       {
+        "kind": "nested",
         "name": "TokenTransferred",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferred",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferred"
       },
       {
+        "kind": "nested",
         "name": "TokenTransferredBatch",
-        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferredBatch",
-        "kind": "nested"
+        "type": "ip_collection_erc_721::IPCollection::IPCollection::TokenTransferredBatch"
       }
     ]
   }
