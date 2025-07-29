@@ -209,9 +209,9 @@ export default function CreateAssetView() {
         calls: [
           {
             contractAddress: MEDIOLANO_CONTRACT,
-            entrypoint: "mint",
+            entrypoint: "mint_item",
             calldata: [
-              values.collection, //
+              publicKey, //
               result.cid, // tokenURI (metadata)
             ],
           },
