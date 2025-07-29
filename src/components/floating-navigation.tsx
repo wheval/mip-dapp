@@ -11,11 +11,10 @@ import { Badge } from "@/src/components/ui/badge"
 import { Home, Plus, Briefcase, Activity, Menu, X, Sparkles, TrendingUp, FolderOpen } from "lucide-react"
 
 const navItems = [
-  { href: "/", icon: Home, label: "Home", description: "Discover IP assets" },
-  { href: "/collections", icon: FolderOpen, label: "Collections", description: "Browse collections" },
-  { href: "/create", icon: Plus, label: "Create", description: "Tokenize your IP" },
+  { href: "/", icon: Home, label: "Start", description: "Discover IP" },
+  { href: "/create", icon: Plus, label: "Create", description: "Tokenize your content" },
   { href: "/portfolio", icon: Briefcase, label: "Portfolio", description: "Manage your assets" },
-  { href: "/activities", icon: Activity, label: "Activities", description: "View transactions" },
+  { href: "/activities", icon: Activity, label: "Activities", description: "Your onchain history" },
 ]
 
 export function FloatingNavigation() {

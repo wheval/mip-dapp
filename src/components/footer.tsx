@@ -41,19 +41,11 @@ const additionalLinks = [
   { href: "/settings", label: "Settings", icon: Settings },
 ]
 
-const resourceLinks = [
-  { href: "#", label: "Documentation" },
-  { href: "#", label: "API Reference" },
-  { href: "#", label: "Support" },
-  { href: "#", label: "Privacy Policy" },
-  { href: "#", label: "Terms of Service" },
-]
-
 export function Footer() {
   return (
     <footer className="bg-background border-t border-border/50 mt-16">
       {/* CTA Banner */}
-      <div className="bg-gradient-to-r from-primary/5 via-purple-500/5 to-pink-500/5 border-b border-border/50">
+      <div className="bg-gradient-to-r from-primary/5 via-purple-500/5 to-blue-500/5 border-b border-border/50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center space-y-4">
             <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 mb-2">
@@ -71,7 +63,7 @@ export function Footer() {
 
               <Link href="https://ip.mediolano.app" target="_blank">
               <Button size="lg" className="group">
-                Open Mediolano Dapp
+                Mediolano Dapp
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
               </Link>
@@ -92,9 +84,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo & Description */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="inline-flex items-center">
-             <LogoMip />
+            <div className="inline-flex items-center">   
              <LogoMediolano /> 
+             <LogoMip />
             </div>
             <p className="text-muted-foreground max-w-md">
               Transform your content into protected intellectual property with frictionless tokenization.
@@ -124,7 +116,7 @@ export function Footer() {
 
           {/* Main Navigation */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Navigation</h4>
+            <h4 className="font-semibold text-foreground">MIP Dapp</h4>
             <nav className="space-y-3">
               {mainNavLinks.map((link) => {
                 const Icon = link.icon
@@ -161,46 +153,11 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold text-foreground">Resources</h4>
             <nav className="space-y-3">
-
-                <Link
-                  href="/faq"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  FAQ
-                </Link>
-
-
-                <Link
-                  href="/support"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Support
-                </Link>
-              
-                <Link
-                  href="https://github.com/mediolano-app/mip-dapp"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  OSS Repo
-                </Link>
-
-
-                <Link
-                  href="https://x.com/mip_app"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  MIP on X
-                </Link>
-
-          
-
-                <Link
-                  href="https://instagram.com/ip.lounge"
-                  className="block text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  IP Lounge
-                </Link>
-            
+              <Link href="https://mediolano.xyz/community-guidelines/" className="block text-muted-foreground hover:text-primary transition-colors duration-200">Community Guidelines</Link>
+              <Link href="https://mediolano.xyz/governance-charter/" className="block text-muted-foreground hover:text-primary transition-colors duration-200">Governance Charter</Link>
+              <Link href="https://mediolano.xyz/compliance-guidelines/" className="block text-muted-foreground hover:text-primary transition-colors duration-200">Compliance Guidelines</Link>
+              <Link href="https://mediolano.xyz/terms-of-use/" className="block text-muted-foreground hover:text-primary transition-colors duration-200">Terms of Use</Link>
+              <Link href="https://mediolano.xyz/privacy-policy/" className="block text-muted-foreground hover:text-primary transition-colors duration-200">Privacy Policy</Link>
             </nav>
           </div>
         </div>
@@ -211,7 +168,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">© 2025 <Link href='https://mediolano.xyz' title="Mediolano - Programmable IP for the Integrity Web"> Mediolano</Link></p>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>Powered on Starknet</span>
-              <span>❤️</span>
             </div>
           </div>
         </div>
