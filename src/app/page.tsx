@@ -4,22 +4,39 @@ import { Header } from "@/src/components/header"
 import { FloatingNavigation } from "@/src/components/floating-navigation"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { TrendingUp, Users, Shield, Zap } from "lucide-react"
+import { FeaturedArticle } from "@/src/components/news/featured-article"
+import { newsArticles, getAllCategories } from "@/src/lib/news-data"
+
 
 export default function HomePage() {
+
+  const featuredArticle = newsArticles.find((article) => article.featured)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
+     
+     
 
       <main className="pb-6">
-        {/* Main Timeline Section */}
+
+      <div className="px-4 pt-6 pb-8">
+        <div className="max-w-6xl mx-auto">
+        {featuredArticle && <FeaturedArticle article={featuredArticle} />}
+        </div>
+      </div>
+
+
+
+        {/* Main Timeline Section 
         <div className="px-4 pt-6 pb-8">
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<TimelineSkeleton />}>
               <Timeline />
             </Suspense>
           </div>
-        </div>
+        </div>*/}
 
-        {/* Stats Section - Moved to Bottom */}
+        {/* Stats Section - Moved to Bottom 
         <div className="px-4 py-8 border-t border-border/30 bg-muted/20 backdrop-blur-sm">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-6">
@@ -68,6 +85,9 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+          */}
+
+
       </main>
      
     </div>
