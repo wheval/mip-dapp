@@ -16,6 +16,7 @@ import {
   UserButton,
 } from '@clerk/nextjs'
 import { LogoMip } from "./logo-mip"
+import { SiGoogle } from "react-icons/si"
 
 
 export function Header() {
@@ -37,18 +38,30 @@ export function Header() {
 
           {/* Right Side Controls */}
           <div className="flex items-center space-x-2">
-            <ThemeToggle />
+            
 
-            {/* Notifications */}
-            <NotificationsDropdown />
+            {/* Notifications 
+            <NotificationsDropdown />*/}
 
             <SignedOut>
-              <SignInButton />
-              <SignUpButton />
+              <SignInButton>
+                <button className="text-sm px-2 py-1 bg-primary/20 text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-1">
+                  <SiGoogle className="w-4 h-4" />
+                  Log in
+                </button>
+              </SignInButton>
+              <SignUpButton>
+                <button className="text-sm px-2 py-1 bg-primary/20 text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-1">
+                  <SiGoogle className="w-4 h-4" />
+                  Sign up
+                </button>
+              </SignUpButton>
             </SignedOut>
             <SignedIn>
               <UserButton />
             </SignedIn>
+
+            <ThemeToggle />
 
             {/* Connection Status - Desktop 
             <div className="hidden sm:flex items-center space-x-2 bg-muted/50 rounded-full px-3 py-1.5 border border-border/50">
