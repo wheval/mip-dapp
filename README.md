@@ -9,8 +9,7 @@ It’s built using powerful tools that work behind the scenes to keep costs free
 MIP integrates Mediolano Protocol to enable instant tokenization and protection of creative works in accordance with the Berne Convention (1886), which spans 181 countries. This legal infrastructure guarantees global recognition of authorship and provides verifiable proof of ownership for 50 to 70 years, depending on the jurisdiction.
 
 
-
-![mip-screen2 (1)](https://github.com/user-attachments/assets/07eb8b5c-ba61-4c22-9119-c838a3882e84)
+![mip-mobile-dapp](https://github.com/user-attachments/assets/a910cb00-cdb9-449b-a1a1-c9f8101a482a)
 
 
 
