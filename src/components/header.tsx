@@ -45,13 +45,13 @@ export function Header() {
 
             <SignedOut>
               <SignInButton>
-                <button className="text-sm px-2 py-1 bg-primary/20 text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-1">
+                <button className="text-sm px-2 py-1 bg-primary/33 text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-1">
                   <SiGoogle className="w-4 h-4" />
                   Log in
                 </button>
               </SignInButton>
               <SignUpButton>
-                <button className="text-sm px-2 py-1 bg-primary/20 text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-1">
+                <button className="text-sm px-2 py-1 bg-primary/33 text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-1">
                   <SiGoogle className="w-4 h-4" />
                   Sign up
                 </button>

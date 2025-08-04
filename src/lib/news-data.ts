@@ -31,28 +31,28 @@ const authors: NewsAuthor[] = [
     id: "1",
     name: "MIP",
     avatar: "/placeholder.svg?height=100&width=100",
-    bio: "Lead Developer Relations at Mediolano IP Platform. Passionate about blockchain technology and creator empowerment.",
-    twitter: "https://twitter.com/mariasantos",
-    linkedin: "https://linkedin.com/in/mariasantos",
-    role: "Developer Relations Lead",
+    bio: "Tokenize and protect your creative work with MIP.",
+    twitter: "https://x.com/mediolanoapp",
+    linkedin: "https://linkedin.com/mediolano",
+    role: "Mobile dapp",
   },
   {
     id: "2",
     name: "MIP",
     avatar: "/placeholder.svg?height=100&width=100",
-    bio: "Product Manager focused on IP protection and blockchain innovation. 5+ years in Web3 development.",
-    twitter: "https://twitter.com/carlosrodriguez",
-    linkedin: "https://linkedin.com/in/carlosrodriguez",
-    role: "Product Manager",
+    bio: "Tokenize and protect your creative work with MIP.",
+    twitter: "https://x.com/mediolanoapp",
+    linkedin: "https://linkedin.com/mediolano",
+    role: "Mobile dapp",
   },
   {
     id: "3",
     name: "MIP",
     avatar: "/placeholder.svg?height=100&width=100",
-    bio: "Community Manager and Content Creator. Helping creators understand IP protection in the digital age.",
-    twitter: "https://twitter.com/anasilva",
-    linkedin: "https://linkedin.com/in/anasilva",
-    role: "Community Manager",
+    bio: "Tokenize and protect your creative work with MIP.",
+    twitter: "https://x.com/mediolanoapp",
+    linkedin: "https://linkedin.com/mediolano",
+    role: "Mobile dapp",
   },
 ]
 
@@ -67,24 +67,7 @@ export const newsArticles: NewsArticle[] = [
       <div class="prose prose-lg max-w-none">
         <p>Estamos empolgados em anunciar o <strong>Starknet Rio Meetup 2025</strong>, um evento exclusivo que reunirá desenvolvedores, criadores e entusiastas de blockchain no coração do Rio de Janeiro.</p>
         
-        <h2>O que esperar do evento</h2>
-        <p>Este meetup será uma oportunidade única para:</p>
-        <ul>
-          <li>Aprender sobre as últimas inovações em Starknet</li>
-          <li>Descobrir como proteger propriedade intelectual usando blockchain</li>
-          <li>Fazer networking com profissionais da área</li>
-          <li>Participar de workshops práticos</li>
-        </ul>
-
-        <h2>Programação</h2>
-        <p>O evento contará com palestras de especialistas, demonstrações ao vivo da plataforma MIP, e sessões de networking. Haverá também um workshop prático sobre como tokenizar propriedade intelectual.</p>
-
-        <h2>Local e Data</h2>
-        <p>📅 <strong>Data:</strong> 6 de agosto, 2025<br>
-        📍 <strong>Local:</strong> CCDiversa<br>
-        🕐 <strong>Horário:</strong> 15h - 23h</p>
-
-        <p>Não perca esta oportunidade de estar na vanguarda da revolução da propriedade intelectual no Brasil!</p>
+        
       </div>
     `,
     image: "/starknet-rio-meetup-ip-lounge.png",
