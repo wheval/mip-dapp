@@ -53,7 +53,7 @@ export default function NewsArticlePage({ params }: NewsArticlePageProps) {
             <Button variant="ghost" asChild className="gap-2">
               <Link href="/news">
                 <ArrowLeft className="w-4 h-4" />
-                Back to News
+                Back to News & Updates
               </Link>
             </Button>
             <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export default function NewsArticlePage({ params }: NewsArticlePageProps) {
           <Image src={article.image || "/placeholder.svg"} alt={article.title} fill className="object-cover" priority />
         </div>
 
-        {/* Article Actions */}
+        {/* Article Actions 
         <div className="flex items-center justify-between mb-8 p-4 bg-background/50 backdrop-blur-sm rounded-lg border border-border/50">
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Share:</span>
@@ -146,7 +146,7 @@ export default function NewsArticlePage({ params }: NewsArticlePageProps) {
               <LinkIcon className="w-4 h-4" />
             </Button>
           </div>
-        </div>
+        </div>*/}
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none mb-12" dangerouslySetInnerHTML={{ __html: article.content }} />

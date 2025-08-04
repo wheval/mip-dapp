@@ -127,9 +127,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Quick links:
 <br>
-<a href="https://ip.mediolano.app">Mediolano Dapp</a>
-
-<a href="https://x.com/mediolanoapp">X / Twitter</a>
-<br>
+<a href="https://ip.mediolano.app">Mediolano Dapp</a><br>
+<a href="https://x.com/mediolanoapp">X / Twitter</a><br>
 <a href="https://t.me/MediolanoStarknet">Telegram</a>
-<br>

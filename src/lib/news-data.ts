@@ -62,12 +62,10 @@ export const newsArticles: NewsArticle[] = [
     slug: "starknet-rio-meetup",
     title: "Starknet Rio Meetup + IP Lounge",
     excerpt:
-      "Join us in Rio de Janeiro for an exclusive meetup about Starknet technology and IP protection. Network with developers, creators, and blockchain enthusiasts.",
+      "​A Starknet, em parceria com o OnlyDust e Mediolano está promovendo um meetup no Rio de Janeiro com vibes de blockchain, open-source e cultura!",
     content: `
       <div class="prose prose-lg max-w-none">
         <p>Estamos empolgados em anunciar o <strong>Starknet Rio Meetup 2025</strong>, um evento exclusivo que reunirá desenvolvedores, criadores e entusiastas de blockchain no coração do Rio de Janeiro.</p>
-        
-        
       </div>
     `,
     image: "/starknet-rio-meetup-ip-lounge.png",
@@ -77,200 +75,40 @@ export const newsArticles: NewsArticle[] = [
     tags: ["Starknet", "Rio", "Meetup", "Blockchain", "Mediolano"],
     featured: true,
     isEvent: true,
-    eventDate: "2025-08-06",
+    eventDate: "2025-08-04",
     eventLocation: "Rio de Janeiro, Brazil",
     readTime: 5,
   },
   {
     id: "2",
-    slug: "ip-protection-guide-2025",
-    title: "The Complete Guide to IP Protection in 2025",
+    slug: "programmable-ip-tokenizing-intelligence-integrity-web",
+    title: "Programmable IP: Tokenizing Intelligence on the Integrity Web",
     excerpt:
-      "Everything creators need to know about protecting their intellectual property in the digital age. From traditional methods to blockchain solutions.",
+      "The rapid evolution of the digital landscape has given birth to new paradigms and technologies that are reshaping the way we interact with information and assets. Among these, the concepts of programmable intellectual property (IP) and the Integrity Web [..]",
     content: `
       <div class="prose prose-lg max-w-none">
-        <p>Intellectual property protection has never been more critical for creators in the digital age. With the rise of AI, NFTs, and digital content creation, understanding how to protect your work is essential.</p>
-        
-        <h2>Traditional IP Protection Methods</h2>
-        <p>Traditional methods include:</p>
-        <ul>
-          <li>Copyright registration</li>
-          <li>Trademark filing</li>
-          <li>Patent applications</li>
-          <li>Trade secret protection</li>
-        </ul>
+        <p>The rapid evolution of the digital landscape has given birth to new paradigms and technologies that are reshaping the way we interact with information and assets. Among these, the concepts of programmable intellectual property (IP) and the Integrity Web stand out as transformative forces that promise to revolutionize the management, distribution, and utilization of intelligence. This publication explores how programmable IP will tokenize intelligence on the Integrity Web, ushering in a new era of transparency, security, and</p>
+      <br>
+        <p>Programmable IP refers to intellectual property that is embedded with smart contracts, allowing for automated and programmable actions based on predefined conditions. This concept harnesses the power of blockchain technology to tokenize IP assets, enabling them to be traded, licensed, and monetized with unprecedented precision and flexibility.</p>
+<br>
+        <p>The Integrity Web is an emerging digital ecosystem built on the principles of trust, transparency, and authenticity. It leverages blockchain technology to create a decentralized and immutable ledger of transactions, ensuring that information and assets remain secure and verifiable. In this context, programmable IP represents a groundbreaking innovation that enables the creation, management, and distribution of intellectual property in a highly efficient and secure manner.</p>
+<br>
+        <p>Tokenizing intelligence on the Integrity Web represents a paradigm shift in how we conceptualize and manage intellectual property. By transforming intelligence into programmable and tradable tokens, we can unlock new avenues for collaboration, innovation, and value creation.</p>
 
-        <h2>Blockchain-Based Solutions</h2>
-        <p>Modern blockchain solutions offer:</p>
-        <ul>
-          <li>Immutable proof of creation</li>
-          <li>Transparent ownership records</li>
-          <li>Automated licensing</li>
-          <li>Global accessibility</li>
-        </ul>
-
-        <h2>Why Choose MIP?</h2>
-        <p>The Mediolano IP Platform combines the best of both worlds, offering traditional legal backing with cutting-edge blockchain technology. Our platform provides creators with comprehensive protection that's both legally sound and technologically advanced.</p>
+        <p>Programmable IP and the Integrity Web represent a transformative vision for the future of intellectual property and intelligence. By tokenizing IP assets and leveraging the power of blockchain technology, we can create a more transparent, secure, and innovative digital ecosystem.</p> 
+<br>
+        <p>As we move forward, it is essential to address the challenges and embrace the opportunities presented by these technologies to unlock their full potential and drive the next wave of digital innovation.</p>
       </div>
     `,
-    image: "/placeholder.svg?height=400&width=800",
+    image: "/article-programmable-ip-tokenization.webp",
     author: authors[1],
-    publishedAt: "2025-08-06",
-    category: "Education",
+    publishedAt: "2025-08-04",
+    category: "Articles",
     tags: ["IP Protection", "Guide", "Blockchain", "Copyright"],
     featured: false,
     readTime: 8,
   },
-  {
-    id: "3",
-    slug: "creator-success-stories",
-    title: "Creator Success Stories: How MIP Changed Their Lives",
-    excerpt:
-      "Real stories from creators who transformed their careers using blockchain-based IP protection. Discover how they increased revenue and protected their work.",
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <p>Meet the creators who have transformed their careers using the Mediolano IP Platform. These success stories showcase the real-world impact of blockchain-based IP protection.</p>
-        
-        <h2>Sarah's Photography Journey</h2>
-        <p>Sarah, a freelance photographer from São Paulo, struggled with image theft and unauthorized usage. After joining MIP, she saw a 300% increase in licensing revenue and complete elimination of unauthorized usage.</p>
-
-        <h2>Miguel's Music Revolution</h2>
-        <p>Independent musician Miguel used MIP to protect his compositions and automate licensing. He now earns passive income from his music catalog while maintaining full creative control.</p>
-
-        <h2>The Digital Art Collective</h2>
-        <p>A group of digital artists formed a collective on MIP, sharing resources and cross-promoting their work. Together, they've generated over $50,000 in licensing revenue in just six months.</p>
-
-        <p>These stories represent just a fraction of the creators who have found success with blockchain-based IP protection. Join them today and start protecting your creative work.</p>
-      </div>
-    `,
-    image: "/placeholder.svg?height=400&width=800",
-    author: authors[2],
-    publishedAt: "2025-08-01",
-    category: "Success Stories",
-    tags: ["Success Stories", "Creators", "Revenue", "Protection"],
-    featured: false,
-    readTime: 6,
-  },
-  {
-    id: "4",
-    slug: "blockchain-ip-future",
-    title: "The Future of Intellectual Property on Blockchain",
-    excerpt:
-      "Exploring how blockchain technology is revolutionizing IP protection, licensing, and monetization for creators worldwide.",
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <p>The intersection of blockchain technology and intellectual property represents one of the most exciting developments in the creative economy. As we look toward the future, several trends are emerging.</p>
-        
-        <h2>Programmable IP Rights</h2>
-        <p>Smart contracts are enabling programmable IP rights, allowing creators to set automatic licensing terms, royalty distributions, and usage restrictions directly in code.</p>
-
-        <h2>Global IP Registry</h2>
-        <p>Blockchain provides the infrastructure for a truly global IP registry, where creators can register and protect their work across borders without complex legal procedures.</p>
-
-        <h2>Micro-Licensing Revolution</h2>
-        <p>The ability to license content for micro-payments opens new revenue streams for creators, enabling monetization of previously unprofitable uses.</p>
-
-        <h2>AI and IP Protection</h2>
-        <p>Artificial intelligence combined with blockchain creates powerful tools for detecting IP infringement and automating protection measures.</p>
-      </div>
-    `,
-    image: "/placeholder.svg?height=400&width=800",
-    author: authors[1],
-    publishedAt: "2025-07-12",
-    category: "Technology",
-    tags: ["Blockchain", "Future", "Technology", "Innovation"],
-    featured: false,
-    readTime: 7,
-  },
-  {
-    id: "5",
-    slug: "mip-platform-updates",
-    title: "MIP Platform Updates: New Features and Improvements",
-    excerpt:
-      "Discover the latest features and improvements to the Mediolano IP Platform, including enhanced analytics, mobile app updates, and new creator tools.",
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <p>We're excited to announce several major updates to the Mediolano IP Platform that will enhance your experience and provide new opportunities for creators.</p>
-        
-        <h2>Enhanced Analytics Dashboard</h2>
-        <p>Our new analytics dashboard provides deeper insights into your IP portfolio performance, including:</p>
-        <ul>
-          <li>Real-time licensing revenue tracking</li>
-          <li>Geographic usage analytics</li>
-          <li>Trend analysis and predictions</li>
-          <li>Comparative performance metrics</li>
-        </ul>
-
-        <h2>Mobile App Improvements</h2>
-        <p>The MIP mobile app now features:</p>
-        <ul>
-          <li>Faster upload and processing</li>
-          <li>Offline mode for viewing your portfolio</li>
-          <li>Push notifications for licensing opportunities</li>
-          <li>Enhanced security features</li>
-        </ul>
-
-        <h2>New Creator Tools</h2>
-        <p>We've added several new tools to help creators maximize their IP value:</p>
-        <ul>
-          <li>Automated pricing suggestions</li>
-          <li>Bulk licensing management</li>
-          <li>Collaboration features for teams</li>
-          <li>Integration with popular creative software</li>
-        </ul>
-      </div>
-    `,
-    image: "/placeholder.svg?height=400&width=800",
-    author: authors[0],
-    publishedAt: "2025-07-10",
-    category: "Platform Updates",
-    tags: ["Updates", "Features", "Mobile", "Analytics"],
-    featured: false,
-    readTime: 4,
-  },
-  {
-    id: "6",
-    slug: "legal-aspects-blockchain-ip",
-    title: "Legal Aspects of Blockchain-Based IP Protection",
-    excerpt:
-      "Understanding the legal framework surrounding blockchain IP protection, including enforceability, jurisdiction, and compliance considerations.",
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <p>As blockchain-based IP protection becomes mainstream, understanding the legal implications is crucial for creators and businesses alike.</p>
-        
-        <h2>Legal Recognition</h2>
-        <p>Many jurisdictions now recognize blockchain records as valid evidence of IP ownership and creation dates. This legal recognition strengthens the protection offered by platforms like MIP.</p>
-
-        <h2>Enforceability</h2>
-        <p>Smart contracts and blockchain records provide strong evidence in legal disputes, but enforcement still requires traditional legal mechanisms in most jurisdictions.</p>
-
-        <h2>International Considerations</h2>
-        <p>Blockchain's global nature creates opportunities and challenges:</p>
-        <ul>
-          <li>Cross-border IP protection</li>
-          <li>Jurisdictional complexities</li>
-          <li>International treaty implications</li>
-          <li>Regulatory compliance requirements</li>
-        </ul>
-
-        <h2>Best Practices</h2>
-        <p>To maximize legal protection:</p>
-        <ul>
-          <li>Maintain detailed creation records</li>
-          <li>Use reputable blockchain platforms</li>
-          <li>Understand local IP laws</li>
-          <li>Consider traditional registration alongside blockchain protection</li>
-        </ul>
-      </div>
-    `,
-    image: "/placeholder.svg?height=400&width=800",
-    author: authors[1],
-    publishedAt: "2025-07-08",
-    category: "Legal",
-    tags: ["Legal", "Compliance", "Blockchain", "IP Law"],
-    featured: false,
-    readTime: 9,
-  },
+  
 ]
 
 // Helper functions

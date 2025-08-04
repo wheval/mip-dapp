@@ -29,14 +29,14 @@ import { LogoMip } from "./logo-mip"
 const footerSections = [
   {
     id: "platform",
-    title: "Platform",
+    title: "Start",
     icon: Shield,
     links: [
-      { name: "Home", href: "/" },
-      { name: "Create", href: "/create", badge: "Start" },
+      { name: "Create", href: "/create", badge: "Free" },
       { name: "Portfolio", href: "/portfolio" },
       { name: "Transfer", href: "/transfer" },
       { name: "Activities", href: "/activities" },
+      { name: "Notifications", href: "/notifications" },
     ],
   },
   {
@@ -45,10 +45,10 @@ const footerSections = [
     icon: Globe,
     links: [
       { name: "Discover", href: "/discover", badge: "Learn" },
-      { name: "Notifications", href: "/notifications" },
       { name: "Updates", href: "/news", badge: "News" },
       { name: "Mediolano", href: "https://mediolano.xyz", external: true },
       { name: "Mediolano Dapp", href: "https://ip.mediolano.app", external: true },
+      { name: "Contact Us", href: "mailto:mediolanoapp@gmail.com" },
     ],
   },
   {
@@ -61,6 +61,7 @@ const footerSections = [
        { name: "Compliance Guidelines", href: "https://mediolano.xyz/compliance-guidelines/" },
        { name: "Terms of Use", href: "https://mediolano.xyz/terms-of-use/" },
       { name: "Privacy Policy", href: "https://mediolano.xyz/privacy-policy/" },
+
     ],
   },
 ]
