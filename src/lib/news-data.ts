@@ -34,7 +34,7 @@ const authors: NewsAuthor[] = [
     bio: "Tokenize and protect your creative work with MIP.",
     twitter: "https://x.com/mediolanoapp",
     linkedin: "https://linkedin.com/mediolano",
-    role: "Mobile dapp",
+    role: "My Intellectual Property",
   },
   {
     id: "2",
@@ -43,7 +43,7 @@ const authors: NewsAuthor[] = [
     bio: "Tokenize and protect your creative work with MIP.",
     twitter: "https://x.com/mediolanoapp",
     linkedin: "https://linkedin.com/mediolano",
-    role: "Mobile dapp",
+    role: "My Intellectual Property",
   },
   {
     id: "3",
@@ -52,7 +52,7 @@ const authors: NewsAuthor[] = [
     bio: "Tokenize and protect your creative work with MIP.",
     twitter: "https://x.com/mediolanoapp",
     linkedin: "https://linkedin.com/mediolano",
-    role: "Mobile dapp",
+    role: "My Intellectual Property",
   },
 ]
 
