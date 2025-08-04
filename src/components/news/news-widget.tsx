@@ -21,7 +21,7 @@ export function NewsWidget() {
             <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
               <Newspaper className="w-3 h-3 text-white" />
             </div>
-            <h4 className="font-bold">Latest News</h4>
+            <h4 className="font-bold">Featured</h4>
           </div>
           <Button variant="outline" size="sm" asChild className="hidden md:flex bg-transparent text-xs">
             <Link href="/news">
@@ -39,9 +39,9 @@ export function NewsWidget() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     {/* Feature Image - 1:1 Aspect Ratio */}
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary/20 to-purple-500/20">
+                    <div className="w-16 h-16 md:w-32 md:h-32 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary/20 to-purple-500/20">
                       <img
-                        src={featuredArticle.image || "/placeholder.svg?height=80&width=80"}
+                        src={featuredArticle.image || "/placeholder.svg?height=100&width=100"}
                         alt={featuredArticle.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
@@ -51,7 +51,7 @@ export function NewsWidget() {
                       <div className="flex items-start gap-2 mb-2">
                         <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-xs gap-1">
                           <Star className="w-2 h-2" />
-                          Featured
+                          Hot
                         </Badge>
                         <Badge variant="secondary" className="text-xs">
                           {featuredArticle.category}
@@ -64,12 +64,7 @@ export function NewsWidget() {
                       <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{featuredArticle.excerpt}</p>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                            <User className="w-3 h-3 text-primary" />
-                          </div>
-                          <span className="text-xs text-muted-foreground">{featuredArticle.author.name}</span>
-                        </div>
+                       
 
                         <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                       </div>
@@ -103,16 +98,7 @@ export function NewsWidget() {
                           <ArrowUpRight className="w-3 h-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all flex-shrink-0" />
                         </div>
 
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs px-1.5 py-0.5">
-                            {article.category}
-                          </Badge>
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">
-                              <User className="w-3 h-3 text-primary" />
-                            </div>
-                          </div>
-                        </div>
+           
                       </div>
                     </div>
                   </CardContent>
@@ -124,7 +110,7 @@ export function NewsWidget() {
             <div className="md:hidden pt-2">
               <Button variant="outline" size="sm" asChild className="w-full bg-transparent">
                 <Link href="/news">
-                  View All News
+                  View All
                   <ArrowRight className="w-3 h-3 ml-1" />
                 </Link>
               </Button>

@@ -72,8 +72,8 @@ export function FloatingNavigation() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-foreground">Navigation</h3>
-                  <p className="text-xs text-muted-foreground">Quick access to all features</p>
+                  <h3 className="text-xs text-foreground">My Intellectual Property</h3>
+                  <p className="text-xs text-muted-foreground">Protect and tokenize onchain</p>
                 </div>
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                   <Sparkles className="w-3 h-3 mr-1" />
