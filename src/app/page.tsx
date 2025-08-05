@@ -13,7 +13,7 @@ export default function HomePage() {
   const featuredArticle = newsArticles.find((article) => article.featured)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
+    <div className="bg-gradient-to-br from-background via-muted/10 to-background">
      
      
 

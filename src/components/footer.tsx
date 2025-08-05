@@ -22,9 +22,11 @@ import {
   Sparkles,
   ExternalLink,
   FileCheck,
+  Star,
 } from "lucide-react"
 import { NewsWidget } from "@/src/components/news/news-widget"
 import { LogoMip } from "./logo-mip"
+import { SiGithub, SiX } from "react-icons/si"
 
 const footerSections = [
   {
@@ -91,7 +93,7 @@ export function Footer() {
      
 
       {/* Main Content - Mobile Collapsible, Desktop Grid */}
-      <div className="border-t border-border/50 px-4 py-8 md:py-8">
+      <div className="border-t border-border/20 px-4 py-8 md:py-8">
         <div className="max-w-6xl mx-auto">
           {/* Brand Section - Always Visible */}
           <div className="mb-8">
@@ -104,7 +106,7 @@ export function Footer() {
                     </div>
                     <div>
                       <h4 className="text-lg font-bold">MIP</h4>
-                      <p className="text-xs text-muted-foreground">Transform your content into protected intellectual property with frictionless tokenization. Free, fast and secure! Tokenize, protect and trade you intellectual property onchain.</p>
+                      <p className="text-sm text-muted-foreground">Transform your content into protected intellectual property with frictionless tokenization. Free, fast and secure!</p>
                     </div>
                   </div>
 
@@ -132,7 +134,7 @@ export function Footer() {
                     <CollapsibleTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="w-full justify-between p-4 h-auto rounded-xl border border-border/50 hover:border-primary/20"
+                        className="w-full justify-between p-4 h-auto rounded-xl border border-border/20 hover:border-primary/20"
                       >
                         <div className="flex items-center gap-3">
                           <section.icon className="w-4 h-4 text-primary" />
@@ -223,44 +225,27 @@ export function Footer() {
       {/* Social & Bottom Section */}
       <div className=" px-4 py-6">
         <div className="max-w-6xl mx-auto">
-          {/* Social Links - Mobile Optimized */}
-          <div className="mb-6">
-            
-            <div className="grid grid-cols-4 sm:grid-cols-4 gap-3 md:flex md:gap-2">
-              {socialLinks.map((social) => (
-                <Button
-                  key={social.name}
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="group h-12 justify-start gap-2 bg-transparent"
-                >
-                  <a href={social.href} target="_blank" rel="noopener noreferrer">
-                    <div className={`w-4 h-4 rounded p-0.5 flex items-center justify-center`}>
-                      <social.icon className="w-3 h-3" />
-                    </div>
-                     {/* <span className="md:hidden font-medium">{social.name}</span> */}
-                  </a>
-                </Button>
-              ))}
-            </div>
-          </div>
+          
 
           {/* Bottom Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span> 2025 MIP ©<Badge variant="outline" className="text-xs gap-1">Mediolano DAO</Badge></span>
+              <span><Badge variant="outline" className="text-xs gap-1">MIP © Mediolano</Badge></span>
+              <span><Link href="https://github.com/mediolano-app" target="_blank"><SiGithub className="w-4 h-4" /></Link></span>
+              <span><Link href="https://x.com/mediolanoapp" target="_blank"><SiX className="w-4 h-4" /></Link></span>
+              <span><Link href="https://mediolano.xyz" target="_blank"><Globe className="w-4 h-4" /></Link></span>
             </div>
 
             <div className="flex items-center gap-3">
 
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                 <Badge variant="outline" className="text-xs gap-1">
-                Starknet
-              </Badge>
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                 <span>Mainnet</span>
               </div>
+                <Badge variant="outline" className="text-xs gap-1">
+                Starknet
+              </Badge>
+                
              
             </div>
           </div>
