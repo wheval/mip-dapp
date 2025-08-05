@@ -186,7 +186,9 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
 
             <CollapsibleContent className="mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border/30">
-                {/* Creator Info */}
+               
+               
+                {/* Creator Info
                 <div className="space-y-3">
                   <h4 className="font-medium text-foreground text-sm">Creator</h4>
                   <div className="flex items-center space-x-3">
@@ -216,11 +218,11 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                       </Button>
                     </Link>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Technical Details */}
                 <div className="space-y-3">
-                  <h4 className="font-medium text-foreground text-sm">Technical Details</h4>
+                  <h4 className="font-medium text-foreground text-sm">Information</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Network</span>
@@ -420,7 +422,9 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
 
           <CollapsibleContent className="mt-4">
             <div className="space-y-4 pt-4 border-t border-border/30">
-              {/* Creator Info */}
+             
+             
+              {/* Creator Info 
               <div>
                 <h4 className="font-medium text-foreground mb-3 text-sm">Creator</h4>
                 <div className="flex items-center space-x-3">
@@ -445,6 +449,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                   </div>
                 </div>
               </div>
+              */}
 
               {/* Technical Info */}
               <div>
@@ -504,7 +509,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                 </div>
               </div>
 
-              {/* Actions */}
+              {/* Actions 
               <div className="flex space-x-2">
                 {isOwner && (
                   <Button variant="outline" size="sm" className="flex-1" onClick={handleTransfer}>
@@ -512,11 +517,14 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                     Transfer
                   </Button>
                 )}
+                
                 <Button variant="outline" size="sm" className="flex-1" onClick={handleShare}>
                   <Share className="w-4 h-4 mr-1" />
                   Share
                 </Button>
-              </div>
+              </div>*/}
+
+
             </div>
           </CollapsibleContent>
         </CardContent>
