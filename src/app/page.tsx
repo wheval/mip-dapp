@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/src/components/ui/card"
 import { TrendingUp, Users, Shield, Zap } from "lucide-react"
 import { FeaturedArticle } from "@/src/components/news/featured-article"
 import { newsArticles, getAllCategories } from "@/src/lib/news-data"
+import { Hero } from "@/src/components/hero"
 
 
 export default function HomePage() {
@@ -19,11 +20,20 @@ export default function HomePage() {
 
       <main className="pb-6">
 
+      {/* Featured Article Section 
       <div className="px-4 pt-6 pb-8">
         <div className="max-w-6xl mx-auto">
         {featuredArticle && <FeaturedArticle article={featuredArticle} />}
         </div>
-      </div>
+      </div>*/}
+
+
+      {/* New Hero Section */}
+        <div className="px-4 pt-6">
+          <div className="mx-auto max-w-6xl">
+            <Hero />
+          </div>
+        </div>
 
 
 
