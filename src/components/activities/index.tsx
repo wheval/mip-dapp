@@ -19,12 +19,29 @@ interface ActivityStats {
 
 interface ActivitiesProps {
   activities: ActivityItem[]
+  loading?: boolean
+  error?: string | null
   onCreateNew?: () => void
   onCopyToClipboard?: (text: string) => void
+  onRefresh?: () => void
+  onLoadMore?: () => void
+  walletAddress?: string
+  usingMockData?: boolean
   className?: string
 }
 
-export function Activities({ activities: initialActivities, onCreateNew, onCopyToClipboard = () => {}, className = "" }: ActivitiesProps) {
+export function Activities({ 
+  activities: initialActivities, 
+  loading = false,
+  error = null,
+  onCreateNew, 
+  onCopyToClipboard = () => {}, 
+  onRefresh,
+  onLoadMore,
+  walletAddress,
+  usingMockData = false,
+  className = "" 
+}: ActivitiesProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterType, setFilterType] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
@@ -37,7 +54,12 @@ export function Activities({ activities: initialActivities, onCreateNew, onCopyT
       const matchesSearch =
         activity.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         activity.description.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesType = filterType === "all" || activity.type === filterType
+      const matchesType =
+        filterType === "all" ||
+        activity.type === filterType ||
+        (filterType === 'mint' && activity.type === 'mint_batch') ||
+        (filterType === 'burn' && activity.type === 'burn_batch') ||
+        (filterType === 'transfer_out' && activity.type === 'transfer_batch')
       const matchesStatus = filterStatus === "all" || activity.status === filterStatus
 
       return matchesSearch && matchesType && matchesStatus
@@ -57,9 +79,9 @@ export function Activities({ activities: initialActivities, onCreateNew, onCopyT
     const completed = initialActivities.filter((a) => a.status === "completed").length
     const pending = initialActivities.filter((a) => a.status === "pending").length
     const thisMonth = initialActivities.filter((a) => {
-      const activityDate = new Date(a.timestamp)
-      const currentDate = new Date()
-      return activityDate.getMonth() === currentDate.getMonth()
+      const d = new Date(a.timestamp)
+      const now = new Date()
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
     }).length
 
     return { total, completed, pending, thisMonth }
@@ -206,38 +228,71 @@ export function Activities({ activities: initialActivities, onCreateNew, onCopyT
               )}
             </div>
 
-            {/* Activities List */}
-            <div className="animate-fade-in-up" style={{ animationDelay: "500ms" }}>
-              <ActivityList
-                activities={paginatedActivities}
-                copyToClipboard={onCopyToClipboard}
-                emptyStateTitle="No activities found"
-                emptyStateDescription="Your onchain activities will appear here. Try adjusting your filters or create your first IP asset."
-                emptyStateAction={
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    {onCreateNew && (
-                      <Button
-                        onClick={onCreateNew}
-                        className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg shadow-primary/25 hover:scale-105 transition-all duration-200"
-                      >
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Create Your First IP
-                      </Button>
-                    )}
-                    {hasActiveFilters && (
-                      <Button
-                        variant="outline"
-                        onClick={clearFilters}
-                        className="hover:scale-105 transition-transform bg-transparent"
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        Clear Filters
-                      </Button>
-                    )}
+            {/* Loading State */}
+            {loading && (
+              <div className="animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+                <div className="text-center py-12">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full mb-4">
+                    <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                   </div>
-                }
-              />
-            </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Loading Activities</h3>
+                  <p className="text-muted-foreground">Fetching your blockchain activities...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && !loading && (
+              <div className="animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+                <div className="text-center py-12">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500/10 to-red-500/5 rounded-full mb-4">
+                    <X className="w-8 h-8 text-red-500" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Error Loading Activities</h3>
+                  <p className="text-muted-foreground mb-4">{error}</p>
+                  {onRefresh && (
+                    <Button onClick={onRefresh} variant="outline">
+                      Try Again
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Activities List */}
+            {!loading && !error && (
+              <div className="animate-fade-in-up" style={{ animationDelay: "500ms" }}>
+                <ActivityList
+                  activities={paginatedActivities}
+                  copyToClipboard={onCopyToClipboard}
+                  emptyStateTitle="No activities found"
+                  emptyStateDescription="Your onchain activities will appear here. Try adjusting your filters or create your first IP asset."
+                  emptyStateAction={
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      {onCreateNew && (
+                        <Button
+                          onClick={onCreateNew}
+                          className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg shadow-primary/25 hover:scale-105 transition-all duration-200"
+                        >
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Create Your First IP
+                        </Button>
+                      )}
+                      {hasActiveFilters && (
+                        <Button
+                          variant="outline"
+                          onClick={clearFilters}
+                          className="hover:scale-105 transition-transform bg-transparent"
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Clear Filters
+                        </Button>
+                      )}
+                    </div>
+                  }
+                />
+              </div>
+            )}
 
             {/* Pagination */}
             {filteredActivities.length > 0 && (
