@@ -1,6 +1,6 @@
 import { Badge } from "@/src/components/ui/badge"
 import { TransactionDetails } from "./transaction-details"
-import { Clock, ArrowUpRight, ArrowDownLeft, Plus, Send, CheckCircle, AlertCircle, Loader } from "lucide-react"
+import { ArrowUpRight, ArrowDownLeft, Plus, Send, CheckCircle, AlertCircle, Loader, Sparkles, Flame, Pencil } from "lucide-react"
 import {
   type ActivityItem as ActivityItemType,
   activityGradients,
@@ -26,9 +26,13 @@ export function ActivityItem({
   onCopy,
 }: ActivityItemProps) {
 
-  const Icon = type === 'mint' ? Plus : 
-               type === 'transfer_out' ? Send :
-               type === 'transfer_in' ? ArrowDownLeft : ArrowUpRight
+  const Icon =
+    type === 'collection_create' ? Sparkles :
+    type === 'burn' ? Flame :
+    type === 'update' ? Pencil :
+    type === 'mint' ? Plus :
+    type === 'transfer_out' ? Send :
+    type === 'transfer_in' ? ArrowDownLeft : ArrowUpRight
   
   const StatusIcon = status === 'completed' ? CheckCircle :
                      status === 'pending' ? Loader : AlertCircle
@@ -49,10 +53,12 @@ export function ActivityItem({
               <Badge className={`${activityColors[type]} capitalize`}>
                 {typeLabels[type]}
               </Badge>
-              <Badge className={`${statusColors[status]} capitalize flex items-center gap-1`}>
-                <StatusIcon className="w-3 h-3" />
-                {status}
-              </Badge>
+              {status !== 'completed' && (
+                <Badge className={`${statusColors[status]} capitalize flex items-center gap-1`}>
+                  <StatusIcon className="w-3 h-3" />
+                  {status}
+                </Badge>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-between mt-2">
@@ -61,9 +67,12 @@ export function ActivityItem({
               network={network}
               onCopy={onCopy}
             />
-            <time className="text-xs text-muted-foreground">
-              {timestamp}
-            </time>
+              <time className="text-xs text-muted-foreground">
+                {timestamp ? new Date(timestamp).toLocaleString(undefined, {
+                  day: '2-digit', month: 'short', year: 'numeric',
+                  hour: '2-digit', minute: '2-digit', second: '2-digit'
+                }) : '—'}
+              </time>
           </div>
         </div>
       </div>

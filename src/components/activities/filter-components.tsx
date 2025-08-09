@@ -8,6 +8,10 @@ export const typeLabels = {
   mint: "Minted",
   transfer_out: "Sent",
   transfer_in: "Received",
+  burn: "Burned",
+  collection_create: "Collection Created",
+  update: "Updated",
+  upgrade: "Upgraded",
   sale: "Sales",
 } as const
 
