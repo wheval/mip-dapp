@@ -236,7 +236,7 @@ export function Activities({
                     <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">Loading Activities</h3>
-                  <p className="text-muted-foreground">Fetching your blockchain activities...</p>
+                  <p className="text-muted-foreground">Fetching your recent activities...</p>
                 </div>
               </div>
             )}
