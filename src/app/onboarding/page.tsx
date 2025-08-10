@@ -92,8 +92,7 @@ export default function OnboardingComponent() {
 
       await user?.reload();
 
-      router.refresh();
-      router.push("/");
+      window.location.assign("/");
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       setGeneralError(error instanceof Error ? error.message : 'An unexpected error occurred');
