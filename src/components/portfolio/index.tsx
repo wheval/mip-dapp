@@ -46,6 +46,8 @@ export default function PortfolioView() {
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
   const publicKey = user?.publicMetadata?.publicKey as any;
+  
+  console.log("User wallet:", publicKey)
 
   const {
     data: portfolioAsset,
@@ -126,7 +128,7 @@ export default function PortfolioView() {
         return a.title.localeCompare(b.title);
       case "type":
         return a.type.localeCompare(b.type);
-      case "author":
+      case "creator":
         return a.author.localeCompare(b.author);
       default:
         return 0;
@@ -165,6 +167,7 @@ export default function PortfolioView() {
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <span className="text-xs text-muted-foreground">
                         {`${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`}
+
                       </span>
                     </div>
                   )}
@@ -176,6 +179,7 @@ export default function PortfolioView() {
                   >
                     {currentAssets?.length} Assets
                   </Badge>
+                  {/* Export button 
                   <Button
                     variant="outline"
                     size="sm"
@@ -184,6 +188,7 @@ export default function PortfolioView() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  */}
                 </div>
               </div>
 
