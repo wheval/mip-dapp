@@ -91,7 +91,7 @@ export default function CreateAssetView() {
   const {
     callAnyContractAsync,
     isLoading: isMinting,
-    error: mintError,
+    // error: mintError,
   } = useCallAnyContract();
   const { uploadToIpfs, loading } = useIpfsUpload();
   // Upload and media state
@@ -230,10 +230,8 @@ export default function CreateAssetView() {
           description: "Your content is now protected on the blockchain",
         });
 
-        // Optional: redirect after successful mint
-        setTimeout(() => {
-          router.push("/portfolio");
-        }, 3000);
+        // Force full reload to ensure latest data
+        window.location.assign("/portfolio");
       }
     } catch (error) {
       console.error("Minting failed:", error);
