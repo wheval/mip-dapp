@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/src/components/ui/card"
 import { TrendingUp, Users, Shield, Zap } from "lucide-react"
 import { FeaturedArticle } from "@/src/components/news/featured-article"
 import { newsArticles, getAllCategories } from "@/src/lib/news-data"
-import { Hero } from "@/src/components/hero"
+import { PrismHero } from "@/src/components/prism-hero"
 
 
 export default function HomePage() {
@@ -28,23 +28,33 @@ export default function HomePage() {
       </div>*/}
 
 
-      {/* New Hero Section */}
+      {/* New Prism Hero Section */}
         <div className="px-4 pt-6">
           <div className="mx-auto max-w-6xl">
-            <Hero />
+            <PrismHero
+              kicker="Gasless mints • Own your IP"
+              title="Tokenize your IP"
+              highlight="fast, free, forever."
+              subtitle="Turn creations into verifiable, programmable assets with one click."
+              primaryCta={{ label: "Start free", href: "/create" }}
+              secondaryCta={{ label: "Sign up", href: "/create" }}
+              hue={268}
+              size="md"
+              align="left"
+            />
           </div>
         </div>
 
 
 
-        {/* Main Timeline Section 
+        {/* Main Timeline Section */}
         <div className="px-4 pt-6 pb-8">
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<TimelineSkeleton />}>
               <Timeline />
             </Suspense>
           </div>
-        </div>*/}
+        </div>
 
         {/* Stats Section - Moved to Bottom 
         <div className="px-4 py-8 border-t border-border/30 bg-muted/20 backdrop-blur-sm">
