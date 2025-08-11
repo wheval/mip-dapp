@@ -33,7 +33,7 @@ type PrismHeroProps = {
  */
 export function PrismHero({
   kicker = "Gasless mints • Own your IP",
-  title = "Tokenize your IP",
+  title = "Tokenize your content",
   highlight = "fast, free, forever.",
   subtitle = "Turn creations into verifiable, programmable assets with one click.",
   primaryCta = { label: "Start", href: "/create" },
@@ -41,7 +41,7 @@ export function PrismHero({
   chips = [
     { icon: <Paintbrush className="h-3.5 w-3.5" />, label: "Creators" },
     { icon: <Music className="h-3.5 w-3.5" />, label: "Artists" },
-    { icon: <Rocket className="h-3.5 w-3.5" />, label: "Startups" },
+    { icon: <Rocket className="h-3.5 w-3.5" />, label: "Collectors" },
     { icon: <Briefcase className="h-3.5 w-3.5" />, label: "Business" },
   ],
   hue = 268,
@@ -147,13 +147,15 @@ export function PrismHero({
                 <Button
                   asChild
                   size="lg"
-                  className="px-5 transition-transform duration-200 hover:scale-[1.02] shadow-sm"
+                  className="px-5 bg-blue-600 text-white transition-transform duration-200 hover:scale-[1.02] shadow-sm"
                 >
                   <Link href={primaryCta.href} aria-label={primaryCta.label}>
                     {primaryCta.label}
                   </Link>
                 </Button>
               )}
+              
+              {/*}
               {secondaryCta && (
                 <Button
                   asChild
@@ -166,6 +168,8 @@ export function PrismHero({
                   </Link>
                 </Button>
               )}
+                */}
+
             </div>
           )}
 
