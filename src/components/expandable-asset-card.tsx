@@ -313,7 +313,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 group border-border/50 bg-card/50 backdrop-blur-sm">
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         <div className="relative">
-          {/*<Link href={`/asset/${asset.slug}`}> */}
+          <Link href={`/asset/${asset.slug}`}>
             <Image
               src={asset.mediaUrl || "/placeholder.svg"}
               alt={asset.title}
@@ -321,7 +321,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
               height={300}
               className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105 cursor-pointer"
             />
-          {/*</Link> */}
+          </Link> 
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           <div className="absolute top-3 right-3">
@@ -381,11 +381,11 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
         <CardContent className="p-6">
           <div className="space-y-4">
             <div>
-             {/* <Link href={`/asset/${asset.slug}`}>*/}
+             <Link href={`/asset/${asset.slug}`}>
                 <h3 className="font-semibold text-foreground mb-2 truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
                   {asset.title}
                 </h3>
-              {/*</Link>*/}
+              </Link>
 
               <p className="text-sm text-muted-foreground line-clamp-2">{asset.description}</p>
             </div>
@@ -405,7 +405,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
 
             <div className="flex space-x-2">
               
-              {/*}
+             
               <Link href={`/asset/${asset.slug}`} className="flex-1">
                 <Button
                   variant="outline"
@@ -416,7 +416,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                   View Asset
                 </Button>
               </Link>
-              */}
+             
               
               
               <CollapsibleTrigger asChild>
