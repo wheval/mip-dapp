@@ -66,8 +66,8 @@ export default function AssetPage() {
           <div className="px-4 py-8">
             <div className="max-w-6xl mx-auto text-center py-16">
               <h1 className="text-2xl font-bold text-foreground mb-4">Asset Not Found</h1>
-              <p className="text-muted-foreground mb-6">The asset you're looking for doesn't exist or has been removed.</p>
-              <Button onClick={() => router.push("/")}>Back to Home</Button>
+              <p className="text-muted-foreground mb-6">The asset you're looking could not be found.</p>
+              <Button onClick={() => router.push("/")}>Back to Start</Button>
             </div>
           </div>
         </main>
@@ -90,7 +90,7 @@ export default function AssetPage() {
                 <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
                   <div className="relative group">
                     <Image
-                      src={asset.mediaUrl || "/placeholder.svg?height=600&width=600"}
+                      src={asset.mediaUrl || "/placeholder.svg"}
                       alt={asset.title}
                       width={600}
                       height={600}
@@ -100,7 +100,7 @@ export default function AssetPage() {
 
                     <div className="absolute top-4 left-4">
                       <Badge className="bg-background/90 text-foreground border-border/50 backdrop-blur-sm">
-                        {asset.type || "Unknown"}
+                        {asset.type || "NFT"}
                       </Badge>
                     </div>
 
@@ -139,19 +139,17 @@ export default function AssetPage() {
                         <Send className="w-4 h-4 mr-2" />
                         Transfer
                       </Button>
-                      <Button variant="outline">
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit
-                      </Button>
                     </>
                   ) : (
                     <Button variant="outline" className="col-span-2">
                       <Users className="w-4 h-4 mr-2" />
-                      Contact Creator
+                      Creator {asset.author || ""}
                     </Button>
                   )}
                 </div>
 
+
+                {/* File information section 
                 {(asset.fileSize || asset.fileDimensions || asset.fileFormat) && (
                   <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                     <CardContent className="p-4">
@@ -178,7 +176,10 @@ export default function AssetPage() {
                       </div>
                     </CardContent>
                   </Card>
-                )}
+                )}*/}
+
+
+
               </div>
 
               <div className="space-y-6">
@@ -197,7 +198,7 @@ export default function AssetPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={handleShare}>
                           <Share className="w-4 h-4 mr-2" />
-                          Share Asset
+                          Share
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={handleShare}>
                           <Copy className="w-4 h-4 mr-2" />
@@ -210,7 +211,7 @@ export default function AssetPage() {
                             rel="noopener noreferrer"
                           >
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            View on Explorer
+                            View onchain
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -225,7 +226,7 @@ export default function AssetPage() {
 
                 <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">Asset Information</CardTitle>
+                   {/*  <CardTitle className="text-lg">Asset Information</CardTitle>*/}
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -249,7 +250,7 @@ export default function AssetPage() {
 
                     {asset.externalUrl && (
                       <div>
-                        <Label className="text-sm text-muted-foreground">External Link</Label>
+                        
                         <div className="flex items-center space-x-2 mt-1">
                           <Globe className="w-4 h-4 text-muted-foreground" />
                           <a
@@ -258,22 +259,27 @@ export default function AssetPage() {
                             rel="noopener noreferrer"
                             className="text-primary hover:underline text-sm"
                           >
-                            View
+                            View External Link
                           </a>
                         </div>
                       </div>
                     )}
 
+                    {/*
                     <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/30">
                       <div className="text-center">
                         <div className="text-lg font-bold text-foreground">{asset.registrationDate || "Unknown"}</div>
                         <div className="text-xs text-muted-foreground">Created</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-lg font-bold text-foreground">v{asset.ipVersion || "1.0"}</div>
+                        <div className="text-lg font-bold text-foreground">v {asset.ipVersion || "1.0"}</div>
                         <div className="text-xs text-muted-foreground">Version</div>
                       </div>
                     </div>
+                    */}
+
+
+
                   </CardContent>
                 </Card>
 
@@ -285,12 +291,14 @@ export default function AssetPage() {
                       </div>
                       <div>
                         <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="font-bold text-foreground">{asset.protectionStatus || "Unknown"}</h3>
-                          {getProtectionIcon(asset.protectionStatus)}
+                          <h3 className="font-bold text-foreground">{asset.protectionStatus || "Unknown"}</h3> IP {getProtectionIcon(asset.protectionStatus)}
                         </div>
                         <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                          Protected under {(asset.protectionScope || "unknown").toLowerCase()} copyright law for {asset.protectionDuration || "unknown duration"}
+                          This intellectual property is registered onchain and protected under the Berne Convention, ensuring its rights are recognized internationally.
                         </p>
+                        <p className="text-muted-foreground text-sm mb-2">
+                          The Berne Convention primarily protects copyright, which safeguards literary and artistic works. The convention ensures that works originating in one member country receive the same copyright protection in all other member countries as their own nationals. 
+                          </p>
                         <div className="flex flex-wrap gap-2">
                           <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
                             {asset.protectionScope || "Unknown Scope"}
@@ -373,6 +381,8 @@ export default function AssetPage() {
                         </div>
                       </div>
 
+
+                      {/* License Terms Section 
                       <div className="flex space-x-2">
                         <Button variant="outline" className="flex-1">
                           <ExternalLink className="w-4 h-4 mr-2" />
@@ -382,7 +392,10 @@ export default function AssetPage() {
                           <Globe className="w-4 h-4 mr-2" />
                           License Asset
                         </Button>
-                      </div>
+                      </div>*/}
+
+
+
                     </div>
                   </CardContent>
                 </Card>
