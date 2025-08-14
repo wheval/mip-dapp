@@ -141,10 +141,14 @@ export default function AssetPage() {
                       </Button>
                     </>
                   ) : (
+                    <>
+                    {/* 
                     <Button variant="outline" className="col-span-2">
                       <Users className="w-4 h-4 mr-2" />
                       Creator {asset.author || ""}
                     </Button>
+                    */}
+                    </>
                   )}
                 </div>
 
@@ -294,10 +298,10 @@ export default function AssetPage() {
                           <h3 className="font-bold text-foreground">{asset.protectionStatus || "Unknown"}</h3> IP {getProtectionIcon(asset.protectionStatus)}
                         </div>
                         <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                          This intellectual property is registered onchain and protected under the Berne Convention, ensuring its rights are recognized internationally.
+                          This intellectual property is registered onchain and protected with The Berne Convention and Proof of Ownership.
                         </p>
                         <p className="text-muted-foreground text-sm mb-2">
-                          The Berne Convention primarily protects copyright, which safeguards literary and artistic works. The convention ensures that works originating in one member country receive the same copyright protection in all other member countries as their own nationals. 
+                          The Berne Convention primarily protects copyright, which safeguards literary, artistic and creative works. The convention ensures that works originating in one member country receive the same copyright protection in all other member countries as their own nationals. 
                           </p>
                         <div className="flex flex-wrap gap-2">
                           <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
@@ -474,7 +478,7 @@ export default function AssetPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-sm text-muted-foreground">Token Standard</Label>
+                          <Label className="text-sm text-muted-foreground">Asset Standard</Label>
                           <div className="font-medium text-foreground">ERC-721</div>
                         </div>
                         <div>
