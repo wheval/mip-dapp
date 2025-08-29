@@ -45,6 +45,7 @@ STREAM_URL=https://sepolia.starknet.a5a.ch
 STARTING_BLOCK=1200000
 CONTRACT_ADDRESS=0x1234567890abcdef...
 POSTGRES_CONNECTION_STRING=
+RPC_URL=
 ```
 
 ### Example: `.env`
@@ -64,7 +65,7 @@ POSTGRES_CONNECTION_STRING=
 
 ---
 
-## 🚀 Running Locally
+## 🚀 Running Locally on dev mode
 
 1. Install dependencies:
 
@@ -72,22 +73,21 @@ POSTGRES_CONNECTION_STRING=
    pnpm install
    ```
 
-2. Run a specific indexer (Dapp example):
+2. Run a specific medialano dapp indexer:
 
    ```bash
-   pnpm run start:indexer:dapp
+   pnpm run dev:dapp
+   ```
+3. Run medialanoMipp indexer:
+
+   ```bash
+   pnpm run dev:mipp:mainnet
    ```
 
-3. Run API service:
+4. Run API service:
 
    ```bash
-   pnpm run start:api
-   ```
-
-4. Run both indexers together:
-
-   ```bash
-   pnpm run dev
+   pnpm run api:dev
    ```
 
 ---
@@ -167,27 +167,6 @@ You can connect using tools like **pgAdmin** or **psql**:
 ```sql
 SELECT * FROM "cursor_table" LIMIT 20;
 ```
-
----
-
-## 📊 Architecture
-
-```mermaid
-flowchart TD
-  subgraph Indexers
-    Dapp[Indexer: Dapp] --> DB[(Postgres)]
-    Mipp[Indexer: Mipp] --> DB
-  end
-
-  API[Fastify API] --> DB
-  Clients[Clients / Frontend] --> API
-```
-
-* **Indexer (Dapp/Mipp)** → Streams Starknet events → writes to **Postgres**
-* **API** → Reads from **Postgres** → serves data to clients
-
-
----
 
 ## ✅ Summary
 
