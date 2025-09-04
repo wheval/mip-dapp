@@ -1,9 +1,12 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import swagger from "@fastify/swagger";
+import swaggerUI from "@fastify/swagger-ui";
 import { assetsRoutes } from "./routes/assets";
 import { collectionsRoutes } from "./routes/collection";
 import { transfersRoutes } from "./routes/transfers";
 import { statsRoutes } from "./routes/stats";
+import { openapiSpec } from "lib/util";
 
 const fastify = Fastify({
   logger: {
@@ -33,6 +36,15 @@ fastify.register(cors, {
     }
   },
   credentials: true,
+});
+
+// --- Swagger Setup ---
+fastify.register(swagger, {
+  openapi: openapiSpec,
+});
+
+fastify.register(swaggerUI, {
+  routePrefix: "/docs",
 });
 
 // Add global error handler

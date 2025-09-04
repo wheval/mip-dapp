@@ -1,4 +1,6 @@
 import { shortString } from "starknet";
+import { readFileSync } from "fs";
+import yaml from "yaml";
 
 /**
  * Convert array of felts into a string.
@@ -28,3 +30,7 @@ export function feltsToString(felts: string[]): string {
 export function feltToAddress(f: string): string {
   return "0x" + BigInt(f).toString(16).padStart(64, "0");
 }
+
+
+
+export const openapiSpec = yaml.parse(readFileSync("./openapi.yaml", "utf-8"));
