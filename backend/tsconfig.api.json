@@ -4,7 +4,7 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist/api",
-    "rootDir": "src",
+    "rootDir": ".",
     "declaration": true,
     "sourceMap": true
   },
