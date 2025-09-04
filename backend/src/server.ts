@@ -1,9 +1,15 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import swagger from "@fastify/swagger";
+import swaggerUI from "@fastify/swagger-ui";
 import { assetsRoutes } from "./routes/assets";
 import { collectionsRoutes } from "./routes/collection";
 import { transfersRoutes } from "./routes/transfers";
 import { statsRoutes } from "./routes/stats";
+import { openapiSpec } from "lib/util";
+
+
+const port = parseInt(process.env.PORT || "3000");
 
 const fastify = Fastify({
   logger: {
@@ -33,6 +39,16 @@ fastify.register(cors, {
     }
   },
   credentials: true,
+});
+
+// --- Swagger Setup ---
+fastify.register(swagger, {
+  openapi: openapiSpec,
+
+});
+
+fastify.register(swaggerUI, {
+  routePrefix: "/docs",
 });
 
 // Add global error handler
@@ -83,7 +99,7 @@ fastify.get("/", async (request, reply) => {
       transfers: "/api/transfers",
       stats: "/api/stats",
     },
-    documentation: "https://github.com/your-repo/nft-indexer-api",
+    documentation: process.env.NODE_ENV === "production"? "https://github.com/your-repo/nft-indexer-api" : `http://localhost:${port}/docs`,
   });
 });
 
@@ -108,7 +124,6 @@ process.on("SIGINT", gracefulShutdown);
 // Start server
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || "3000");
     const host = process.env.HOST || "0.0.0.0";
 
     await fastify.listen({ port, host });

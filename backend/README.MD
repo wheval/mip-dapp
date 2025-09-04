@@ -89,6 +89,10 @@ POSTGRES_CONNECTION_STRING=
    ```bash
    pnpm run api:dev
    ```
+5. Swagger can be accessed on PORT/docs:
+   ```bash
+   http://localhost:3000/docs
+   ```
 
 ---
 

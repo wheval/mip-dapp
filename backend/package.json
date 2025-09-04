@@ -14,7 +14,7 @@
     "start:indexer:dapp": "apibara start --indexer medialano-dapp --preset",
     "start:indexer:mipp": "apibara start --indexer medialano-mipp-mainnet --preset",
     "start:indexer:dapp:web": "node dist/deployment/deployment-service.js dapp",
-    "start:indexer:mipp:web": "node dist/depoyment/deployment-service.js mipp",
+    "start:indexer:mipp:web": "node dist/deployment/deployment-service.js mipp",
     "start:api:deploy": "pnpm run drizzle:generate && pnpm run drizzle:push && pnpm run build:api && node dist/api/src/server.js",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
