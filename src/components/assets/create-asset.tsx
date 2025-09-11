@@ -108,11 +108,11 @@ export default function CreateAssetView() {
     description: "",
     mediaUrl: "",
     externalUrl: "https://mip.mediolano.app",
+    author: publicKey || "", 
 
     // Advanced fields with smart defaults
     type: "post", // Default to "Post" like social media
     tags: [] as string[],
-    author: "",
     collection: collections[0].label, // Default to MIP Collection
     licenceType: licenseType[0],
     licenseDetails: "",
@@ -324,6 +324,21 @@ export default function CreateAssetView() {
                           ref={uploaderRef}
                           onChange={(url, file) => console.log(url)}
                         />
+                        {/* Creator/Author - Primary Field */}
+                        <div className="space-y-2">
+                          <TextInput
+                            placeholder="Your name or preferred creator identity"
+                            label="Creator/Author Name"
+                            name="author"
+                            labelIcon={
+                              <PenTool className="w-5 h-5 text-primary" />
+                            }
+                          />
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            This is how you'll be credited as the creator. We've pre-filled this with your wallet address, but you can change it to your name, username, or brand.
+                          </p>
+                        </div>
+
                         {/* External URL - Primary Field */}
                         <TextInput
                           placeholder="https://yourwebsite.com"
@@ -416,8 +431,8 @@ export default function CreateAssetView() {
 
                             <Separator />
 
-                            {/* Collection & Author */}
-                            <div className="grid grid-cols-1 items-start md:grid-cols-2 gap-4">
+                            {/* Collection */}
+                            <div className="grid grid-cols-1 gap-4">
                               <SelectInput
                                 label="Collection"
                                 data={collections || []}
@@ -428,15 +443,6 @@ export default function CreateAssetView() {
                                 defaultValue={collections?.[0]?.label}
                                 handleSubText={(item) => item.description}
                                 name="collection"
-                                labelClass="text-sm font-medium flex items-center space-x-2"
-                              />
-
-                              <TextInput
-                                id="author"
-                                placeholder=""
-                                label="Author"
-                                name="author"
-                                showBadge={false}
                                 labelClass="text-sm font-medium flex items-center space-x-2"
                               />
                             </div>
