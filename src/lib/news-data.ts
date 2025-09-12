@@ -59,6 +59,31 @@ const authors: NewsAuthor[] = [
 export const newsArticles: NewsArticle[] = [
   {
     id: "1",
+    slug: "world-creators-own-work",
+    title: "A world where creators own their work, instantly and everywhere",
+    excerpt:
+      "Mediolano is designed to empower creators to register, license, and monetize their content without requiring prior knowledge of blockchain or technical systems. It enables from artists to AI agents to tokenize creative work on-chain, establishing immutable proof of ownership.",
+    content: `
+      <div class="prose prose-lg max-w-none">
+        <p>Creators, developers, and businesses produce content at unprecedented speed, yet the mechanisms for protecting intellectual property remain slow, expensive, and  constrained. As artificial intelligence, generative media, and agentic platforms reshape the creative landscape and blur the lines between original and derivative work, all digital content becomes increasingly modular and remixable, making ownership grow more complex and expensive. While creative works are more vulnerable, the need for a secure and scalable sound solution has become urgent.</p>
+        <p>Mediolano, an open-source framework built on Starknet, proposes an unique model for intellectual property protection. Mediolano is designed to empower creators to register, license, and monetize their content without requiring prior knowledge of blockchain or technical systems. It enables from artists to AI agents to tokenize creative work on-chain, establishing immutable proof of ownership with zero transaction fees. </p>
+        <p>Mediolano’s use of Starknet—a Layer 2 scaling solution for Ethereum—ensures high-speed, low-cost transactions. Starknet employs zero-knowledge proofs to maintain security and scalability, making it an ideal foundation for IP and RWA tokenization. The protocol’s zero-fee model further lowers the barrier to entry, particularly for creators in emerging markets and underrepresented communities.</p>
+        <p>In a time when ideas are currency and originality is under siege, the implications extend beyond copyright. Mediolano’s model—combining cryptographic verification with zero fees offers more than protection — it empowers creators with a compelling blueprint for new possibilities on the Integrity Web.</p>
+        </div>
+    `,
+    image: "/miplaunch.jpg",
+    author: authors[0],
+    publishedAt: "2025-07-12",
+    category: "Creators",
+    tags: ["Starknet", "Mobile", "App", "Blockchain", "IP"],
+    featured: true,
+    isEvent: false,
+    eventDate: "2025-08-04",
+    eventLocation: "Rio de Janeiro, Brazil",
+    readTime: 5,
+  },
+  {
+    id: "2",
     slug: "starknet-rio-meetup",
     title: "Starknet Rio Meetup + IP Lounge",
     excerpt:
@@ -70,17 +95,14 @@ export const newsArticles: NewsArticle[] = [
     `,
     image: "/starknet-rio-meetup-ip-lounge.png",
     author: authors[0],
-    publishedAt: "2025-08-06",
-    category: "Events",
-    tags: ["Starknet", "Rio", "Meetup", "Blockchain", "Mediolano"],
-    featured: true,
-    isEvent: true,
-    eventDate: "2025-08-04",
-    eventLocation: "Rio de Janeiro, Brazil",
-    readTime: 5,
+    publishedAt: "2025-07-12",
+    category: "Articles",
+    tags: ["IP Protection", "Mobile", "Blockchain", "Starknet"],
+    featured: false,
+    readTime: 8,
   },
   {
-    id: "2",
+    id: "3",
     slug: "programmable-ip-tokenizing-intelligence-integrity-web",
     title: "Programmable IP: Tokenizing Intelligence on the Integrity Web",
     excerpt:

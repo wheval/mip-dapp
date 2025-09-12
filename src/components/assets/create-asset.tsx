@@ -107,7 +107,7 @@ export default function CreateAssetView() {
     title: "",
     description: "",
     mediaUrl: "",
-    externalUrl: "https://mip.mediolano.app",
+    externalUrl: "https://yourlink.com",
     author: publicKey || "", 
 
     // Advanced fields with smart defaults
@@ -328,7 +328,7 @@ export default function CreateAssetView() {
                         <div className="space-y-2">
                           <TextInput
                             placeholder="Your name or preferred creator identity"
-                            label="Creator/Author Name"
+                            label="Creator Name"
                             name="author"
                             labelIcon={
                               <PenTool className="w-5 h-5 text-primary" />
@@ -341,8 +341,8 @@ export default function CreateAssetView() {
 
                         {/* External URL - Primary Field */}
                         <TextInput
-                          placeholder="https://yourwebsite.com"
-                          label="External URL"
+                          placeholder="https://yourlink.com"
+                          label="Your link"
                           name="externalUrl"
                           labelIcon={
                             <ExternalLink className="w-5 h-5 text-primary" />
