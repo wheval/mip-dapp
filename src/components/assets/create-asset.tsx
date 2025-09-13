@@ -117,8 +117,8 @@ export default function CreateAssetView() {
     licenceType: licenseType[0],
     licenseDetails: "",
     ipVersion: "1.0",
-    commercialUse: false,
-    modifications: false,
+    commercialUse: true,
+    modifications: true,
     attribution: true,
     registrationDate: new Date().toISOString().split("T")[0],
     protectionStatus: "Protected",
@@ -167,12 +167,12 @@ export default function CreateAssetView() {
             trait_type: "Attribution",
             value: values.attribution.toString(),
           },
-          { trait_type: "IP Version", value: values.ipVersion },
+          { trait_type: "Version", value: values.ipVersion },
           {
-            trait_type: "Protection Status",
+            trait_type: "Protection",
             value: values.protectionStatus,
           },
-          { trait_type: "Protection Scope", value: values.protectionScope },
+          { trait_type: "Scope", value: values.protectionScope },
           { trait_type: "Tags", value: values.tags.join(", ") },
         ],
         properties: {
@@ -195,7 +195,7 @@ export default function CreateAssetView() {
       }
 
       const result = await uploadToIpfs(file, metadata);
-      console.log("Uploaded:", result);
+      //console.log("Uploaded:", result);
 
       // Mint NFT using Chipi SDK's callAnyContract
       const mintResult = await callAnyContractAsync({
@@ -226,7 +226,7 @@ export default function CreateAssetView() {
         setShowPinDialog(false);
 
         toast({
-          title: "🎉 IP Asset Created!",
+          title: "Asset Created!",
           description: "Your content is now protected on the blockchain",
         });
 

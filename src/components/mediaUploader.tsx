@@ -151,7 +151,7 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
         <Label className="text-base font-semibold flex items-center space-x-2">
           <Upload className="w-5 h-5 text-primary" />
           <span>{label}</span>
-          <Badge variant="secondary" className="text-xs px-2 py-0">
+          <Badge variant="outline" className="text-xs px-2 py-0">
             Optional
           </Badge>
         </Label>
