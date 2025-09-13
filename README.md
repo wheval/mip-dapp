@@ -1,19 +1,27 @@
+<img width="1024" height="500" alt="image" src="https://github.com/user-attachments/assets/9fe73372-a6b9-4867-b1e5-ab1833058567" />
+
+
 # MIP by Mediolano
 
-Fast, secure and free! Transform your content into protected intellectual property with frictionless tokenization on #Starknet
+MIP - My Intellectual Property - is a mobile app that allows users to publish their content onchain for free using their Google account, ensuring greater security and eliminating technical barriers for non-crypto natives.
 
-MIP empowers artists, creators, and organizations protect their creative work and make money from it — without needing to understand anything about cryptocurrency or even technology.
+Within seconds anyone can create an account with self-custody assets and start tokenizing content onchain -- simple, fast, and free. Built for the Integrity Web, MIP empowers intelligence giving creators protection, control and new frontiers.
 
-It’s built using powerful tools that work behind the scenes to keep costs free, transactions fast, and your ownership secure. With MIP, anyone can turn their creative content—like music, art, writing, or videos—into digital assets that are protected and easy to share or sell.
+Built on Starknet: Scalable, Secure, Smart. MIP is powered by Chipi Pay SDK and AVNU Paymaster to let users enjoy gasless transactions and frictionless onboarding. And thanks to Mediolano Protocol, content tokenization is completely free — no hidden fees, no gatekeeping.
 
-MIP integrates Mediolano Protocol to enable instant tokenization and protection of creative works in accordance with the Berne Convention (1886), which spans 181 countries. This legal infrastructure guarantees global recognition of authorship and provides verifiable proof of ownership for 50 to 70 years, depending on the jurisdiction.
+## Features:
+
+- No crypto knowledge required - Sign in with Google, get a smart account instantly
+- Tokenize Content into onchain assets with zero cost
+- Remix & Monetize to collaborate and earn from derivative works
+- Share & Transfer assets with other users
+- Portfolio Manager to track your tokenized content in one place
+- Creator Public Profile to showcase your work and build your onchain reputation
+- Self-Custody Smart Account to assets ownership without relying on third parties
+- Asset interoperability and industry standarts
 
 
-![mip-mobile-dapp](https://github.com/user-attachments/assets/a910cb00-cdb9-449b-a1a1-c9f8101a482a)
-
-
-
-# Mediolano - Programmable IP for the Integrity Web
+## Mediolano - Programmable IP for the Integrity Web
 
 Governed by a DAO (Decentralized Autonomous Organization), Mediolano champions transparent, decentralized decision-making in alignment with core web3 and cypherpunk principles. Our mission is to foster long-term value and sustainability for the entire ecosystem—from users to partners—by operating in the collective interest of the network.
 
