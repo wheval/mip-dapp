@@ -295,7 +295,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                         rel="noopener noreferrer"
                         className="text-primary hover:underline text-sm"
                       >
-                        View External Resource
+                        View external link
                       </a>
                     </div>
                   </div>

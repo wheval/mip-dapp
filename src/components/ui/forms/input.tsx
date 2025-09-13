@@ -36,7 +36,7 @@ export const TextInput = ({
           {labelIcon ?? labelIcon}
           <span>{props.label}</span>
           {showBadge && (
-            <Badge variant="destructive" className="text-xs px-2 py-0">
+            <Badge variant="outline" className="text-xs px-2 py-0">
               Required
             </Badge>
           )}

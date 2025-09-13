@@ -230,8 +230,11 @@ export default function CreateAssetView() {
           description: "Your content is now protected on the blockchain",
         });
 
-        // Force full reload to ensure latest data
-        window.location.assign("/portfolio");
+        // Force full reload to ensure latest data after 3 seconds
+        setTimeout(function() {
+            window.location.assign("/portfolio");
+        }, 3000);
+
       }
     } catch (error) {
       console.error("Minting failed:", error);
@@ -300,7 +303,7 @@ export default function CreateAssetView() {
                     {/* Main Creation Form */}
                     <Card className="bg-card/50 backdrop-blur-sm border-border/50">
                       <CardContent className="p-6 space-y-6">
-                        {/* Title - Primary Field */}
+                        {/* Title */}
                         <TextInput
                           placeholder="What's your creation called?"
                           label="Title"
@@ -310,21 +313,22 @@ export default function CreateAssetView() {
                           }
                         />
 
-                        {/* Description - Primary Field */}
+                        {/* Description */}
                         <TextAreaInput
                           labelIcon={
                             <FileText className="w-5 h-5 text-primary" />
                           }
                           label="Description"
                           name="description"
+                          placeholder="Describe your creation"
                         />
 
-                        {/* Media Upload - Optional */}
+                        {/* Media Upload */}
                         <MediaUploader
                           ref={uploaderRef}
                           onChange={(url, file) => console.log(url)}
                         />
-                        {/* Creator/Author - Primary Field */}
+                        {/* Creator/Author */}
                         <div className="space-y-2">
                           <TextInput
                             placeholder="Your name or preferred creator identity"
@@ -339,7 +343,7 @@ export default function CreateAssetView() {
                           </p>
                         </div>
 
-                        {/* External URL - Primary Field */}
+                        {/* External URL */}
                         <TextInput
                           placeholder="https://yourlink.com"
                           label="Your link"
@@ -634,20 +638,19 @@ export default function CreateAssetView() {
                             </h3>
                             <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
                               Your IP will be protected on Starknet with
-                              immutable proof of ownership and global copyright
-                              protection.
+                              immutable proof of ownership.
                             </p>
                             <div className="grid grid-cols-3 gap-4">
                               <div className="text-center">
                                 <Clock className="w-6 h-6 mx-auto text-primary mb-1" />
                                 <p className="text-xs font-medium">
-                                  ~2 minutes
+                                  Seconds
                                 </p>
                               </div>
                               <div className="text-center">
                                 <Globe className="w-6 h-6 mx-auto text-green-500 mb-1" />
                                 <p className="text-xs font-medium">
-                                  181 Countries
+                                  Worldwide
                                 </p>
                               </div>
                               <div className="text-center">
@@ -669,7 +672,7 @@ export default function CreateAssetView() {
                             </div>
                             <div className="flex-1">
                               <h3 className="font-bold text-green-900 dark:text-green-100 mb-2">
-                                IP Asset Created!
+                                Asset Created!
                               </h3>
                               <div className="space-y-2">
                                 <p className="text-sm text-green-700 dark:text-green-300">
@@ -756,7 +759,7 @@ export default function CreateAssetView() {
                                 {isMinting ? (
                                   <div className="flex items-center space-x-3">
                                     <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
-                                    <span>Minting Your IP Asset...</span>
+                                    <span>Creating Your IP Asset...</span>
                                   </div>
                                 ) : (
                                   <div className="flex items-center space-x-3">
@@ -776,7 +779,7 @@ export default function CreateAssetView() {
                                 onSubmit={(pin) => handlePinSubmit(pin, values)}
                                 isLoading={isPinSubmitting || loading}
                                 title="Authenticate Minting"
-                                description="Enter your wallet PIN to mint your IP asset"
+                                description="Enter your wallet PIN to create your IP asset"
                                 submitText="Mint Asset"
                                 error={pinError}
                                 onCancel={() => setShowPinDialog(false)}
