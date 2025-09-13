@@ -7,7 +7,7 @@ import { TrendingUp, Users, Shield, Zap } from "lucide-react"
 import { FeaturedArticle } from "@/src/components/news/featured-article"
 import { newsArticles, getAllCategories } from "@/src/lib/news-data"
 import { PrismHero } from "@/src/components/prism-hero"
-
+import { Badge } from "@/src/components/ui/badge"
 
 export default function HomePage() {
 
@@ -50,11 +50,10 @@ export default function HomePage() {
         {/* Main Timeline Section */}
         <div className="px-4 pt-12 pb-8">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-2">Explore</h2>
-              <p className="text-muted-foreground">
-                Discover the latest tokenize content from creators worldwide
-              </p>
+            <div className="mb-2">
+
+              <Badge variant="outline">Explore content from creators worldwide:</Badge>
+
             </div>
             <Suspense fallback={<TimelineSkeleton />}>
               <Timeline />

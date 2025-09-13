@@ -78,7 +78,6 @@ export function Timeline() {
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [expandedAssets, setExpandedAssets] = useState<Set<string>>(new Set());
 
-  // Use the real timeline hook instead of mock data
   const {
     assets,
     isLoading,
@@ -482,7 +481,7 @@ export function Timeline() {
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Send className="w-4 h-4 mr-2" />
-                          License Asset
+                          Transfer Asset
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
@@ -519,7 +518,7 @@ export function Timeline() {
                             rel="noopener noreferrer"
                           >
                             <Globe className="w-4 h-4 mr-1" />
-                            External
+                            External link
                           </a>
                         </Button>
                       )}
@@ -575,7 +574,7 @@ export function Timeline() {
                                 {asset.creator.name}
                               </p>
                               <p className="text-xs text-muted-foreground truncate">
-                                @{asset.creator.username}
+                                {asset.creator.username}
                               </p>
                             </div>
                           </div>
@@ -591,11 +590,9 @@ export function Timeline() {
                           </div>
                           <div>
                             <p className="text-sm font-medium text-foreground">
-                              {asset.protectionStatus}
+                              {asset.protectionStatus} v{asset.ipVersion}
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                              v{asset.ipVersion}
-                            </p>
+
                           </div>
                         </div>
 

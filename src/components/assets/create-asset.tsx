@@ -233,7 +233,7 @@ export default function CreateAssetView() {
         // Force full reload to ensure latest data after 3 seconds
         setTimeout(function() {
             window.location.assign("/portfolio");
-        }, 3000);
+        }, 7000);
 
       }
     } catch (error) {
