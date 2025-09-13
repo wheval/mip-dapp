@@ -233,10 +233,12 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                       <X className="w-3 h-3" />
                     </Button>
                   </div>
+                  {/*
                   <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
                     <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>{mediaFile?.name}</span>
+                     <span>{mediaFile?.name}</span> 
                   </div>
+                  */}
                 </div>
               )}
 
@@ -272,7 +274,7 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                     alt="URL Preview"
                     width={300}
                     height={150}
-                    className="max-w-screen-sm h-32 object-cover"
+                    className="w-full h-32 object-cover"
                   />
                 </div>
               )}
