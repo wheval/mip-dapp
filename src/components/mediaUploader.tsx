@@ -160,7 +160,7 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
           value={mediaType}
           onValueChange={(val) => setMediaType(val as "upload" | "url")}
         >
-          <TabsList className="grid w-full max-w-screen-sm grid-cols-2 bg-muted/50">
+          <TabsList className="grid max-w-screen-sm grid-cols-2 bg-muted/50">
             <TabsTrigger
               value="upload"
               className="data-[state=active]:bg-background"
@@ -219,7 +219,7 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                       alt="Preview"
                       width={300}
                       height={150}
-                      className="w-full max-w-screen-sm h-32 object-cover rounded-lg mx-auto"
+                      className="max-w-screen-sm h-32 object-cover rounded-lg mx-auto"
                     />
                     <Button
                       size="sm"
@@ -272,7 +272,7 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                     alt="URL Preview"
                     width={300}
                     height={150}
-                    className="w-full h-32 object-cover"
+                    className="max-w-screen-sm h-32 object-cover"
                   />
                 </div>
               )}
