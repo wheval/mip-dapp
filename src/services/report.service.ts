@@ -57,12 +57,7 @@ export class ReportContentService {
           version: "1.0"
         }
 
-        console.log(`📋 Submitting report (attempt ${attempt + 1}):`, {
-          reportId,
-          contentType: reportData.contentType,
-          contentId: reportData.contentId,
-          reportType: reportData.reportType
-        })
+        
 
         const response = await fetch(`${this.baseUrl}/api/reports/submit`, {
           method: 'POST',
@@ -84,11 +79,6 @@ export class ReportContentService {
         }
 
         const result = await response.json()
-        
-        console.log('✅ Report submitted successfully:', {
-          reportId: result.reportId || reportId,
-          status: result.status
-        })
 
         return {
           success: true,
@@ -99,7 +89,7 @@ export class ReportContentService {
 
       } catch (error) {
         attempt++
-        console.error(`❌ Report submission attempt ${attempt} failed:`, error)
+        console.error(`Report submission attempt ${attempt} failed:`, error)
         
         if (attempt >= this.MAX_RETRIES) {
           throw new Error(
