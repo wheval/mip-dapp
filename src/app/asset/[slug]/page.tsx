@@ -325,7 +325,7 @@ export default function AssetPage() {
               <TabsList className="grid w-full grid-cols-5 bg-muted/50">
                 <TabsTrigger value="licensing" className="data-[state=active]:bg-background">Licensing</TabsTrigger>
                 <TabsTrigger value="template" className="data-[state=active]:bg-background">Template</TabsTrigger>
-                <TabsTrigger value="attributes" className="data-[state=active]:bg-background">Attributes</TabsTrigger>
+                {/*<TabsTrigger value="attributes" className="data-[state=active]:bg-background">Attributes</TabsTrigger>*/}
                 <TabsTrigger value="history" className="data-[state=active]:bg-background">History</TabsTrigger>
                 <TabsTrigger value="technical" className="data-[state=active]:bg-background">Technical</TabsTrigger>
               </TabsList>

@@ -36,24 +36,6 @@ const authors: NewsAuthor[] = [
     linkedin: "https://linkedin.com/mediolano",
     role: "My Intellectual Property",
   },
-  {
-    id: "2",
-    name: "MIP",
-    avatar: "/placeholder.svg?height=100&width=100",
-    bio: "Tokenize and protect your creative work with MIP.",
-    twitter: "https://x.com/mediolanoapp",
-    linkedin: "https://linkedin.com/mediolano",
-    role: "My Intellectual Property",
-  },
-  {
-    id: "3",
-    name: "MIP",
-    avatar: "/placeholder.svg?height=100&width=100",
-    bio: "Tokenize and protect your creative work with MIP.",
-    twitter: "https://x.com/mediolanoapp",
-    linkedin: "https://linkedin.com/mediolano",
-    role: "My Intellectual Property",
-  },
 ]
 
 export const newsArticles: NewsArticle[] = [
@@ -73,36 +55,17 @@ export const newsArticles: NewsArticle[] = [
     `,
     image: "/miplaunch.jpg",
     author: authors[0],
-    publishedAt: "2025-07-12",
+    publishedAt: "2025-09-12",
     category: "Creators",
     tags: ["Starknet", "Mobile", "App", "Blockchain", "IP"],
     featured: true,
     isEvent: false,
-    eventDate: "2025-08-04",
-    eventLocation: "Rio de Janeiro, Brazil",
+    eventDate: "2025-09-12",
+    eventLocation: "Worldwide",
     readTime: 5,
   },
   {
     id: "2",
-    slug: "starknet-rio-meetup",
-    title: "Starknet Rio Meetup + IP Lounge",
-    excerpt:
-      "​A Starknet, em parceria com o OnlyDust e Mediolano está promovendo um meetup no Rio de Janeiro com vibes de blockchain, open-source e cultura!",
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <p>Estamos empolgados em anunciar o <strong>Starknet Rio Meetup 2025</strong>, um evento exclusivo que reunirá desenvolvedores, criadores e entusiastas de blockchain no coração do Rio de Janeiro.</p>
-      </div>
-    `,
-    image: "/starknet-rio-meetup-ip-lounge.png",
-    author: authors[0],
-    publishedAt: "2025-07-12",
-    category: "Articles",
-    tags: ["IP Protection", "Mobile", "Blockchain", "Starknet"],
-    featured: false,
-    readTime: 8,
-  },
-  {
-    id: "3",
     slug: "programmable-ip-tokenizing-intelligence-integrity-web",
     title: "Programmable IP: Tokenizing Intelligence on the Integrity Web",
     excerpt:
