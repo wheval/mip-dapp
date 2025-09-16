@@ -322,7 +322,7 @@ export default function AssetPage() {
             </div>
 
             <Tabs defaultValue="licensing" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 bg-muted/50">
+              <TabsList className="grid w-full grid-cols-4 bg-muted/50">
                 <TabsTrigger value="licensing" className="data-[state=active]:bg-background">Licensing</TabsTrigger>
                 <TabsTrigger value="template" className="data-[state=active]:bg-background">Template</TabsTrigger>
                 {/*<TabsTrigger value="attributes" className="data-[state=active]:bg-background">Attributes</TabsTrigger>*/}
