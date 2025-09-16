@@ -359,7 +359,7 @@ export default function PortfolioView() {
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="recent">Recent</SelectItem>
+                      <SelectItem value="recent">Created</SelectItem>
                       <SelectItem value="name">Name</SelectItem>
                       <SelectItem value="type">Type</SelectItem>
                       <SelectItem value="author">Author</SelectItem>

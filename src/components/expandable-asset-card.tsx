@@ -117,7 +117,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                         {asset.licenseType.replace("-", " ").toUpperCase()}
                       </Badge>
                       <span className="text-xs text-muted-foreground">v{asset.ipVersion}</span>
-                      <span className="text-xs text-muted-foreground">by {asset.author}</span>
+                      <span className="text-xs text-muted-foreground"></span>
                     </div>
 
                     <div className="flex items-center space-x-2">
@@ -399,8 +399,8 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
             </div>
 
             <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>by {asset.author}</span>
               <span>{asset.registrationDate}</span>
+              <span></span>
             </div>
 
             <div className="flex space-x-2">
