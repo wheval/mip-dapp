@@ -86,7 +86,7 @@ export const newsArticles: NewsArticle[] = [
       </div>
     `,
     image: "/article-programmable-ip-tokenization.webp",
-    author: authors[1],
+    author: authors[0],
     publishedAt: "2025-08-04",
     category: "Articles",
     tags: ["IP Protection", "Guide", "Blockchain", "Copyright"],
