@@ -20,7 +20,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "MIP",
-  description: "Own your content! Create, manage, and share your IP onchain.",
+  description: "Own and publish your content onchain",
 };
 
 export default function RootLayout({

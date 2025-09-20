@@ -13,8 +13,6 @@ Built on Starknet: Scalable, Secure, Smart. MIP is powered by Chipi Pay SDK and 
 
 - No crypto knowledge required - Sign in with Google, get a smart account instantly
 - Tokenize Content into onchain assets with zero cost
-- Remix & Monetize to collaborate and earn from derivative works
-- Share & Transfer assets with other users
 - Portfolio Manager to track your tokenized content in one place
 - Creator Public Profile to showcase your work and build your onchain reputation
 - Self-Custody Smart Account to assets ownership without relying on third parties
@@ -28,42 +26,11 @@ Governed by a DAO (Decentralized Autonomous Organization), Mediolano champions t
 <a href="https://mediolano.xyz">Website mediolano.xyz</a>
 
 
-## Roadmap
-
-- [x] Starknet Ignition **24.9**
-
-- [x] MIP Protocol @ Starknet Sepolia **24.11**
-
-- [x] Mediolano Dapp @ Starknet Sepolia **24.11**
-
-- [x] Programmable IP Contracts **25.02**
-
-- [x] MIP Dapp @ Starknet Sepolia **25.06**
-
-- [X] MIP Protocol @ Starknet Mainnet **25.07**
-
-- [X] MIP Collections Protocol @ Starknet Sepolia **25.07**
-
-- [X] MIP Dapp @ Starknet Mainnet **25.08**
-
-- [X] MIP Collections Protocol @ Starknet Mainnet **25.08**
-
-- [ ] Mediolano Dapp @ Starknet Mainnet **25.10**
-
-- [ ] Medialane Protocol @ Starknet Sepolia **25.11**
-
-- [ ] Medialane Dapp @ Starknet Sepolia **25.11**
-
-- [ ] Medialane Protocol @ Starknet Mainnet **25.12**
-
-- [ ] Medialane Dapp @ Starknet Mainnet **25.12**
 
 
 ## Contributing
 
-We are building open-source Integrity Web with the amazing **OnlyDust** platform. Check https://app.onlydust.com/p/mediolano for more information.
-
-We also have a Telegram group focused to support development: https://t.me/mediolanoapp
+We are building open-source Integrity Web.
 
 Ccontributions are **greatly appreciated**. If you have a feature or suggestion that would our plattform better, please fork the repo and create a pull request with the tag "enhancement".
 
