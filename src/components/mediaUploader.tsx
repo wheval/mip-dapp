@@ -204,10 +204,11 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                   </div>
                   <div>
                     <p className="font-medium text-foreground mb-1">
-                      Drop files here or click to browse
+                      Drop files here or click to browse your device
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Images, videos, audio, documents (Max 100MB)
+                      Allow this app access your camera or media library to upload your content.
+                      You can change or remove the permissions anytime in your device settings.
                     </p>
                   </div>
                 </div>

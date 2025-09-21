@@ -107,7 +107,7 @@ export default function CreateAssetView() {
     title: "",
     description: "",
     mediaUrl: "",
-    externalUrl: "https://yourlink.com",
+    externalUrl: "https://example.com",
     author: publicKey || "", 
 
     // Advanced fields with smart defaults
@@ -143,7 +143,7 @@ export default function CreateAssetView() {
       });
 
       if (!token) {
-        throw new Error("No bearer token found");
+        throw new Error("No bearer token found. Please try to login again.");
       }
 
       // Create metadata object (in production, this would be uploaded to IPFS)
@@ -230,7 +230,7 @@ export default function CreateAssetView() {
           description: "Your content is now protected on the blockchain",
         });
 
-        // Force full reload to ensure latest data after 3 seconds
+        // Force full reload to ensure latest data
         setTimeout(function() {
             window.location.assign("/portfolio");
         }, 7000);
@@ -244,7 +244,7 @@ export default function CreateAssetView() {
 
       toast({
         title: "Minting Failed",
-        description: errorMessage,
+        description: "PIN incorrect. Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -255,8 +255,8 @@ export default function CreateAssetView() {
   const handleCreate = useCallback(async () => {
     if (!user) {
       toast({
-        title: "Wallet Not Available",
-        description: "Please ensure your wallet is properly loaded",
+        title: "Encrypted wallet not connected",
+        description: "Please login again to access your encrypted wallet",
         variant: "destructive",
       });
       return;
@@ -283,8 +283,7 @@ export default function CreateAssetView() {
                   </h1>
                 </div>
                 <p className="text-muted-foreground text-sm">
-                  Share your creative work and protect it as intellectual
-                  property
+                  Share your creative work and protect it as intellectual property
                 </p>
               </div>
 
@@ -345,7 +344,7 @@ export default function CreateAssetView() {
 
                         {/* External URL */}
                         <TextInput
-                          placeholder="https://yourlink.com"
+                          placeholder="https://example.com"
                           label="Your link"
                           name="externalUrl"
                           labelIcon={
@@ -779,7 +778,7 @@ export default function CreateAssetView() {
                                 onSubmit={(pin) => handlePinSubmit(pin, values)}
                                 isLoading={isPinSubmitting || loading}
                                 title="Authenticate Minting"
-                                description="Enter your wallet PIN to create your IP asset"
+                                description="Enter your PIN to create your content"
                                 submitText="Mint Asset"
                                 error={pinError}
                                 onCancel={() => setShowPinDialog(false)}
