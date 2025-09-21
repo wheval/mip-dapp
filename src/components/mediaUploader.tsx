@@ -207,8 +207,13 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                       Drop files here or click to browse your device
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Allow this app access your camera or media library to upload your content.
-                      You can change or remove the permissions anytime in your device settings.
+                      MIP requires access to your camera and photo library to both take and store your photos onchain. 
+                      <p className="text-sm text-muted-foreground">
+                      Your photos are not transmitted to our servers, they will be stored directly on decentralized file server.
+                      </p>
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      You can change permissions at any time in your device settings.
                     </p>
                   </div>
                 </div>
