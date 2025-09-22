@@ -39,9 +39,9 @@ export function NewsWidget() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     {/* Feature Image - 1:1 Aspect Ratio */}
-                    <div className="w-16 h-16 md:w-32 md:h-32 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary/20 to-purple-500/20">
+                    <div className="w-16 h-9 md:w-32 md:h-18 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary/20 to-purple-500/20">
                       <img
-                        src={featuredArticle.image || "/placeholder.svg?height=100&width=100"}
+                        src={featuredArticle.image || "/placeholder.svg?height=192&width=108"}
                         alt={featuredArticle.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />

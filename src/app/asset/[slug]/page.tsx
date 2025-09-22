@@ -94,12 +94,12 @@ export default function AssetPage() {
                       alt={asset.title}
                       width={600}
                       height={600}
-                      className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-102"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-background/90 text-foreground border-border/50 backdrop-blur-sm">
+                      <Badge className="bg-background/60 text-foreground border-border/50 backdrop-blur-sm">
                         {asset.type || "NFT"}
                       </Badge>
                     </div>

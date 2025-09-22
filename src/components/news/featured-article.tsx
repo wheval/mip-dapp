@@ -25,7 +25,7 @@ export function FeaturedArticle({ article }: FeaturedArticleProps) {
     <Card className="overflow-hidden bg-gradient-to-r from-primary/5 via-purple-500/5 to-pink-500/5 border-border/50">
       <div className="grid md:grid-cols-2 gap-0">
         {/* Image Section */}
-        <div className="relative aspect-square md:aspect-square group">
+        <div className="relative aspect-video group">
           <Image
             src={article.image || "/placeholder.svg"}
             alt={article.title}
