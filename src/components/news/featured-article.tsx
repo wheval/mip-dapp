@@ -52,7 +52,11 @@ export function FeaturedArticle({ article }: FeaturedArticleProps) {
         <CardContent className="p-8 flex flex-col justify-center space-y-6">
           <div className="space-y-4">
            
-            <h2 className="text-2xl md:text-3xl font-bold leading-tight">{article.title}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold leading-tight">
+              <Link href={`/news/${article.slug}`}>
+              {article.title}
+              </Link>
+              </h2>
 
             <p className="text-muted-foreground text-lg leading-relaxed">{article.excerpt}</p>
 
@@ -87,14 +91,14 @@ export function FeaturedArticle({ article }: FeaturedArticleProps) {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Button asChild className="flex-1">
-              <Link href={`/create`}>
-                Tokenize your IP
+              <Link href={`/news/${article.slug}`}>
+                Open Article
                 <ExternalLink className="w-4 h-4 ml-2" />
               </Link>
             </Button>
             {article.isEvent && (
               <Button variant="outline" className="flex-1 bg-transparent">
-                <Link href={`https://lu.ma/e3t15dyd`} target="_blank">
+                <Link href={`/news/${article.slug}`}>
                 Event Details
                 </Link>
                 <Calendar className="w-4 h-4 ml-2" />
