@@ -21,7 +21,7 @@ export function NewsWidget() {
             <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
               <Newspaper className="w-3 h-3 text-white" />
             </div>
-            <h4 className="font-bold">Featured</h4>
+            <h4 className="font-bold">Creators Newsroom</h4>
           </div>
           <Button variant="outline" size="sm" asChild className="hidden md:flex bg-transparent text-xs">
             <Link href="/news">
@@ -39,9 +39,9 @@ export function NewsWidget() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     {/* Feature Image - 1:1 Aspect Ratio */}
-                    <div className="w-16 h-9 md:w-32 md:h-18 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary/20 to-purple-500/20">
+                    <div className="w-16 h-16 md:w-32 md:h-32 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary/20 to-purple-500/20">
                       <img
-                        src={featuredArticle.image || "/placeholder.svg?height=192&width=108"}
+                        src={featuredArticle.image || "/placeholder.svg?height=100&width=100"}
                         alt={featuredArticle.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
@@ -51,7 +51,7 @@ export function NewsWidget() {
                       <div className="flex items-start gap-2 mb-2">
                         <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-xs gap-1">
                           <Star className="w-2 h-2" />
-                          Hot
+                          Lastest
                         </Badge>
                         <Badge variant="secondary" className="text-xs">
                           {featuredArticle.category}
