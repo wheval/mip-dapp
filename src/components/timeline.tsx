@@ -752,8 +752,14 @@ export function Timeline() {
           {!hasMore && assets.length > 0 && (
             <div className="text-center py-8">
               <p className="text-sm text-muted-foreground">
-                You've reached the end • {totalAssets} assets loaded
+                (for now) you've reached the end of this timline • {totalAssets} assets loaded
               </p>
+              <Link href="/create">
+                <Button variant="outline" size="sm" className="mt-4">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Create New
+                </Button>
+              </Link>
             </div>
           )}
         </div>
