@@ -741,15 +741,6 @@ export function Timeline() {
             </div>
           )}
 
-            {/* Report Dialog */}
-        <ReportAssetDialog
-          assetId={asset.slug}
-          assetName={asset.title}
-          assetCreator={asset.creator.name}
-          open={isReportDialogOpen}
-          onOpenChange={setIsReportDialogOpen}
-        />
-
           {/* Infinite scroll trigger */}
           <div ref={scrollTriggerRef} className="h-1" />
 
