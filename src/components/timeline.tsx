@@ -80,7 +80,8 @@ export function Timeline() {
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [expandedAssets, setExpandedAssets] = useState<Set<string>>(new Set());
 
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
+  // Add state to track which asset is being reported
+  const [reportAsset, setReportAsset] = useState<any | null>(null);
 
   const {
     assets,
@@ -214,7 +215,7 @@ export function Timeline() {
       await navigator.clipboard.writeText(url);
       toast({
         title: "Link copied!",
-        description: "Asset link has been copied to your clipboard.",
+        description: "You can share it anywhere.",
       });
     } catch (error) {
       toast({
@@ -484,10 +485,11 @@ export function Timeline() {
                         <DropdownMenuSeparator />
 
                         <DropdownMenuItem
-                        onClick={() => setIsReportDialogOpen(true)}
-                        className="text-red-600 focus:text-red-600">
-                        Report Asset
-                      </DropdownMenuItem>
+                          onClick={() => setReportAsset(asset)}
+                          className="text-red-600 focus:text-red-600"
+                        >
+                          Report Asset
+                        </DropdownMenuItem>
 
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -506,7 +508,7 @@ export function Timeline() {
                         Share
                       </Button>
 
-                      {asset.externalUrl && (
+                      {/*asset.externalUrl && (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -522,7 +524,9 @@ export function Timeline() {
                             External link
                           </a>
                         </Button>
-                      )}
+                      )*/}
+
+
                     </div>
 
                     <div className="flex items-center space-x-2">
@@ -753,6 +757,19 @@ export function Timeline() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Report Asset Dialog */}
+      {reportAsset && (
+        <ReportAssetDialog
+          open={!!reportAsset}
+          assetId={reportAsset.id}
+          contentId={reportAsset.id}
+          contentName={reportAsset.title}
+          onOpenChange={(open: boolean) => {
+            if (!open) setReportAsset(null);
+          }}
+        />
       )}
 
     </div>
