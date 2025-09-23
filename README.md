@@ -1,9 +1,9 @@
 <img width="1024" height="500" alt="image" src="https://github.com/user-attachments/assets/9fe73372-a6b9-4867-b1e5-ab1833058567" />
 
 
-# MIP by Mediolano
+# MIP - My Intellectual Property
 
-MIP - My Intellectual Property - is a mobile app that allows users to publish their content onchain for free using their Google account, ensuring greater security and eliminating technical barriers for non-crypto natives.
+MIP is a mobile app that allows users to publish their content onchain for free using their Google account, ensuring greater security and eliminating technical barriers for non-crypto natives.
 
 Within seconds anyone can create an account with self-custody assets and start tokenizing content onchain -- simple, fast, and free. Built for the Integrity Web, MIP empowers intelligence giving creators protection, control and new frontiers.
 
@@ -101,6 +101,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Quick links:
 <br>
-<a href="https://ip.mediolano.app">Mediolano Dapp</a><br>
+<a href="https://mediolano.xyz">Mediolano.xyz</a><br>
+<a href="https://ip.mediolano.app">IP Creator Dapp</a><br>
 <a href="https://x.com/mediolanoapp">X / Twitter</a><br>
-<a href="https://t.me/MediolanoStarknet">Telegram</a>
+<a href="https://t.me/mediolanoapp">Telegram Group</a>

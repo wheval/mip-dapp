@@ -46,18 +46,20 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 
+import { ReportAssetDialog } from "@/src/components/report-asset-dialog"
+
 const getLicenseColor = (licenseType: string) => {
   switch (licenseType) {
     case "all-rights":
-      return "bg-red-500 text-white";
+      return "bg-purple-500 text-white";
     case "creative-commons":
       return "bg-green-500 text-white";
     case "open-source":
-      return "bg-blue-500 text-white";
+      return "bg-green-500 text-white";
     case "custom":
       return "bg-purple-500 text-white";
     default:
-      return "bg-gray-500 text-white";
+      return "bg-blue-500 text-white";
   }
 };
 
@@ -77,6 +79,8 @@ const ASSETS_PER_PAGE = 20;
 export function Timeline() {
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [expandedAssets, setExpandedAssets] = useState<Set<string>>(new Set());
+
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
 
   const {
     assets,
@@ -471,23 +475,20 @@ export function Timeline() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
+
                         <DropdownMenuItem onClick={() => handleShare(asset)}>
                           <Copy className="w-4 h-4 mr-2" />
                           Copy Link
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Send className="w-4 h-4 mr-2" />
-                          Transfer Asset
-                        </DropdownMenuItem>
+                       
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View on Explorer
-                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                        onClick={() => setIsReportDialogOpen(true)}
+                        className="text-red-600 focus:text-red-600">
+                        Report Asset
+                      </DropdownMenuItem>
+
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -740,6 +741,15 @@ export function Timeline() {
             </div>
           )}
 
+            {/* Report Dialog */}
+        <ReportAssetDialog
+          assetId={asset.slug}
+          assetName={asset.title}
+          assetCreator={asset.creator.name}
+          open={isReportDialogOpen}
+          onOpenChange={setIsReportDialogOpen}
+        />
+
           {/* Infinite scroll trigger */}
           <div ref={scrollTriggerRef} className="h-1" />
 
@@ -753,6 +763,7 @@ export function Timeline() {
           )}
         </div>
       )}
+
     </div>
   );
 }
