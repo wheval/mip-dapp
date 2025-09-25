@@ -8,7 +8,6 @@ import { transfersRoutes } from "./routes/transfers";
 import { statsRoutes } from "./routes/stats";
 import { openapiSpec } from "lib/util";
 
-
 const port = parseInt(process.env.PORT || "3000");
 
 const fastify = Fastify({
@@ -29,6 +28,12 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 fastify.register(cors, {
   origin: (origin, cb) => {
+    const hostname = new URL(origin as any).hostname;
+    if (hostname === "localhost") {
+      //  Request from localhost will pass
+      cb(null, true);
+      return;
+    }
     // Allow requests with no origin (like curl or mobile apps)
     if (!origin) return cb(null, true);
 
@@ -44,7 +49,6 @@ fastify.register(cors, {
 // --- Swagger Setup ---
 fastify.register(swagger, {
   openapi: openapiSpec,
-
 });
 
 fastify.register(swaggerUI, {
@@ -99,7 +103,10 @@ fastify.get("/", async (request, reply) => {
       transfers: "/api/transfers",
       stats: "/api/stats",
     },
-    documentation: process.env.NODE_ENV === "production"? "https://github.com/your-repo/nft-indexer-api" : `http://localhost:${port}/docs`,
+    documentation:
+      process.env.NODE_ENV === "production"
+        ? "https://github.com/your-repo/nft-indexer-api"
+        : `http://localhost:${port}/docs`,
   });
 });
 
