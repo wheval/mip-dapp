@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS reports (
   blockchain_tx_hash VARCHAR(255),
   source VARCHAR(50) NOT NULL DEFAULT 'mip-dapp',
   version VARCHAR(10) NOT NULL DEFAULT '1.0',
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create indexes for better query performance
@@ -56,5 +56,5 @@ COMMENT ON COLUMN reports.status IS 'Current status of the report in moderation 
 COMMENT ON COLUMN reports.blockchain_tx_hash IS 'Optional blockchain transaction hash if report is recorded on-chain';
 COMMENT ON COLUMN reports.source IS 'Source application that submitted the report';
 COMMENT ON COLUMN reports.version IS 'Version of the report schema';
-COMMENT ON COLUMN reports.created_at IS 'Timestamp when the report was created';
-COMMENT ON COLUMN reports.updated_at IS 'Timestamp when the report was last updated';
+COMMENT ON COLUMN reports.created_at IS 'Timezone-aware timestamp when the report was created';
+COMMENT ON COLUMN reports.updated_at IS 'Timezone-aware timestamp when the report was last updated';

@@ -204,10 +204,10 @@ const MediaUploader = forwardRef<MediaUploaderRef, MediaUploaderProps>(
                   </div>
                   <div>
                     <p className="font-medium text-foreground mb-1">
-                      Drop files here or click to browse
+                      Drop files here or click to browse your device
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Images, videos, audio, documents (Max 100MB)
+                      MIP may require access to your camera and photo library to take pictures or let you upload media. Your media is not transmitted to our servers, they will be stored directly on a decentralized file server. You can change permissions at any time in your device settings.
                     </p>
                   </div>
                 </div>

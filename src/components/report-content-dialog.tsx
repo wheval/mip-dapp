@@ -4,7 +4,6 @@ import * as React from "react"
 import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { AlertTriangle, CheckCircle, Flag, X } from "lucide-react"
-import { cn } from "@/src/lib/utils"
 import {
   Dialog,
   DialogContent,
@@ -18,6 +17,9 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Label } from "@/src/components/ui/label"
 import { Textarea } from "@/src/components/ui/textarea"
+import { Input } from "@/src/components/ui/input"
+import { Checkbox } from "@/src/components/ui/checkbox"
+import { Alert, AlertDescription } from "@/src/components/ui/alert"
 import {
   Select,
   SelectContent,
@@ -26,7 +28,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select"
 import { reportContentService } from "@/src/services/report.service"
-import Image from "next/image"
+import { shortenAddress } from "@/src/lib/utils"
 
 export interface ReportContentProps {
   contentType: "asset" | "collection" | "profile"
@@ -46,44 +48,17 @@ export interface ReportFormData {
   contentOwner?: string
   reporterWallet: string
   reporterUserId: string
+  email?: string
 }
 
-const REPORT_TYPES = [
-  {
-    value: "inappropriate-content",
-    label: "Inappropriate Content",
-    description: "Content contains offensive, harmful, or explicit material"
-  },
-  {
-    value: "copyright-infringement",
-    label: "Copyright Infringement",
-    description: "Content violates intellectual property rights"
-  },
-  {
-    value: "spam",
-    label: "Spam",
-    description: "Content is repetitive, promotional, or off-topic"
-  },
-  {
-    value: "harassment",
-    label: "Harassment",
-    description: "Content is abusive or targets specific individuals"
-  },
-  {
-    value: "fake-content",
-    label: "Fake or Misleading",
-    description: "Content contains false information or impersonation"
-  },
-  {
-    value: "scam",
-    label: "Scam or Fraud",
-    description: "Content appears to be fraudulent or deceptive"
-  },
-  {
-    value: "other",
-    label: "Other",
-    description: "Report for other policy violations"
-  }
+const REPORT_REASONS = [
+  { value: "copyright", label: "Copyright Infringement" },
+  { value: "trademark", label: "Trademark Violation" },
+  { value: "impersonation", label: "Impersonation" },
+  { value: "fraud", label: "Fraudulent Content" },
+  { value: "inappropriate", label: "Inappropriate Content" },
+  { value: "spam", label: "Spam or Misleading" },
+  { value: "other", label: "Other" },
 ]
 
 export function ReportContentDialog({
@@ -99,70 +74,56 @@ export function ReportContentDialog({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [error, setError] = useState("")
+  const [reportId, setReportId] = useState<string | null>(null)
 
   // Form state
   const [reportType, setReportType] = useState("")
   const [description, setDescription] = useState("")
-  const [reportTypeError, setReportTypeError] = useState("")
-  const [descriptionError, setDescriptionError] = useState("")
+  const [email, setEmail] = useState("")
+  const [agreeToPolicy, setAgreeToPolicy] = useState(false)
 
   const userWallet = user?.publicMetadata?.publicKey as string
   const userId = user?.id
 
-  // Validation functions
-  const validateReportType = (value: string): string => {
-    if (!value || value.trim() === '') {
-      return 'Please select a report type'
-    }
-    return ''
+  // Helper function to check if a string looks like an address
+  const isAddress = (str: string): boolean => {
+    if (!str || typeof str !== 'string') return false
+    return /^0x[a-fA-F0-9]{40}$/.test(str) || /^0x[a-fA-F0-9]{64}$/.test(str) || /^[a-fA-F0-9]{64}$/.test(str)
   }
 
-  const validateDescription = (value: string): string => {
-    if (!value || value.trim() === '') {
-      return 'Please provide a description of the issue'
+  // Helper function to format owner display
+  const formatOwner = (owner: string): string => {
+    if (!owner || typeof owner !== 'string') return owner
+    if (isAddress(owner)) {
+      return shortenAddress(owner, 6)
     }
-    if (value.length < 10) {
-      return 'Description must be at least 10 characters'
+    // Fallback: if it's a very long string, shorten it anyway
+    if (owner.length > 20) {
+      return `${owner.slice(0, 6)}...${owner.slice(-4)}`
     }
-    if (value.length > 1000) {
-      return 'Description must not exceed 1000 characters'
-    }
-    return ''
+    return owner
   }
 
   // Handle form field changes
   const handleReportTypeChange = (value: string) => {
     setReportType(value)
-    const error = validateReportType(value)
-    setReportTypeError(error)
-    if (error) setError("")
   }
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value
-    setDescription(value)
-    const error = validateDescription(value)
-    setDescriptionError(error)
-    if (error) setError("")
+    setDescription(e.target.value)
   }
 
-  // Validate entire form
-  const validateForm = (): boolean => {
-    const typeError = validateReportType(reportType)
-    const descError = validateDescription(description)
-    
-    setReportTypeError(typeError)
-    setDescriptionError(descError)
-    
-    return !typeError && !descError
+  const handleAgreeChange = (checked: boolean | string) => {
+    setAgreeToPolicy(Boolean(checked))
   }
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!validateForm()) {
-      setError("Please fix the errors above")
+    const trimmedDescription = description.trim()
+    
+    if (!reportType || !trimmedDescription || !agreeToPolicy) {
       return
     }
 
@@ -177,16 +138,22 @@ export function ReportContentDialog({
     try {
       const reportData: ReportFormData = {
         reportType: reportType,
-        description: description.trim(),
+        description: trimmedDescription,
         contentType,
         contentId,
         contentTitle,
         contentOwner,
         reporterWallet: userWallet,
-        reporterUserId: userId
+        reporterUserId: userId,
+        email: email || undefined,
       }
 
-      await reportContentService.submitReport(reportData)
+      const response = await reportContentService.submitReport(reportData)
+      
+      // Store the real report ID from the API response
+      if (response.reportId) {
+        setReportId(response.reportId)
+      }
       
       // Show success state
       setShowSuccess(true)
@@ -210,10 +177,11 @@ export function ReportContentDialog({
   const resetForm = () => {
     setReportType("")
     setDescription("")
-    setReportTypeError("")
-    setDescriptionError("")
+    setEmail("")
+    setAgreeToPolicy(false)
     setError("")
     setShowSuccess(false)
+    setReportId(null)
   }
 
   // Handle dialog open change
@@ -224,9 +192,10 @@ export function ReportContentDialog({
     }
   }
 
-  const isFormValid = reportType && description && !reportTypeError && !descriptionError && !isSubmitting
+  const trimmedDescription = description.trim()
+  const isFormValid = reportType && trimmedDescription && agreeToPolicy && !isSubmitting
 
-  const selectedReportType = REPORT_TYPES.find(type => type.value === reportType)
+  const selectedReportType = REPORT_REASONS.find(type => type.value === reportType)
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -234,173 +203,139 @@ export function ReportContentDialog({
         {children}
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-fit" aria-describedby="report-dialog-description">
+      <DialogContent className="sm:w-[500px] sm:min-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Flag className="h-5 w-5 text-destructive" />
-            Report Content
+            <Flag className="h-5 w-5 text-red-500" />
+            Report {contentType === "asset" ? "Asset" : contentType === "collection" ? "Collection" : "Content"}
           </DialogTitle>
-          <DialogDescription id="report-dialog-description">
-            Report inappropriate or abusive content to help keep MIP safe for everyone.
+          <DialogDescription>
+            Report {contentType === "asset" ? "Asset" : contentType === "collection" ? "Collection" : "Content"} "{contentId.length > 10 ? `${contentId.slice(0, 6)}...${contentId.slice(-4)}` : contentId}"{contentOwner ? ` by ${formatOwner(contentOwner)}` : ""} for policy violations or legal issues.
           </DialogDescription>
         </DialogHeader>
-
         {showSuccess ? (
-          <div className="py-8">
-            <Card className="border-green-200 bg-green-50">
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3 text-green-800">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
-                  <div className="space-y-1">
-                    <p className="font-medium">Report submitted successfully!</p>
-                    <p className="text-sm text-green-700">
-                      Thank you for helping keep MIP safe. Our moderation team will review this report.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="flex flex-col items-center justify-center py-8 space-y-4">
+            <CheckCircle className="h-12 w-12 text-green-500" />
+            <div className="text-center space-y-2">
+              <h3 className="font-semibold text-green-700">Report Submitted Successfully</h3>
+              <p className="text-sm text-muted-foreground">
+                Thank you for helping keep Mediolano safe. We'll review your report and take appropriate action if
+                necessary.
+              </p>
+              {reportId && (
+                <p className="text-xs text-muted-foreground">
+                  Report ID: {reportId}
+                </p>
+              )}
+            </div>
+          </div>
+        ) : isSubmitting ? (
+          <div className="flex flex-col items-center justify-center py-8 space-y-4">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <div className="text-center">
+              <h3 className="font-semibold">Submitting Report</h3>
+              <p className="text-sm text-muted-foreground">Please wait while we process your report...</p>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Content Info */}
-            <Card className="bg-muted/50">
-              <CardContent className="pt-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Reporting content:</p>
-                  <div className="flex gap-x-2">
-                    {contentImage && (
-                      <div className="w-20 h-20 rounded-sm overflow-hidden">
-                        <Image
-                          src={contentImage}
-                          alt={contentTitle}
-                          width={100}
-                          height={100}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="text-sm">
-                      <p className="font-semibold text-md">{contentTitle}</p>
-                      <p className="capitalize text-muted-foreground">{contentType} ID: <span className="text-foreground font-medium">{contentId}</span></p>
-                      {contentOwner && <p className="text-muted-foreground">Owner: <span className="text-foreground font-medium">{contentOwner}</span></p>}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Report Type Selection */}
             <div className="space-y-2">
-              <Label htmlFor="report-type">Report Type *</Label>
-              <Select value={reportType} onValueChange={handleReportTypeChange}>
-                <SelectTrigger 
-                  id="report-type"
-                  className={cn(reportTypeError && "border-destructive")}
-                  aria-describedby={reportTypeError ? "report-type-error" : undefined}
-                >
-                  <SelectValue placeholder="Select a reason for reporting" />
+              <Label htmlFor="reason">Reason for Report *</Label>
+              <Select
+                value={reportType}
+                onValueChange={handleReportTypeChange}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a reason" />
                 </SelectTrigger>
                 <SelectContent>
-                  {REPORT_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
+                  {REPORT_REASONS.map((reason) => (
+                    <SelectItem key={reason.value} value={reason.value}>
+                      {reason.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {reportTypeError && (
-                <p id="report-type-error" className="text-sm text-destructive">
-                  {reportTypeError}
-                </p>
-              )}
-              {selectedReportType && !reportTypeError && (
-                <p className="text-sm ml-1 text-muted-foreground">
-                  {selectedReportType.description}
-                </p>
-              )}
             </div>
 
-            {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">
-                Description *
-                <span className="text-xs text-muted-foreground ml-2">
-                  ({description.length}/1000 characters)
-                </span>
-              </Label>
+              <Label htmlFor="description">Detailed Description *</Label>
               <Textarea
                 id="description"
-                placeholder="Please provide specific details about why you're reporting this content. Include any relevant information that would help our moderation team."
+                placeholder="Please provide specific details about the violation, including any evidence or supporting information..."
                 value={description}
                 onChange={handleDescriptionChange}
-                className={cn(
-                  "min-h-[100px] resize-none",
-                  descriptionError && "border-destructive"
-                )}
-                maxLength={1000}
-                aria-describedby={descriptionError ? "description-error" : undefined}
+                className="min-h-[100px]"
+                required
               />
-              {descriptionError && (
-                <p id="description-error" className="text-sm text-destructive ml-1">
-                  {descriptionError}
-                </p>
-              )}
             </div>
 
             {/* Warning */}
-            <Card className="border-amber-200 bg-amber-50">
-              <CardContent className="pt-4">
-                <div className="flex gap-3">
-                  <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm">
-                    <p className="font-medium text-amber-800">Please note:</p>
-                    <ul className="mt-1 space-y-1 text-amber-700">
-                      <li>• Reports are reviewed by the Mediolano DAO moderation team</li>
-                      <li>• False reports may result in action against your account</li>
-                      <li>• All reports are confidential</li>                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-2">
+              <Label htmlFor="email">Contact Email (Optional)</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                We may contact you for additional information about your report.
+              </p>
+            </div>
+
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                False reports may result in account restrictions. Please ensure your report is accurate and made in good
+                faith.
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="agree"
+                checked={agreeToPolicy}
+                onCheckedChange={handleAgreeChange}
+                required
+              />
+              <Label htmlFor="agree" className="text-sm leading-5">
+                I agree to the{" "}
+                <a
+                  href="/community-guidelines"
+                  className="text-primary hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Community Guidelines
+                </a>{" "}
+                and confirm that this report is made in good faith. *
+              </Label>
+            </div>
 
             {/* Error message */}
             {error && (
-              <Card className="border-destructive bg-destructive/5">
-                <CardContent className="pt-4">
-                  <div className="flex items-center gap-2 text-destructive">
-                    <X className="h-4 w-4" />
-                    <p className="text-sm font-medium">{error}</p>
+              <div className="rounded-md bg-red-50 p-2">
+                  <div className="ml-3">
+                    <div className="text-sm text-red-700">
+                      <p>{error}</p>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
             )}
 
-            <DialogFooter className="gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleOpenChange(false)}
-                disabled={isSubmitting}
-              >
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!isFormValid}
-                className="bg-destructive hover:bg-destructive/90"
+                className="bg-red-600 hover:bg-red-700"
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
-                    Submitting Report...
-                  </>
-                ) : (
-                  <>
-                    <Flag className="h-4 w-4 mr-2" />
-                    Submit Report
-                  </>
-                )}
+                Submit Report
               </Button>
             </DialogFooter>
           </form>
@@ -410,7 +345,6 @@ export function ReportContentDialog({
   )
 }
 
-// Export convenience component for quick integration
 export function ReportButton(props: Omit<ReportContentProps, 'children'>) {
   return (
     <ReportContentDialog {...props}>

@@ -23,20 +23,36 @@ export async function GET(
       signal: request.signal,
     })
 
-    const data = await response.json()
+    // Instead of unconditionally parsing JSON, first read as text and
+    // only JSON.parse if the content-type is JSON and the body is non-empty.
+    const contentType = response.headers.get('content-type') ?? ''
+    const rawBody = await response.text()
+    const isJson = contentType.includes('application/json') && rawBody.length > 0
+    const data = isJson ? JSON.parse(rawBody) : rawBody
 
     if (!response.ok) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: data.message || 'Backend request failed',
-          error: data.error 
-        }, 
+        {
+          success: false,
+          message: isJson && typeof data === 'object' && data && 'message' in data
+            ? (data as Record<string, unknown>).message
+            : 'Backend request failed',
+          error: isJson && typeof data === 'object' && data && 'error' in data
+            ? (data as Record<string, unknown>).error
+            : rawBody || null,
+        },
         { status: response.status }
       )
     }
 
-    return NextResponse.json(data, { status: response.status })
+    // If it's JSON, preserve the object; otherwise return the raw text.
+    if (isJson) {
+      return NextResponse.json(data, { status: response.status })
+    }
+    return new NextResponse(rawBody, {
+      status: response.status,
+      headers: contentType ? { 'Content-Type': contentType } : undefined,
+    })
 
   } catch (error) {
     console.error('Report fetch error:', error)
@@ -57,7 +73,20 @@ export async function PATCH(
 ) {
   try {
     const { id } = params
-    const body = await request.json()
+    
+    // Parse JSON with error handling
+    let body: any
+    try {
+      body = await request.json()
+    } catch (jsonError) {
+      return NextResponse.json(
+        { error: "Malformed JSON" },
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    }
     
     // Sanitize/allowlist inbound headers
     const inbound = new Headers(request.headers)

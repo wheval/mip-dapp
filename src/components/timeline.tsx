@@ -47,20 +47,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
-import { ReportContentDialog } from "@/src/components/report-content-dialog";
+import { ReportContentDialog } from "@/src/components/report-content-dialog"
 
 const getLicenseColor = (licenseType: string) => {
   switch (licenseType) {
     case "all-rights":
-      return "bg-red-500 text-white";
+      return "bg-purple-500 text-white";
     case "creative-commons":
       return "bg-green-500 text-white";
     case "open-source":
-      return "bg-blue-500 text-white";
+      return "bg-green-500 text-white";
     case "custom":
       return "bg-purple-500 text-white";
     default:
-      return "bg-gray-500 text-white";
+      return "bg-blue-500 text-white";
   }
 };
 
@@ -80,6 +80,7 @@ const ASSETS_PER_PAGE = 20;
 export function Timeline() {
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [expandedAssets, setExpandedAssets] = useState<Set<string>>(new Set());
+
 
   const {
     assets,
@@ -213,7 +214,7 @@ export function Timeline() {
       await navigator.clipboard.writeText(url);
       toast({
         title: "Link copied!",
-        description: "Asset link has been copied to your clipboard.",
+        description: "You can share it anywhere.",
       });
     } catch (error) {
       toast({
@@ -478,24 +479,14 @@ export function Timeline() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleShare(asset)}>
+
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => handleShare(asset)}>
                           <Copy className="w-4 h-4 mr-2" />
                           Copy Link
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Send className="w-4 h-4 mr-2" />
-                          Transfer Asset
-                        </DropdownMenuItem>
+                       
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View on Explorer
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+
                         <ReportContentDialog
                           contentType="asset"
                           contentId={asset.id}
@@ -504,13 +495,14 @@ export function Timeline() {
                           contentImage={asset.mediaUrl}
                         >
                           <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
+                            className="text-destructive focus:text-destructive cursor-pointer"
                             onSelect={(e) => e.preventDefault()}
                           >
                             <Flag className="w-4 h-4 mr-2" />
-                            Report Content
+                            Report Asset
                           </DropdownMenuItem>
                         </ReportContentDialog>
+
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -528,7 +520,7 @@ export function Timeline() {
                         Share
                       </Button>
 
-                      {asset.externalUrl && (
+                      {/*asset.externalUrl && (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -544,7 +536,9 @@ export function Timeline() {
                             External link
                           </a>
                         </Button>
-                      )}
+                      )*/}
+
+
                     </div>
 
                     <div className="flex items-center space-x-2">
@@ -770,12 +764,20 @@ export function Timeline() {
           {!hasMore && assets.length > 0 && (
             <div className="text-center py-8">
               <p className="text-sm text-muted-foreground">
-                You've reached the end • {totalAssets} assets loaded
+                (for now) you've reached the end of this timline • {totalAssets} assets loaded
               </p>
+              <Link href="/create">
+                <Button variant="outline" size="sm" className="mt-4">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Create New
+                </Button>
+              </Link>
             </div>
           )}
         </div>
       )}
+
+
     </div>
   );
 }

@@ -20,20 +20,50 @@ export async function GET(request: NextRequest) {
       signal: request.signal,
     })
 
-    const data = await response.json()
+    // Check for no-content statuses
+    if (response.status === 204 || response.status === 205) {
+      return new NextResponse(null, { status: response.status })
+    }
+
+    // Check if response has JSON content
+    const contentType = response.headers.get('content-type')
+    const isJson = contentType && contentType.includes('application/json')
+
+    let data: any = null
+    let errorMessage: string | null = null
+
+    if (isJson) {
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        console.error('JSON parsing error:', jsonError)
+        errorMessage = 'Invalid JSON response from backend'
+      }
+    } else {
+      // For non-JSON responses, read as text
+      try {
+        const textData = await response.text()
+        if (textData) {
+          data = { message: textData }
+        }
+      } catch (textError) {
+        console.error('Text parsing error:', textError)
+        errorMessage = 'Failed to read response body'
+      }
+    }
 
     if (!response.ok) {
       return NextResponse.json(
         { 
           success: false, 
-          message: data.message || 'Backend request failed',
-          error: data.error 
+          message: errorMessage || data?.message || 'Backend request failed',
+          error: data?.error || (isJson ? null : data?.message)
         }, 
         { status: response.status }
       )
     }
 
-    return NextResponse.json(data, { status: response.status })
+    return NextResponse.json(data || {}, { status: response.status })
 
   } catch (error) {
     console.error('Report fetch error:', error)

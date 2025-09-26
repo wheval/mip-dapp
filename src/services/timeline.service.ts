@@ -112,7 +112,7 @@ class TimelineService {
         params.append("collectionId", filters.collectionId);
       }
       
-      const response = await fetch(`${this.baseUrl}/assets?${params}`, {
+      const response = await fetch(`${this.baseUrl}/api/assets?${params}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -597,7 +597,7 @@ class TimelineService {
   async getRecentActivity(limit = 10): Promise<any[]> {
     try {
       const response = await fetch(
-        `${this.baseUrl}/transfers?limit=${limit}&sortBy=block&sortOrder=desc`
+        `${this.baseUrl}/api/transfers?limit=${limit}&sortBy=block&sortOrder=desc`
       );
       
       if (!response.ok) {

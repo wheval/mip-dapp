@@ -18,20 +18,32 @@ export async function GET(request: NextRequest) {
       signal: request.signal,
     })
 
-    const data = await response.json()
+    // Check if response has content before parsing JSON
+    const contentType = response.headers.get('content-type')
+    const hasJsonContent = contentType && contentType.includes('application/json')
+    
+    let data = null
+    if (hasJsonContent) {
+      try {
+        data = await response.json()
+      } catch (parseError) {
+        console.warn('Failed to parse JSON response:', parseError)
+      }
+    }
 
     if (!response.ok) {
       return NextResponse.json(
         { 
           success: false, 
-          message: data.message || 'Backend health check failed',
-          error: data.error 
+          message: data?.message || 'Backend health check failed',
+          error: data?.error 
         }, 
         { status: response.status }
       )
     }
 
-    return NextResponse.json(data, { status: response.status })
+    // For successful responses, return the data if available, otherwise return success
+    return NextResponse.json(data || { success: true, status: 'healthy' }, { status: response.status })
 
   } catch (error) {
     console.error('Health check error:', error)

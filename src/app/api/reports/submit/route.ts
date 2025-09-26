@@ -62,6 +62,11 @@ export async function POST(request: NextRequest) {
       signal: request.signal,
     })
 
+    // Handle 204 No Content responses immediately
+    if (response.status === 204) {
+      return new NextResponse(null, { status: 204 })
+    }
+
     const data = await parseResponse(response)
 
     if (!response.ok) {
@@ -111,6 +116,11 @@ export async function GET(request: NextRequest) {
       cache: 'no-store',
       signal: request.signal,
     })
+
+    // Handle 204 No Content responses immediately
+    if (response.status === 204) {
+      return new NextResponse(null, { status: 204 })
+    }
 
     const data = await parseResponse(response)
 

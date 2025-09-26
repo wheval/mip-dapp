@@ -144,12 +144,11 @@ export class ReportContentService {
    * Get user's report history (from backend)
    */
   async getUserReportHistory(userWallet: string): Promise<ReportMetadata[]> {
+    if (!userWallet || typeof userWallet !== 'string') {
+      throw new Error('Invalid userWallet: must be a non-empty string')
+    }
+
     try {
-      // Validate and sanitize userWallet to prevent injection
-      if (!userWallet || typeof userWallet !== 'string') {
-        throw new Error('Invalid userWallet: must be a non-empty string')
-      }
-      
       const response = await fetch(`${this.baseUrl}/api/reports?reporterWallet=${encodeURIComponent(userWallet)}`, {
         method: 'GET',
         headers: {
@@ -164,11 +163,11 @@ export class ReportContentService {
       }
 
       const data = await response.json()
-      return data.reports || []
+      return Array.isArray(data.reports) ? data.reports : []
 
     } catch (error) {
       console.error('Error getting user report history:', error)
-      return []
+      throw (error instanceof Error ? error : new Error('Failed to fetch report history'))
     }
   }
 
@@ -176,33 +175,27 @@ export class ReportContentService {
    * Get report by ID
    */
   async getReportById(reportId: string): Promise<ReportMetadata | null> {
-    try {
-      // Validate and sanitize reportId to prevent injection attacks
-      const validatedReportId = this.validateAndSanitizeReportId(reportId)
-      
-      const response = await fetch(`${this.baseUrl}/api/reports/${validatedReportId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Report-Source': 'mip-dapp'
-        },
-        signal: AbortSignal.timeout(10000)
-      })
+    // Validate and sanitize reportId to prevent injection attacks
+    const validatedReportId = this.validateAndSanitizeReportId(reportId)
+    
+    const response = await fetch(`${this.baseUrl}/api/reports/${validatedReportId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Report-Source': 'mip-dapp'
+      },
+      signal: AbortSignal.timeout(10000)
+    })
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          return null
-        }
-        throw new Error(`Failed to fetch report: ${response.status}`)
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null
       }
-
-      const data = await response.json()
-      return data.report || null
-
-    } catch (error) {
-      console.error('Error getting report:', error)
-      return null
+      throw new Error(`Failed to fetch report: ${response.status}`)
     }
+
+    const data = await response.json()
+    return data.report || null
   }
 
   /**

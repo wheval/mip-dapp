@@ -202,7 +202,7 @@ export async function reportsRoutes(fastify: FastifyInstance) {
   }, async (request: FastifyRequest<{ Querystring: any }>, reply: FastifyReply) => {
     try {
       const query = request.query as { page?: string; limit?: string; status?: string; contentType?: string };
-      const page = parseInt(query.page || "1");
+      const page = Math.max(1, parseInt(query.page || "1"));
       const limit = Math.min(parseInt(query.limit || "20"), 100); // Max 100 per page
       const offset = (page - 1) * limit;
 
@@ -221,10 +221,15 @@ export async function reportsRoutes(fastify: FastifyInstance) {
         ? db.select().from(reports).where(and(...conditions))
         : db.select().from(reports);
 
-      // Get total count
-      const totalResult = await db
-        .select({ count: sql`COUNT(${reports.id})` })
-        .from(reports);
+      // Get total count with same conditions as main query
+      const totalResult = conditions.length > 0 
+        ? await db
+            .select({ count: sql`COUNT(${reports.id})` })
+            .from(reports)
+            .where(and(...conditions))
+        : await db
+            .select({ count: sql`COUNT(${reports.id})` })
+            .from(reports);
       const total = Number(totalResult[0]?.count || 0);
 
       // Get paginated results
