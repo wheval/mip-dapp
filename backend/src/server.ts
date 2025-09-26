@@ -9,7 +9,6 @@ import { statsRoutes } from "./routes/stats";
 import { reportsRoutes } from "./routes/reports";
 import { openapiSpec } from "lib/util";
 
-
 const port = parseInt(process.env.PORT || "3000");
 
 const fastify = Fastify({
@@ -30,22 +29,52 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 fastify.register(cors, {
   origin: (origin, cb) => {
-    // Allow requests with no origin (like curl or mobile apps)
-    if (!origin) return cb(null, true);
+    if (!origin) return cb(null, true); // allow curl, mobile apps, etc.
 
+    // Allow if explicitly whitelisted
     if (allowedOrigins.includes(origin)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Not allowed by CORS"), false);
+      return cb(null, true);
     }
+
+    // Allow any localhost port
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+      return cb(null, true);
+    }
+
+    // Otherwise, reject
+    return cb(new Error("Not allowed by CORS"), false);
   },
   credentials: true,
 });
 
+// fastify.register(cors, {
+//   origin: (origin, cb) => {
+//     // Allow requests with no origin (like curl or mobile apps)
+//     if (!origin) return cb(null, true);
+
+//        // Allow if explicitly whitelisted
+//     if (allowedOrigins.includes(origin)) {
+//       return cb(null, true);
+//     }
+
+//     // Allow any localhost port
+//     if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+//       return cb(null, true);
+//     }
+
+//     if (allowedOrigins.includes(origin)) {
+//       cb(null, true);
+
+//     } else {
+//       cb(new Error("Not allowed by CORS"), false);
+//     }
+//   },
+//   credentials: true,
+// });
+
 // --- Swagger Setup ---
 fastify.register(swagger, {
   openapi: openapiSpec,
-
 });
 
 fastify.register(swaggerUI, {
@@ -102,7 +131,10 @@ fastify.get("/", async (request, reply) => {
       stats: "/api/stats",
       reports: "/api/reports",
     },
-    documentation: process.env.NODE_ENV === "production"? "https://github.com/your-repo/nft-indexer-api" : `http://localhost:${port}/docs`,
+    documentation:
+      process.env.NODE_ENV === "production"
+        ? "https://github.com/your-repo/nft-indexer-api"
+        : `http://localhost:${port}/docs`,
   });
 });
 
